@@ -1,0 +1,89 @@
+@{
+	ViewData["Title"] = "Acceso";
+}
+
+<header>
+	<nav>
+		<a href="/">Fluenty</a>
+	</nav>
+</header>
+
+<main>
+	<div id="auth-toggle">
+		<button type="button" id="show-login">Iniciar sesión</button>
+		<button type="button" id="show-register">Registrarse</button>
+	</div>
+    <section id="welcome">
+        <h1>Bienvenido a Fluenty</h1>
+        <p>La plataforma donde todos pueden capacitarse y usar la inteligencia artificial para mejorar sus habilidades.</p>
+
+        <div>
+            <h3>Cursos creados</h3>
+            <p>Más de 100 cursos disponibles para todos los niveles.</p>
+        </div>
+        <div>
+            <h3>Empleados capacitados</h3>
+            <p>Más de 1000 empleados han mejorado sus habilidades con nuestra plataforma.</p>
+        </div>
+        <div>
+            <h3>Tiempo ahorrado</h3>
+            <p>Más de 500 horas de capacitación han sido ahorradas gracias a nuestra plataforma.</p>
+        </div>
+    </section>
+
+	<section id="login">
+		<h2>Iniciar sesión</h2>
+		<form method="post" action="/Account/Login">
+			<label>Usuario</label>
+			<input type="text" name="Username" required />
+
+			<label>Contraseña</label>
+			<input type="password" name="Password" required />
+
+			<button type="submit">Acceder</button>
+		</form>
+	</section>
+
+	<section id="register" style="display:none;">
+		<h2>Registrarse</h2>
+		<form method="post" action="/Account/Register">
+			<label>Nombre</label>
+			<input type="text" name="Nombre" required />
+
+			<label>Apellido</label>
+			<input type="text" name="Apellido" required />
+
+			<label>Email</label>
+			<input type="email" name="Email" required />
+
+			<label>Contraseña</label>
+			<input type="password" name="Password" required />
+
+			<button type="submit">Crear cuenta</button>
+		</form>
+	</section>
+</main>
+
+<footer>
+	<p>2026 Fluenty</p>
+</footer>
+
+<script>
+	(function(){
+		var login = document.getElementById('login');
+		var register = document.getElementById('register');
+		var btnLogin = document.getElementById('show-login');
+		var btnRegister = document.getElementById('show-register');
+
+		if(!login || !register || !btnLogin || !btnRegister) return;
+
+		function showLogin(){ login.style.display = 'block'; register.style.display = 'none'; }
+		function showRegister(){ login.style.display = 'none'; register.style.display = 'block'; }
+
+		btnLogin.addEventListener('click', function(e){ e.preventDefault(); showLogin(); });
+		btnRegister.addEventListener('click', function(e){ e.preventDefault(); showRegister(); });
+
+		// default
+		showLogin();
+	})();
+</script>
