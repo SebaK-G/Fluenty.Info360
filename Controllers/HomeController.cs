@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Fluenty.Models;
 using Fluenty.Info360.Models;
 
 namespace Fluenty.Info360.Controllers;
@@ -12,12 +11,14 @@ public class HomeController : Controller
     public HomeController(ILogger<HomeController> logger){
         _logger = logger;
     }
+
     public IActionResult Privacy(){
         return View();
     }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error(){
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View();
     }
 
     public IActionResult Index(){
@@ -30,14 +31,14 @@ public class HomeController : Controller
 
     public IActionResult Login()
     {
-        return View();
+        return View("Acceso");
     }
 
     [HttpPost]
     public IActionResult Login(string Email, string Contrasena)
     {
         BD miBD = new BD();
-        Usuario usuario = miBD.Login(Email, Contrasena);
+        Usuarios usuario = miBD.Login(Email, Contrasena);
 
         if (usuario != null)
         {
@@ -47,6 +48,6 @@ public class HomeController : Controller
         }
 
         ViewBag.Mensaje = "Email o contraseña incorrectos";
-        return View();
+        return View("Acceso");
     }
 }
