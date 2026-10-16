@@ -4,10 +4,67 @@
 
 <h1>Acceso</h1>
 
-<form action='@Url.Action("Login", "Home")' method="POST">
-    <input type="text" name="Email" />
-    <input type="password" name="Contrasena" />
-    <input type="submit" value="Ingresar" />
-</form>
+@if (ViewBag.Mensaje != null)
+{
+    <div>@ViewBag.Mensaje</div>
+}
 
-<p>@ViewBag.Mensaje</p>
+@if (ViewBag.MensajeRegistro != null)
+{
+    <div>@ViewBag.MensajeRegistro</div>
+}
+
+<button type="button" onclick="mostrarFormulario('login')">Iniciar sesión</button>
+<button type="button" onclick="mostrarFormulario('registro')">Registrarse</button>
+
+<div id="form-login">
+    <h2>Iniciar sesión</h2>
+    <form asp-action="Login" asp-controller="Home" method="post">
+        <div>
+            <label for="Email">Email:</label><br />
+            <input type="email" id="Email" name="Email" required />
+        </div>
+        <div>
+            <label for="Contrasena">Contraseña:</label><br />
+            <input type="password" id="Contrasena" name="Contrasena" required />
+        </div>
+        <div>
+            <input type="submit" value="Ingresar" />
+        </div>
+    </form>
+</div>
+
+<div id="form-registro" hidden>
+    <h2>Registrarse</h2>
+    <form asp-action="Signup" asp-controller="Home" method="post">
+        <div>
+            <label for="Nombre">Nombre:</label><br />
+            <input type="text" id="Nombre" name="Nombre" required />
+        </div>
+        <div>
+            <label for="Apellido">Apellido:</label><br />
+            <input type="text" id="Apellido" name="Apellido" required />
+        </div>
+        <div>
+            <label for="EmailRegistro">Email:</label><br />
+            <input type="email" id="EmailRegistro" name="Email" required />
+        </div>
+        <div>
+            <label for="Dni">DNI:</label><br />
+            <input type="text" id="Dni" name="Dni" required />
+        </div>
+        <div>
+            <label for="Telefono">Teléfono:</label><br />
+            <input type="text" id="Telefono" name="Telefono" required />
+        </div>
+        <div>
+            <label for="ContrasenaRegistro">Contraseña:</label><br />
+            <input type="password" id="ContrasenaRegistro" name="Contraseña" required />
+        </div>
+        <div>
+            <input type="submit" value="Registrarme" />
+        </div>
+    </form>
+</div>
+
+
