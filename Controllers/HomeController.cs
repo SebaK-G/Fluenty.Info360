@@ -7,29 +7,51 @@ namespace Fluenty.Info360.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    public HomeController(ILogger<HomeController> logger){
+    public HomeController(ILogger<HomeController> logger)
+    {
         _logger = logger;
     }
-    public IActionResult Privacy(){
-        return View();
-    }
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error(){
+
+    public IActionResult Privacy()
+    {
         return View();
     }
 
-    public IActionResult Index(){
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
         return View();
     }
-    public IActionResult Acceso(){
+
+    public IActionResult Index()
+    {
+        ViewBag.Nombre = "Martina";
+        ViewBag.NombreEmpresa = "Fluenty";
+        ViewBag.CantidadCursos = 12;
+        ViewBag.CantidadEmpleados = 38;
+        ViewBag.Actividades = new[]
+        {
+            "Onboarding de ingreso",
+            "Capacitación en ventas",
+            "Curso de seguridad",
+            "Taller de liderazgo"
+        };
+
+        return View();
+    }
+
+    public IActionResult Acceso()
+    {
         return View();
     }
 
     [HttpPost]
-    public IActionResult Login(string Email, string Contrasena){
+    public IActionResult Login(string Email, string Contrasena)
+    {
         BD miBD = new BD();
         Usuarios usuario = miBD.Login(Email, Contrasena);
-        if (usuario != null){
+        if (usuario != null)
+        {
             HttpContext.Session.SetString("Nombre", usuario.Nombre);
             HttpContext.Session.SetString("Email", usuario.Email);
             return RedirectToAction("Index");
@@ -39,8 +61,10 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Signup(string NombreEmpresa, string EmailEmpresa, int CantidadEmpleados, string Cuit, string Nombre, string Apellido, string Email, string Dni, string Telefono, string Contrasena){
-        try{
+    public IActionResult Signup(string NombreEmpresa, string EmailEmpresa, int CantidadEmpleados, string Cuit, string Nombre, string Apellido, string Email, string Dni, string Telefono, string Contrasena)
+    {
+        try
+        {
             BD miBD = new BD();
             Empresas empresa = new Empresas();
             empresa.Nombre = NombreEmpresa;
@@ -63,16 +87,20 @@ public class HomeController : Controller
             ViewBag.MensajeRegistro = "Registro exitoso. Ya puedes iniciar sesión.";
             return View("Acceso");
         }
-        catch (Exception ex){
+        catch (Exception ex)
+        {
             ViewBag.MensajeRegistro = "No se pudo registrar el usuario: " + ex.Message;
             return View("Acceso");
         }
     }
 
     [HttpPost]
-    public IActionResult GuardarTipoUsuario(string TipoUsuario, int? IdEmpleado, int? IdEmpleador){
-        if (TipoUsuario == "Empleado"){
-            if (IdEmpleado == null){
+    public IActionResult GuardarTipoUsuario(string TipoUsuario, int? IdEmpleado, int? IdEmpleador)
+    {
+        if (TipoUsuario == "Empleado")
+        {
+            if (IdEmpleado == null)
+            {
                 ViewBag.Mensaje = "Debe ingresar un IdEmpleado.";
                 return View("Formularios");
             }
@@ -81,7 +109,8 @@ public class HomeController : Controller
             return View("Formularios");
         }
 
-        if (IdEmpleador == null){
+        if (IdEmpleador == null)
+        {
             ViewBag.Mensaje = "Debe ingresar un IdEmpleador.";
             return View("Formularios");
         }

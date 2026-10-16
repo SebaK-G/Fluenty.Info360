@@ -1284,4 +1284,364 @@ El código anterior se transcribe respetando la forma visible en el material. En
 - Los métodos `VerInfo`, `VerActores`, `GetInfo`, `GetActores`, `BD.GetInfo` y `BD.GetActores` quedan incluidos solo en el contexto exacto de los ejemplos anteriores. No supongas que podés crear métodos semejantes con nombres o comportamientos nuevos sin autorización.
 - Si se requiere algo diferente de estas formas, detenete y preguntame si autorizo el recurso específico antes de escribirlo.
 
+
+## Criterios de HTML y CSS aportados por el usuario
+
+Este apartado se agrega al material técnico anterior y es igualmente obligatorio. Se aplica a las consignas de páginas web y diseño visual. Todo lo siguiente forma parte de la lista cerrada: no amplíes los recursos autorizados por conocimiento externo.
+
+### 1. Estructura general del proyecto
+Primero dividimos las páginas en distintos HTMLs y un solo CSS.
+
+**Estructura básica de cada HTML:**
+- `head`
+- `title`
+- `body`
+
+**Elementos semánticos**
+
+- `header`: contiene al encabezado de una sección o documento, donde se colocan habitualmente vínculos de navegación, los formularios de búsqueda, etc. Sus contenidos son consistentes a lo largo de todo el sitio.
+- `main`: representa el contenido principal del `body` de un documento o aplicación. El área principal del contenido consiste en el contenido que está directamente relacionado, o se expande sobre el tema central de un documento o la funcionalidad central de una aplicación.
+- `section`: es un elemento de seccionamiento genérico, diseñado para contener temáticamente una parte de un documento definida. Los contenidos de un elemento `section` son usualmente precedidos por un encabezado.
+- `article`: el elemento `article` en HTML define un contenido autocontenido y reutilizable, como artículos, entradas de blog, comentarios o widgets, permitiendo su distribución independiente.
+- `div`: el elemento `div` es un contenedor genérico que agrupa y estructura dentro de una página, sin aportar significado semántico, utilizado principalmente para aplicar estilos o manipulación mediante CSS y JavaScript.
+- `footer`: representa al pie de una sección o documento, donde los autores habitualmente colocan firmas, información acerca del autor, etc. Son consistentes a lo largo de todo el sitio.
+
+**Otros elementos HTML incluidos en los apuntes:** `h1`, `p`, `pre`, entre otros nombrados expresamente en el material general. La palabra “etc.” no autoriza por sí sola etiquetas nuevas: si una etiqueta no aparece concretamente en el material autorizado, preguntá antes de usarla.
+
+### 2. Imágenes
+Utilizar:
+```html
+<img src="imagen.jpg" alt="Descripción">
+```
+Atributos incluidos: `src` y `alt`.
+
+### 3. Enlaces
+Etiqueta `a` y atributo `href`:
+```html
+<a href="pagina.html">Ir a la página</a>
+```
+
+### 4. Botones
+```html
+<button>Enviar</button>
+```
+
+### 5. Formularios
+Se puede usar `form` con los atributos `method`, los valores `get` y `post`, y `action`.
+
+Ejemplo:
+```html
+<form method="post" action="gracias.html">
+
+   <input type="email" />
+   <input type="tel" />
+   <input type="date" />
+   <input type="url" />
+   <input type="color" />
+   <input type="search" />
+
+   <input
+   type="number"
+   max="999"
+   min="0"
+   step="1" />
+
+   <input
+   type="range"
+   max="999"
+   min="0"
+   step="1" />
+
+</form>
+```
+
+También se puede usar: `checkbox`, `radio`, `select`, `reset`, `submit` y `placeholder`.
+
+Este apartado se suma a los ejemplos de formularios MVC incluidos anteriormente en el material. En cada caso, utilizá solo los atributos, etiquetas y tipos de `input` expresamente incluidos en alguno de los dos apartados de clase.
+
+### 6. Listas
+
+**No ordenadas:**
+```html
+<ul>
+   <li>Elemento</li>
+</ul>
+```
+
+**Ordenadas:**
+```html
+<ol>
+   <li>Elemento</li>
+</ol>
+```
+
+En CSS:
+```css
+list-style-type: none;
+```
+
+### 7. Navegación
+El elemento HTML `nav` representa una sección de una página cuyo propósito es proporcionar enlaces de navegación, ya sea dentro del documento actual o a otros documentos. Ejemplos comunes son menús, tablas de contenido e índices.
+
+Normalmente lo usamos junto con:
+```html
+<nav>
+   <ul>
+       <li><a href="">Inicio</a></li>
+   </ul>
+</nav>
+```
+
+### 8. Iframes
+Se pueden usar para:
+- Google Maps.
+- Videos de YouTube.
+
+### 9. Clases e IDs
+
+**Clases**
+Se pueden utilizar clases, sin abusar de ellas. Tienen un nivel de detalle mayor. Sirven para aplicar un estilo a un conjunto de componentes de un mismo tipo (o que sirvan para un mismo propósito), pero de forma diferenciada al selector de tipo. Por ejemplo, `.banners` podría hacer referencia a todos los `img` del sitio relacionados con una tarjeta de perfil de una persona.
+
+**IDs**
+
+HTML:
+```html
+id="xx"
+```
+
+CSS:
+```css
+#xx
+```
+
+### 10. CSS: propiedades de texto
+
+**Colores:**
+```css
+color: red;
+color: #ffffff;
+color: rgb(...);
+color: rgba(...);
+```
+
+**Tamaño de fuente:**
+```css
+font-size: em;
+font-size: large;
+font-size: larger;
+font-size: px;
+```
+
+**Peso:**
+```css
+font-weight: bold;
+```
+
+**Decoración:**
+```css
+text-decoration: underline;
+```
+
+**Alineación:**
+```css
+text-align: center;
+```
+
+**Transformación:**
+```css
+text-transform: uppercase;
+```
+
+**Sombra:**
+```css
+text-shadow: #7f8c8d;
+```
+
+**Fuente:**
+```css
+font-family: ...;
+```
+
+Los valores con `...` son representativos del apunte; no autorizan a incorporar propiedades nuevas.
+
+### 11. CSS: espaciado
+
+**Margin:** `margin`, `margin-top`, `margin-bottom`, `margin-left`, `margin-right`.
+
+**Padding:** `padding`, `padding-top`, `padding-bottom`, `padding-left`, `padding-right`.
+
+### 12. CSS: bordes
+
+**Border radius:** `border-radius: ...;`
+
+**Border:**
+```css
+border: 1px solid black;
+```
+Donde `1px` es el tamaño, `solid` es el estilo y `black` es el color.
+
+También: `border-top`, `border-right`, `border-bottom` y `border-left`.
+
+### 13. CSS: tamaños
+
+Propiedades: `width` y `height`.
+
+- `width`: se pueden usar `px` y `%`.
+- `height`: se pueden usar `px`, `%` y `auto`.
+
+### 14. CSS: fondos
+
+```css
+background-color: #2C3E50;
+background-image: url("imagen.jpg");
+background-repeat: no-repeat;
+background-position: center;
+background-size: cover;
+background-attachment: fixed;
+```
+
+### 15. Selectores CSS
+
+**Selector universal:** `*`.
+
+**Selector por etiqueta:** `p`, `div`, `h1`.
+
+**Selector descendente:** `div h3`.
+
+**Selector múltiple:** `h3, h4`.
+
+**Selector por ID:** `#miId`.
+
+### 16. Selectores de atributo
+
+Elementos `a` con atributo `title`:
+```css
+a[title] {
+   color: purple;
+}
+```
+
+`href` exacto:
+```css
+a[href="https://example.org"] {
+   color: green;
+}
+```
+
+`href` que contiene texto:
+```css
+a[href*="example"] {
+   font-size: 2em;
+}
+```
+
+`href` que comienza con:
+```css
+a[href^="#"] {
+   color: #001978;
+}
+```
+
+`href` que termina con:
+```css
+a[href$=".org"] {
+   font-style: italic;
+}
+```
+
+`class` que contiene una palabra:
+```css
+a[class~="logo"] {
+   padding: 2px;
+}
+```
+
+### 17. Pseudoclases
+Se pueden usar:
+- `:first-child`
+- `:last-child`
+- `:hover`
+
+### 18. Float
+
+```css
+float: left;
+float: right;
+```
+
+También se puede usar `clear`.
+
+### 19. Display
+La propiedad `display` en CSS define cómo se comporta un elemento en la estructura de la página. Determina si se muestra:
+- En línea con otros elementos (`inline`).
+- Ocupando todo el ancho disponible (`block`).
+- Combinando características de ambos (`inline-block`).
+
+Es fundamental para controlar el diseño y la distribución del contenido en la web.
+
+### 20. Flexbox
+Podemos usar:
+```css
+display: flex;
+justify-content: ...;
+align-items: ...;
+```
+
+### 21. Grid
+Permite organizar elementos en áreas o regiones dentro de un contenedor. Podemos definir estructuras bidimensionales precisas, controlando tanto la alineación horizontal como vertical de los elementos. Facilita la creación de diseños complejos y adaptables.
+
+Ejemplos:
+```css
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: ...;
+width: ...;
+margin: ...;
+```
+
+### 22. Position
+Podemos usar:
+```css
+position: relative;
+position: absolute;
+```
+
+### 23. Jerarquía y especificidad CSS
+En CSS, la jerarquía de estilo determina qué reglas se aplican a un elemento cuando existen varias reglas en conflicto. La prioridad se establece de acuerdo con:
+- La especificidad del selector.
+- El orden en que se declaran las reglas.
+
+Es clave respetar el orden y seguir un patrón en el desarrollo de los proyectos.
+
+**Orden de prioridad indicado en los apuntes:**
+1. `!important`
+2. ID
+3. Atributo
+4. Clase
+5. Etiqueta
+6. `*` (selector universal)
+
+### 24. Estructura de una regla CSS
+
+Ejemplo:
+```css
+p {
+   color: red;
+}
+```
+
+- `p`: selector.
+- `color`: propiedad.
+- `red`: valor de la propiedad.
+- `color: red;`: declaración.
+
+### 25. Buenas prácticas
+- No abusar de `br`.
+- Se pueden usar clases, pero sin abusar de ellas.
+- Es clave respetar la jerarquía y especificidad de CSS.
+- Seguir un patrón ordenado en el desarrollo del proyecto.
+
+===================== FIN DE LOS CRITERIOS DE HTML Y CSS =====================
+
+
 ===================== FIN DEL MATERIAL DE CLASE =====================

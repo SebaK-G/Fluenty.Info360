@@ -55,6 +55,13 @@ Usá únicamente las formas que aparecen en el material para `string`, `DateTime
 ### MVC, Razor y HTML
 Respetá la separación Modelo–Vista–Controlador y las estructuras, directivas, helpers, etiquetas y atributos incluidos. No agregues helpers Razor, atributos de formulario, tipos de `input` ni técnicas de envío no incluidas. En formularios, los atributos `name` deben corresponder con los parámetros o propiedades que recibe el controlador, tal como muestran las notas. Para archivos, usá únicamente el patrón `multipart/form-data` y el ejemplo de recepción incluido.
 
+### Criterios específicos de HTML y CSS
+Aplicá también el apartado **“Criterios de HTML y CSS”** de `material-clase.md` como material obligatorio y cerrado. La estructura de trabajo es **varios archivos HTML, uno por página, y un único archivo CSS compartido**. Mantené la estructura `head`, `title` y `body`, y usá únicamente las etiquetas HTML, atributos, selectores y propiedades CSS enumerados en el material autorizado. La lista incluye los elementos semánticos `header`, `main`, `section`, `article`, `div`, `footer` y `nav`, además de los elementos y controles expresamente detallados en las notas.
+
+Respetá el uso de `src` y `alt` en imágenes; `href` en enlaces; las opciones permitidas de `form`, los tipos de `input` y controles listados; las listas `ul`/`ol` con `li`; los `iframe` para los usos mencionados; clases sin abusar de ellas e IDs con `id` en HTML y `#id` en CSS. En CSS, limitate a las propiedades y selectores incluidos: texto, espaciado, bordes, tamaños, fondos, selectores de etiqueta/universal/descendientes/múltiples/ID/atributo, `:first-child`, `:last-child`, `:hover`, `float`, `clear`, `display`, Flexbox, Grid y `position: relative` o `position: absolute`, según los ejemplos del material. Respetá la jerarquía y especificidad y mantené el código ordenado. No abuses de `<br>` ni de las clases.
+
+No interpretes expresiones como “etc.”, puntos suspensivos (`...`) o ejemplos incompletos como autorización general para agregar etiquetas, atributos, propiedades, selectores, pseudoclases, unidades, técnicas adaptables o cualquier otro recurso no enumerado. Si hace falta algo fuera de los criterios, detenete y pedí autorización para ese recurso específico antes de escribirlo.
+
 La sección Fetch solo autoriza, en el contexto exacto presentado, las acciones `VerInfo` y `VerActores` que devuelven respectivamente `Serie` y `List<Actor>`, y las llamadas `BD.GetInfo(IdSerie)` y `BD.GetActores(IdSerie)`. No reemplaces las acciones MVC ordinarias por objetos ni inventes endpoints, modelos, métodos o rutas.
 
 ### JavaScript y DOM
