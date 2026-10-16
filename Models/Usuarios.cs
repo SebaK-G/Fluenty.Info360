@@ -11,5 +11,5 @@ public class Usuarios
     public int? IdEmpleado { get; set; }
     public string Dni { get; set; }
     public string Telefono { get; set; }
-    public string Contraseña { get; set; }
+    public string Contrasena { get; set; }
 }

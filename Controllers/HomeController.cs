@@ -39,13 +39,26 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Signup(Usuarios usuario){
-        if (usuario == null){
-            ViewBag.MensajeRegistro = "Debe completar los datos del usuario.";
-            return View("Acceso");
-        }
+    public IActionResult Signup(string NombreEmpresa, string EmailEmpresa, int CantidadEmpleados, string Cuit, string Nombre, string Apellido, string Email, string Dni, string Telefono, string Contrasena){
         try{
             BD miBD = new BD();
+            Empresas empresa = new Empresas();
+            empresa.Nombre = NombreEmpresa;
+            empresa.Email = EmailEmpresa;
+            empresa.CantidadEmpleados = CantidadEmpleados;
+            empresa.Cuit = Cuit;
+
+            int idEmpresa = miBD.CrearEmpresa(empresa);
+
+            Usuarios usuario = new Usuarios();
+            usuario.Nombre = Nombre;
+            usuario.Apellido = Apellido;
+            usuario.IdEmpresa = idEmpresa;
+            usuario.Email = Email;
+            usuario.Dni = Dni;
+            usuario.Telefono = Telefono;
+            usuario.Contrasena = Contrasena;
+
             miBD.Signup(usuario);
             ViewBag.MensajeRegistro = "Registro exitoso. Ya puedes iniciar sesión.";
             return View("Acceso");
@@ -54,5 +67,26 @@ public class HomeController : Controller
             ViewBag.MensajeRegistro = "No se pudo registrar el usuario: " + ex.Message;
             return View("Acceso");
         }
+    }
+
+    [HttpPost]
+    public IActionResult GuardarTipoUsuario(string TipoUsuario, int? IdEmpleado, int? IdEmpleador){
+        if (TipoUsuario == "Empleado"){
+            if (IdEmpleado == null){
+                ViewBag.Mensaje = "Debe ingresar un IdEmpleado.";
+                return View("Formularios");
+            }
+
+            ViewBag.Mensaje = "Tipo de usuario: Empleado. IdEmpleado: " + IdEmpleado;
+            return View("Formularios");
+        }
+
+        if (IdEmpleador == null){
+            ViewBag.Mensaje = "Debe ingresar un IdEmpleador.";
+            return View("Formularios");
+        }
+
+        ViewBag.Mensaje = "Tipo de usuario: Empleador. IdEmpleador: " + IdEmpleador;
+        return View("Formularios");
     }
 }
