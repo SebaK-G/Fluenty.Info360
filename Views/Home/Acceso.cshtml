@@ -38,6 +38,23 @@
     <h2>Registrarse</h2>
     <form asp-action="Signup" asp-controller="Home" method="post">
         <div>
+            <label for="NombreEmpresa">Nombre de la empresa:</label><br />
+            <input type="text" id="NombreEmpresa" name="NombreEmpresa" required />
+        </div>
+        <div>
+            <label for="EmailEmpresa">Email de la empresa:</label><br />
+            <input type="email" id="EmailEmpresa" name="EmailEmpresa" required />
+        </div>
+        <div>
+            <label for="CantidadEmpleados">Cantidad de empleados:</label><br />
+            <input type="number" id="CantidadEmpleados" name="CantidadEmpleados" required />
+        </div>
+        <div>
+            <label for="Cuit">CUIT:</label><br />
+            <input type="text" id="Cuit" name="Cuit" required />
+        </div>
+
+        <div>
             <label for="Nombre">Nombre:</label><br />
             <input type="text" id="Nombre" name="Nombre" required />
         </div>
@@ -59,12 +76,31 @@
         </div>
         <div>
             <label for="ContrasenaRegistro">Contraseña:</label><br />
-            <input type="password" id="ContrasenaRegistro" name="Contraseña" required />
+            <input type="password" id="ContrasenaRegistro" name="Contrasena" required />
         </div>
         <div>
             <input type="submit" value="Registrarme" />
         </div>
     </form>
 </div>
+
+<script>
+    function mostrarFormulario(tipo) {
+        var login = document.getElementById('form-login');
+        var registro = document.getElementById('form-registro');
+
+        if (tipo === 'login') {
+            login.hidden = false;
+            registro.hidden = true;
+        } else {
+            login.hidden = true;
+            registro.hidden = false;
+        }
+    }
+
+    window.onload = function () {
+        mostrarFormulario('login');
+    };
+</script>
 
 

@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Formularios";
+}
+
+<h2>Seleccioná tu tipo</h2>
+
+<form method="post" action='@Url.Action("GuardarTipoUsuario", "Home")'>
+    <div>
+        <label>
+            <input type="radio" name="TipoUsuario" value="Empleado" checked /> Empleado
+        </label>
+    </div>
+
+    <div>
+        <label>
+            <input type="radio" name="TipoUsuario" value="Empleador" /> Empleador
+        </label>
+    </div>
+
+    <div>
+        <label for="IdEmpleado">IdEmpleado:</label><br />
+        <input type="number" id="IdEmpleado" name="IdEmpleado" />
+    </div>
+
+    <div>
+        <label for="IdEmpleador">IdEmpleador:</label><br />
+        <input type="number" id="IdEmpleador" name="IdEmpleador" />
+    </div>
+
+    <div>
+        <input type="submit" value="Guardar" />
+    </div>
+</form>
