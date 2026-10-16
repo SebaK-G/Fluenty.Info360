@@ -1,4 +1,14 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿function mostrarFormulario(tipo) {
+    var login = document.getElementById('form-login');
+    var registro = document.getElementById('form-registro');
+    if (tipo === 'login') {
+        login.hidden = false;
+        registro.hidden = true;
+    } else {
+        login.hidden = true;
+        registro.hidden = false;
+    }
+}
+window.onload = function () {
+mostrarFormulario('login');
+};
