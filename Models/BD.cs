@@ -25,8 +25,9 @@ public class BD
 
     public bool ExisteUsuarioDuplicado(string email, string dni, string telefono){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string query = @"SELECT CASE WHEN EXISTS (SELECT 1 FROM Usuarios WHERE Email = @pEmail OR Dni = @pDni OR Telefono = @pTelefono ) THEN 1 ELSE 0 END";
-            return connection.QuerySingle<int>(query, new { pEmail = email, pDni = dni, pTelefono = telefono }) == 1;
+            string query = @"SELECT TOP 1 IdUsuario FROM Usuarios WHERE Email = @pEmail OR Dni = @pDni OR Telefono = @pTelefono";
+            int? usuario = connection.QueryFirstOrDefault<int?>(query, new { pEmail = email, pDni = dni, pTelefono = telefono });
+            return usuario.HasValue;
         }
     }
 
