@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var actividades = ViewBag.Actividades as List<string> ?? new List<string>();
 }
 
 <div class="panel-principal">
@@ -16,22 +17,22 @@
 
     <main>
 
-        <h1>¡Hola, @Model.Nombre!</h1>
+        <h1>¡Hola, @ViewBag.Nombre!</h1>
 
         <div class="plan">
             <h2>Tu empresa</h2>
-            <p>Bienvenido al panel de @Model.NombreEmpresa.</p>
+            <p>Bienvenido al panel de @ViewBag.NombreEmpresa.</p>
             <p>Gestioná las capacitaciones y el equipo de tu empresa desde un solo lugar.</p>
         </div>
 
         <div class="estadisticas">
             <div>
-                <h2>@Model.CantidadCursos</h2>
+                <h2>@ViewBag.CantidadCursos</h2>
                 <p>Cursos creados</p>
             </div>
 
             <div>
-                <h2>@Model.CantidadEmpleados</h2>
+                <h2>@ViewBag.CantidadEmpleados</h2>
                 <p>Empleados registrados</p>
             </div>
         </div>
@@ -63,9 +64,9 @@
             <section class="actividades">
                 <h2>Cursos de tu empresa</h2>
 
-                @if (Model.Actividades.Count > 0)
+                @if (actividades.Count > 0)
                 {
-                    @foreach (string actividad in Model.Actividades)
+                    @foreach (string actividad in actividades)
                     {
                         <div class="actividad">
                             <p>Curso: @actividad</p>
