@@ -19,6 +19,12 @@ public class HomeController : Controller
     }
 
     public IActionResult Index(){
+        ViewBag.Nombre = HttpContext.Session.GetString("Nombre") ?? "Usuario";
+        ViewBag.NombreEmpresa = "tu empresa";
+        ViewBag.CantidadCursos = 0;
+        ViewBag.CantidadEmpleados = 0;
+        ViewBag.Actividades = new List<string>();
+
         return View();
     }
     public IActionResult Acceso(){
