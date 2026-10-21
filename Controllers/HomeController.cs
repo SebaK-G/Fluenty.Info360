@@ -31,6 +31,10 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Landing(){
+        return View();
+    }
+
     [HttpPost]
     public IActionResult Login(string Email, string Contrasena){
         BD miBD = new BD();
