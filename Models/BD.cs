@@ -10,10 +10,24 @@ public class BD
     public Usuarios Login(string email, string contrasena){
         Usuarios usuario = null;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string query = "SELECT * FROM Usuarios WHERE Email = @pEmail AND [Contrasena] = @pContrasena";
+            string query = "SELECT * FROM Usuarios WHERE Email = @pEmail AND Contrasena = @pContrasena";
             usuario = connection.QueryFirstOrDefault<Usuarios>(query, new { pEmail = email, pContrasena = contrasena });
         }
         return usuario;
+    }
+
+    public int? ObtenerIdEmpresaPorNombre(string nombreEmpresa){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string query = "SELECT IdEmpresa FROM Empresas WHERE Nombre = @pNombre";
+            return connection.QueryFirstOrDefault<int?>(query, new { pNombre = nombreEmpresa.Trim() });
+        }
+    }
+
+    public bool ExisteUsuarioDuplicado(string email, string dni, string telefono){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string query = @"SELECT CASE WHEN EXISTS (SELECT 1 FROM Usuarios WHERE Email = @pEmail OR Dni = @pDni OR Telefono = @pTelefono ) THEN 1 ELSE 0 END";
+            return connection.QuerySingle<int>(query, new { pEmail = email, pDni = dni, pTelefono = telefono }) == 1;
+        }
     }
 
     public void Signup(Usuarios usuario){
