@@ -37,8 +37,8 @@ public class HomeController : Controller
 
     [HttpPost]
     public IActionResult Login(string Email, string Contrasena){
-        BD miBD = new BD();
-        Usuarios usuario = miBD.Login(Email, Contrasena);
+        BD bd = new BD();
+        Usuarios usuario = bd.Login(Email, Contrasena);
         if (usuario != null){
             HttpContext.Session.SetString("Nombre", usuario.Nombre);
             HttpContext.Session.SetString("Email", usuario.Email);
@@ -49,27 +49,38 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Signup(string NombreEmpresa, string EmailEmpresa, int CantidadEmpleados, string Cuit, string Nombre, string Apellido, string Email, string Dni, string Telefono, string Contrasena){
+    public IActionResult Signup(string Nombre, string Apellido, string Email, string NombreEmpresa, string Dni, string Telefono, string Contrasena){
         try{
-            BD miBD = new BD();
-            Empresas empresa = new Empresas();
-            empresa.Nombre = NombreEmpresa;
-            empresa.Email = EmailEmpresa;
-            empresa.CantidadEmpleados = CantidadEmpleados;
-            empresa.Cuit = Cuit;
+            if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(Apellido) || string.IsNullOrWhiteSpace(Email) ||
+                string.IsNullOrWhiteSpace(NombreEmpresa) || string.IsNullOrWhiteSpace(Dni) ||
+                string.IsNullOrWhiteSpace(Telefono) || string.IsNullOrWhiteSpace(Contrasena)){
+                ViewBag.MensajeRegistro = "Faltan datos obligatorios para registrar el usuario.";
+                return View("Acceso");
+            }
 
-            int idEmpresa = miBD.CrearEmpresa(empresa);
+            BD bd = new BD();
+
+            int? idEmpresa = bd.ObtenerIdEmpresaPorNombre(NombreEmpresa);
+            if (idEmpresa == null || idEmpresa <= 0){
+                ViewBag.MensajeRegistro = "La empresa ingresada no existe.";
+                return View("Acceso");
+            }
+
+            if (bd.ExisteUsuarioDuplicado(Email, Dni, Telefono)){
+                ViewBag.MensajeRegistro = "El email, DNI o teléfono ya están registrados en otro usuario.";
+                return View("Acceso");
+            }
 
             Usuarios usuario = new Usuarios();
             usuario.Nombre = Nombre;
             usuario.Apellido = Apellido;
-            usuario.IdEmpresa = idEmpresa;
+            usuario.IdEmpresa = idEmpresa.Value;
             usuario.Email = Email;
             usuario.Dni = Dni;
             usuario.Telefono = Telefono;
             usuario.Contrasena = Contrasena;
 
-            miBD.Signup(usuario);
+            bd.Signup(usuario);
             ViewBag.MensajeRegistro = "Registro exitoso. Ya puedes iniciar sesión.";
             return View("Acceso");
         }

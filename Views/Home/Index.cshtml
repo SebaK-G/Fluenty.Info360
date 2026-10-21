@@ -61,6 +61,31 @@
                 </div>
             </section>
 
+
+            <section class="actividades">
+                <h2>Plan Empresarial Activo</h2>
+                <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más, con acceso simultáneo para @ViewBag.EmpleadosActivos empleados activos.</p>
+            </section>
+
+            
+            <div class="actividades">
+                <h2>Actividades recientes</h2>
+                <a href="">Ver todas</a>
+
+                @if (ViewBag.Actividades != null)
+                {
+                    foreach (string actividad in ViewBag.Actividades)
+                    {
+                        <p>@actividad</p>
+                    }
+                }
+                else
+                {
+                    <p>Todavía no hay actividades recientes.</p>
+                }
+            </div>
+
+
             <section class="actividades">
                 <h2>Cursos de tu empresa</h2>
 
