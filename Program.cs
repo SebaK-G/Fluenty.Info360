@@ -2,22 +2,27 @@
 using Microsoft.SemanticKernel;
 
 var builder = WebApplication.CreateBuilder(args);
+var groqHabilitado = false;
 
 builder.Services.AddTransient<Kernel>(sp => new Kernel(sp));
 builder.Services.AddTransient<Fluenty.Services.GroqService>();
+builder.Services.AddSingleton(new Fluenty.Services.GroqFeatureToggle { Enabled = groqHabilitado });
 
 // Configuración de la IA con Groq.
 // El conector OpenAI permite utilizar endpoints compatibles.
+if (groqHabilitado)
+{
 #pragma warning disable SKEXP0010
-builder.Services.AddOpenAIChatCompletion(
-    modelId: "openai/gpt-oss-20b",
-    apiKey: builder.Configuration["Groq:ApiKey"]
-        ?? throw new InvalidOperationException(
-            "Falta configurar Groq:ApiKey en User Secrets."
-        ),
-    endpoint: new Uri("https://api.groq.com/openai/v1")
-);
+    builder.Services.AddOpenAIChatCompletion(
+        modelId: "openai/gpt-oss-20b",
+        apiKey: builder.Configuration["Groq:ApiKey"]
+            ?? throw new InvalidOperationException(
+                "Falta configurar Groq:ApiKey en User Secrets."
+            ),
+        endpoint: new Uri("https://api.groq.com/openai/v1")
+    );
 #pragma warning restore SKEXP0010
+}
 
 builder.Services.AddSession();
 

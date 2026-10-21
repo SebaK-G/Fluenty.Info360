@@ -13,6 +13,8 @@
 *.sln.docstates
 *.vscode
 
+usersecrets.json
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
