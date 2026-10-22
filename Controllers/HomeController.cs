@@ -20,7 +20,7 @@ public class HomeController : Controller
 
     public IActionResult Index(){
         ViewBag.Nombre = HttpContext.Session.GetString("Nombre") ?? "Usuario";
-        ViewBag.NombreEmpresa = "tu empresa";
+        ViewBag.NombreEmpresa = "Ferran";
         ViewBag.CantidadCursos = 0;
         ViewBag.CantidadEmpleados = 0;
         ViewBag.Actividades = new List<string>();
@@ -33,6 +33,16 @@ public class HomeController : Controller
 
     public IActionResult Landing(){
         return View();
+    }
+
+    [HttpPost]
+    public IActionResult CalcularEficiencia(int Empleados, int HorasSemana, int CostoHora){
+        int horasMes = Empleados * HorasSemana * 4 * 25 / 100;
+        ViewBag.HorasMes = horasMes;
+        ViewBag.HorasAnio = horasMes * 12;
+        ViewBag.AhorroMes = horasMes * CostoHora;
+        ViewBag.AhorroAnio = horasMes * CostoHora * 12;
+        return View("Landing");
     }
 
     [HttpPost]
