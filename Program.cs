@@ -2,7 +2,7 @@
 using Microsoft.SemanticKernel;
 
 var builder = WebApplication.CreateBuilder(args);
-var groqHabilitado = true;
+var groqHabilitado = false;
 
 builder.Services.AddTransient<Kernel>(sp => new Kernel(sp));
 builder.Services.AddTransient<Fluenty.Services.GroqService>();

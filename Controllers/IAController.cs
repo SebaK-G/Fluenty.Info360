@@ -1,4 +1,3 @@
-
 using Fluenty.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,19 +14,22 @@ public class IAController : Controller
         _groqFeatureToggle = groqFeatureToggle;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Index(string pregunta)
     {
         if (!_groqFeatureToggle.Enabled)
         {
-            return Content(
-                "Groq está deshabilitado temporalmente. Cuando se habilite tu acceso, cambiá groqHabilitado a true en Program.cs."
-            );
+            ViewBag.Respuesta = "Groq está deshabilitado temporalmente.";
+            return View();
         }
 
-        var respuesta = await _groqService.PreguntarAsync(
-            "Explicá en dos oraciones qué es la inteligencia artificial."
-        );
-
-        return Content(respuesta);
+        var respuesta = await _groqService.PreguntarAsync(pregunta);
+        ViewBag.Respuesta = respuesta;
+        return View();
     }
 }
