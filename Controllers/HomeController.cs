@@ -35,6 +35,61 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult formularioTipoUsuario(string tipoUsuario){
+        ViewBag.TipoUsuario = tipoUsuario;
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult GuardarPerfilUsuario(string TipoUsuario, Empleados empleado, Empleadores empleador){
+        try{
+            BD bd = new BD();
+
+            if (TipoUsuario == "Empleado"){
+                if (string.IsNullOrWhiteSpace(empleado.Puesto)){
+                    ViewBag.TipoUsuario = TipoUsuario;
+                    ViewBag.MensajeTipoUsuario = "Debe ingresar el puesto del empleado.";
+                    return View("formularioTipoUsuario");
+                }
+
+                empleado.Estado = true;
+                int idEmpleado = bd.CrearEmpleado(empleado);
+
+                string email = HttpContext.Session.GetString("RegistroEmail");
+                if (!string.IsNullOrWhiteSpace(email)){
+                    bd.ActualizarUsuarioTipo(email, idEmpleado, null);
+                }
+
+                return RedirectToAction("Index");
+            }
+
+            if (TipoUsuario == "Empleador"){
+                if (string.IsNullOrWhiteSpace(empleador.Cargo)){
+                    ViewBag.TipoUsuario = TipoUsuario;
+                    ViewBag.MensajeTipoUsuario = "Debe ingresar el cargo del empleador.";
+                    return View("formularioTipoUsuario");
+                }
+
+                empleador.Estado = true;
+                int idEmpleador = bd.CrearEmpleador(empleador);
+
+                string email = HttpContext.Session.GetString("RegistroEmail");
+                if (!string.IsNullOrWhiteSpace(email)){
+                    bd.ActualizarUsuarioTipo(email, null, idEmpleador);
+                }
+
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.MensajeTipoUsuario = "Debe seleccionar un tipo de usuario.";
+            return View("Acceso");
+        }
+        catch (Exception ex){
+            ViewBag.MensajeTipoUsuario = "No se pudo guardar la información: " + ex.Message;
+            return View("formularioTipoUsuario");
+        }
+    }
+
     [HttpPost]
     public IActionResult Login(string Email, string Contrasena){
         BD bd = new BD();
@@ -49,23 +104,21 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Signup(string Nombre, string Apellido, string Email, string NombreEmpresa, string Dni, string Telefono, string Contrasena){
+    public IActionResult Signup(string Nombre, string Apellido, string Email, string NombreEmpresa, string TipoUsuario, string Dni, string Telefono, string Contrasena){
         try{
             if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(Apellido) || string.IsNullOrWhiteSpace(Email) ||
-                string.IsNullOrWhiteSpace(NombreEmpresa) || string.IsNullOrWhiteSpace(Dni) ||
-                string.IsNullOrWhiteSpace(Telefono) || string.IsNullOrWhiteSpace(Contrasena)){
+                string.IsNullOrWhiteSpace(NombreEmpresa) || string.IsNullOrWhiteSpace(TipoUsuario) ||
+                string.IsNullOrWhiteSpace(Dni) || string.IsNullOrWhiteSpace(Telefono) || string.IsNullOrWhiteSpace(Contrasena)){
                 ViewBag.MensajeRegistro = "Faltan datos obligatorios para registrar el usuario.";
                 return View("Acceso");
             }
 
             BD bd = new BD();
-
             int? idEmpresa = bd.ObtenerIdEmpresaPorNombre(NombreEmpresa);
             if (idEmpresa == null || idEmpresa <= 0){
                 ViewBag.MensajeRegistro = "La empresa ingresada no existe.";
                 return View("Acceso");
             }
-
             if (bd.ExisteUsuarioDuplicado(Email, Dni, Telefono)){
                 ViewBag.MensajeRegistro = "El email, DNI o teléfono ya están registrados en otro usuario.";
                 return View("Acceso");
@@ -81,8 +134,10 @@ public class HomeController : Controller
             usuario.Contrasena = Contrasena;
 
             bd.Signup(usuario);
-            ViewBag.MensajeRegistro = "Registro exitoso. Ya puedes iniciar sesión.";
-            return View("Acceso");
+            HttpContext.Session.SetString("RegistroEmail", Email);
+            HttpContext.Session.SetString("TipoUsuario", TipoUsuario);
+
+            return RedirectToAction("formularioTipoUsuario", new { tipoUsuario = TipoUsuario });
         }
         catch (Exception ex){
             ViewBag.MensajeRegistro = "No se pudo registrar el usuario: " + ex.Message;
@@ -90,24 +145,4 @@ public class HomeController : Controller
         }
     }
 
-    [HttpPost]
-    public IActionResult GuardarTipoUsuario(string TipoUsuario, int? IdEmpleado, int? IdEmpleador){
-        if (TipoUsuario == "Empleado"){
-            if (IdEmpleado == null){
-                ViewBag.Mensaje = "Debe ingresar un IdEmpleado.";
-                return View("Formularios");
-            }
-
-            ViewBag.Mensaje = "Tipo de usuario: Empleado. IdEmpleado: " + IdEmpleado;
-            return View("Formularios");
-        }
-
-        if (IdEmpleador == null){
-            ViewBag.Mensaje = "Debe ingresar un IdEmpleador.";
-            return View("Formularios");
-        }
-
-        ViewBag.Mensaje = "Tipo de usuario: Empleador. IdEmpleador: " + IdEmpleador;
-        return View("Formularios");
-    }
 }

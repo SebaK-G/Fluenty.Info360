@@ -32,9 +32,9 @@ public class BD
     }
 
     public void Signup(Usuarios usuario){
-        string query = "INSERT INTO Usuarios (Nombre, Apellido, IdEmpresa, Email, Dni, Telefono, Contrasena) VALUES (@pNombre, @pApellido, @pIdEmpresa, @pEmail, @pDni, @pTelefono, @pContrasena)";
+        string query = "INSERT INTO Usuarios (Nombre, Apellido, IdEmpresa, Email, IdEmpleador, IdEmpleado, Dni, Telefono, Contrasena) VALUES (@pNombre, @pApellido, @pIdEmpresa, @pEmail, @pIdEmpleador, @pIdEmpleado, @pDni, @pTelefono, @pContrasena)";
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            connection.Execute(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pIdEmpresa = usuario.IdEmpresa, pEmail = usuario.Email, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena});
+            connection.Execute(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pIdEmpresa = usuario.IdEmpresa, pEmail = usuario.Email, pIdEmpleador = usuario.IdEmpleador, pIdEmpleado = usuario.IdEmpleado, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena});
         }
     }
 
@@ -63,5 +63,16 @@ public class BD
             idEmpleador = connection.QuerySingle<int>(query, new { pCargo = empleador.Cargo, pEstado = empleador.Estado });
         }
         return idEmpleador;
+    }
+
+    public void ActualizarUsuarioTipo(string email, int? idEmpleado, int? idEmpleador){
+        string query = @"UPDATE Usuarios SET IdEmpleado = @pIdEmpleado, IdEmpleador = @pIdEmpleador WHERE Email = @pEmail";
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            connection.Execute(query, new {
+                pIdEmpleado = idEmpleado,
+                pIdEmpleador = idEmpleador,
+                pEmail = email
+            });
+        }
     }
 }

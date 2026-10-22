@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Formulario de tipo de usuario";
+    var tipoUsuario = ViewBag.TipoUsuario as string;
+}
+
+<h2>Completá tu perfil</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.MensajeTipoUsuario))
+{
+    <p>@ViewBag.MensajeTipoUsuario</p>
+}
+
+<div id="form-empleado" style="@(tipoUsuario == "Empleado" ? "display:block" : "display:none")">
+    <h3>Empleado</h3>
+    <form asp-action="GuardarPerfilUsuario" asp-controller="Home" method="post">
+        <input type="hidden" name="TipoUsuario" value="Empleado" />
+
+        <div>
+            <label for="empleado_Puesto">Puesto:</label><br />
+            <input type="text" id="empleado_Puesto" name="empleado.Puesto" required />
+        </div>
+
+        <div>
+            <label for="empleado_Estado">Estado:</label><br />
+            <select id="empleado_Estado" name="empleado.Estado">
+                <option value="true" selected>Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+        </div>
+
+        <div>
+            <input type="submit" value="Guardar perfil de empleado" />
+        </div>
+    </form>
+</div>
+
+<div id="form-empleador" style="@(tipoUsuario == "Empleador" ? "display:block" : "display:none")">
+    <h3>Empleador</h3>
+    <form asp-action="GuardarPerfilUsuario" asp-controller="Home" method="post">
+        <input type="hidden" name="TipoUsuario" value="Empleador" />
+
+        <div>
+            <label for="empleador_Cargo">Cargo:</label><br />
+            <input type="text" id="empleador_Cargo" name="empleador.Cargo" required />
+        </div>
+
+        <div>
+            <label for="empleador_Estado">Estado:</label><br />
+            <select id="empleador_Estado" name="empleador.Estado">
+                <option value="true" selected>Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+        </div>
+
+        <div>
+            <input type="submit" value="Guardar perfil de empleador" />
+        </div>
+    </form>
+</div>
