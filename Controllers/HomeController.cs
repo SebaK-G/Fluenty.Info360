@@ -25,7 +25,7 @@ public class HomeController : Controller
         ViewBag.CantidadEmpleados = 0;
         ViewBag.Actividades = new List<string>();
 
-        return View();
+        return View("Acceso");
     }
     public IActionResult Acceso(){
         return View();
@@ -107,7 +107,7 @@ public class HomeController : Controller
         if (usuario != null){
             HttpContext.Session.SetString("Nombre", usuario.Nombre);
             HttpContext.Session.SetString("Email", usuario.Email);
-            return RedirectToAction("Index");
+            return View("Index");
         }
         ViewBag.Mensaje = "Email o contraseña incorrectos";
         return View("Acceso");
