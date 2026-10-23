@@ -11,7 +11,7 @@
     <div>
         <h3>@invitacion.Nombre @invitacion.Apellido</h3>
         <p>@invitacion.Puesto - Estado: @invitacion.Estado</p>
-        @if (invitacion.Estado == "Pendiente")
+        @if (invitacion.Estado == ViewBag.EstadoInvitacionPendiente)
         {
             <a href='@Url.Action("Completar", "Formulario", new { Codigo = invitacion.Codigo })'>Link del formulario</a>
         }

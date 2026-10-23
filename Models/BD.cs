@@ -146,4 +146,31 @@ public class BD
         }
         return cantidad;
     }
+
+    public int TraerMesesRestantesPlan(){
+        int meses = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerMesesRestantesPlan";
+            meses = connection.QueryFirstOrDefault<int>(storedProcedure, commandType: CommandType.StoredProcedure);
+        }
+        return meses;
+    }
+
+    public int TraerPorcentajeAhorro(){
+        int porcentaje = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerPorcentajeAhorro";
+            porcentaje = connection.QueryFirstOrDefault<int>(storedProcedure, commandType: CommandType.StoredProcedure);
+        }
+        return porcentaje;
+    }
+
+    public string TraerEstadoInvitacionPendiente(){
+        string estado = "";
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerEstadoInvitacionPendiente";
+            estado = connection.QueryFirstOrDefault<string>(storedProcedure, commandType: CommandType.StoredProcedure);
+        }
+        return estado;
+    }
 }

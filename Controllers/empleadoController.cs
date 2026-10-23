@@ -50,6 +50,7 @@ public class EmpleadoController : Controller
         }
         BD bd = new BD();
         ViewBag.Invitaciones = bd.TraerInvitacionesEmpresa(int.Parse(HttpContext.Session.GetString("IdEmpresa")));
+        ViewBag.EstadoInvitacionPendiente = bd.TraerEstadoInvitacionPendiente();
         return View();
     }
 }

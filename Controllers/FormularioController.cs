@@ -9,8 +9,9 @@ public class FormularioController : Controller
     public IActionResult Completar(string Codigo)
     {
         BD bd = new BD();
+        string estadoPendiente = bd.TraerEstadoInvitacionPendiente();
         Invitaciones invitacion = bd.TraerInvitacionPorCodigo(Codigo);
-        if (invitacion == null || invitacion.Estado != "Pendiente")
+        if (invitacion == null || invitacion.Estado != estadoPendiente)
         {
             return View("LinkInvalido");
         }
@@ -24,10 +25,11 @@ public class FormularioController : Controller
         string Herramientas, string Dificultades, string Objetivos, int TiempoXDia)
     {
         BD bd = new BD();
+        string estadoPendiente = bd.TraerEstadoInvitacionPendiente();
 
         // Volvemos a buscar la invitación: los datos salen de la BD, no del form
         Invitaciones invitacion = bd.TraerInvitacionPorCodigo(Codigo);
-        if (invitacion == null || invitacion.Estado != "Pendiente")
+        if (invitacion == null || invitacion.Estado != estadoPendiente)
         {
             return View("LinkInvalido");
         }

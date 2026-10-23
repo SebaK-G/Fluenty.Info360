@@ -1,0 +1,143 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #1f3144, #035b99);
+    min-height: 100vh;
+}
+
+.panel-principal {
+    width: 100%;
+    max-width: 1220px;
+    margin: 18px auto 26px auto;
+}
+
+.panel-principal .main-header {
+    background-color: #ffffff;
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.panel-principal .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 29px;
+}
+
+.panel-principal .brand img {
+    width: 38px !important;
+    height: 38px !important;
+    object-fit: contain;
+}
+
+.panel-principal .main-nav {
+    display: flex;
+    gap: 8px;
+}
+
+.panel-principal .main-nav .nav-link {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #0b1ca6;
+    border-radius: 14px;
+    font-size: 13px;
+    padding: 7px 14px;
+}
+
+.panel-principal .main-nav .nav-link.active {
+    background-color: #07146e;
+}
+
+.panel-principal main {
+    width: 100%;
+    max-width: 980px;
+    margin: 58px auto 0 auto;
+}
+
+.panel-principal h1,
+.panel-principal .plan,
+.panel-principal .estadisticas > div,
+.panel-principal .secciones section,
+.panel-principal .secciones .actividades {
+    background-color: #ffffff;
+    border-radius: 14px;
+}
+
+.panel-principal h1 {
+    padding: 16px 22px;
+    font-size: 35px;
+    margin-bottom: 12px;
+}
+
+.panel-principal .plan {
+    padding: 16px 22px;
+    margin-bottom: 12px;
+}
+
+.panel-principal .estadisticas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.panel-principal .estadisticas > div {
+    padding: 14px 18px;
+}
+
+.panel-principal .secciones {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+}
+
+.panel-principal .secciones section,
+.panel-principal .secciones .actividades {
+    padding: 16px;
+}
+
+.panel-principal .secciones section:first-child {
+    grid-row: span 2;
+}
+
+.panel-principal .secciones section > div {
+    background-color: #f5f6fa;
+    border: 1px solid #eceef5;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.panel-principal .secciones a {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #0b1ca6;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    display: inline-block;
+}
+
+@media (max-width: 980px) {
+    .panel-principal .main-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .panel-principal .main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .panel-principal .estadisticas,
+    .panel-principal .secciones {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-principal .secciones section:first-child {
+        grid-row: auto;
+    }
+}
