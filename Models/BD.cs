@@ -16,6 +16,13 @@ public class BD
         return usuario;
     }
 
+    public string ObtenerNombreEmpresaPorId(int idEmpresa){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string query = "SELECT Nombre FROM Empresas WHERE IdEmpresa = @pIdEmpresa";
+            return connection.QueryFirstOrDefault<string>(query, new { pIdEmpresa = idEmpresa });
+        }
+    }
+
     public int? ObtenerIdEmpresaPorNombre(string nombreEmpresa){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string query = "SELECT IdEmpresa FROM Empresas WHERE Nombre = @pNombre";
