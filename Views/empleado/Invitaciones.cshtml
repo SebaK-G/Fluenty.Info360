@@ -1,19 +1,75 @@
 @using Fluenty.Info360.Models
+
 @{
     ViewData["Title"] = "Mis invitaciones";
 }
 
-<h1>Mis invitaciones</h1>
-<a href='@Url.Action("Invitar", "Empleado")'>Invitar empleado</a>
+<link rel="stylesheet" href="~/css/invitaciones.css" asp-append-version="true" />
 
-@foreach (Invitaciones invitacion in ViewBag.Invitaciones)
-{
-    <div>
-        <h3>@invitacion.Nombre @invitacion.Apellido</h3>
-        <p>@invitacion.Puesto - Estado: @invitacion.Estado</p>
-        @if (invitacion.Estado == ViewBag.EstadoInvitacionPendiente)
-        {
-            <a href='@Url.Action("Completar", "Formulario", new { Codigo = invitacion.Codigo })'>Link del formulario</a>
-        }
-    </div>
-}
+<div class="pagina-invitaciones">
+
+    <header class="encabezado-invitaciones">
+        <div class="logo-invitaciones">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Fluenty" />
+            <span>Fluenty</span>
+        </div>
+
+        <nav class="nav-invitaciones">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+            <a href="@Url.Action("Index", "Curso")">Cursos</a>
+            <a href="@Url.Action("Index", "Calculadora")">Calculadora</a>
+            <a href="@Url.Action("Index", "Empleado")">Empleados</a>
+        </nav>
+    </header>
+
+    <main class="contenido-invitaciones">
+
+        <section class="titulo-invitaciones">
+            <h1>Mis invitaciones</h1>
+            <p>Consultá el estado de las invitaciones que enviaste a tus empleados.</p>
+        </section>
+
+        <a class="boton-invitar" href='@Url.Action("Invitar", "Empleado")'>
+            + Invitar empleado
+        </a>
+
+        <section class="lista-invitaciones">
+
+            @if (ViewBag.Invitaciones != null)
+            {
+                @foreach (Invitaciones invitacion in ViewBag.Invitaciones)
+                {
+                    <article class="tarjeta-invitacion">
+
+                        <h3>@invitacion.Nombre @invitacion.Apellido</h3>
+
+                        <p>
+                            @invitacion.Puesto
+                            <br />
+                            Estado:
+                            <span class="estado-invitacion">@invitacion.Estado</span>
+                        </p>
+
+                        @if (invitacion.Estado == ViewBag.EstadoInvitacionPendiente)
+                        {
+                            <a class="link-formulario"
+                               href='@Url.Action("Completar", "Formulario", new { Codigo = invitacion.Codigo })'>
+                                Abrir formulario
+                            </a>
+                        }
+
+                    </article>
+                }
+            }
+            else
+            {
+                <div class="sin-invitaciones">
+                    <p>No hay invitaciones para mostrar.</p>
+                </div>
+            }
+
+        </section>
+
+    </main>
+
+</div>

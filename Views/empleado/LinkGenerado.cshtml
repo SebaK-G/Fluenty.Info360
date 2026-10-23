@@ -2,11 +2,58 @@
     ViewData["Title"] = "Link generado";
 }
 
-<h1>¡Listo!</h1>
-<p>Mandale este link a @ViewBag.Nombre por WhatsApp o mail para que complete su formulario:</p>
+<link rel="stylesheet" href="~/css/linkgenerado.css" asp-append-version="true" />
 
-<p><a href='@Url.Action("Completar", "Formulario", new { Codigo = ViewBag.Codigo })'>Link del formulario de @ViewBag.Nombre</a></p>
-<p>(Clic derecho sobre el link → "Copiar dirección del enlace")</p>
+<div class="pagina-link-generado">
 
-<a href='@Url.Action("Invitar", "Empleado")'>Invitar a otro</a>
-<a href='@Url.Action("Invitaciones", "Empleado")'>Ver mis invitaciones</a>
+    <header class="encabezado-link">
+        <div class="logo-link">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Fluenty" />
+            <span>Fluenty</span>
+        </div>
+
+        <nav class="nav-link-generado">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+            <a href="@Url.Action("Index", "Curso")">Cursos</a>
+            <a href="@Url.Action("Index", "Calculadora")">Calculadora</a>
+            <a href="@Url.Action("Index", "Empleado")">Empleados</a>
+        </nav>
+    </header>
+
+    <main class="contenido-link-generado">
+
+        <section class="tarjeta-link-generado">
+
+            <div class="icono-exito">✓</div>
+
+            <h1>¡Listo!</h1>
+
+            <p>
+                La invitación para <strong>@ViewBag.Nombre</strong> se generó correctamente.
+                Mandale este link por WhatsApp o mail para que complete su formulario.
+            </p>
+
+            <a class="boton-link-formulario"
+               href="@Url.Action("Completar", "Formulario", new { Codigo = ViewBag.Codigo })">
+                Abrir link del formulario
+            </a>
+
+            <p class="ayuda-link">
+                Podés copiar la dirección del enlace para compartirla con el empleado.
+            </p>
+
+            <div class="acciones-link-generado">
+                <a href="@Url.Action("Invitar", "Empleado")">
+                    Invitar a otro
+                </a>
+
+                <a href="@Url.Action("Invitaciones", "Empleado")">
+                    Ver mis invitaciones
+                </a>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>

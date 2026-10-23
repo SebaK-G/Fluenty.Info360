@@ -1,0 +1,332 @@
+/* ===== CONFIGURACIÓN GENERAL ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #172333;
+    background-color: #202f3e;
+}
+
+/* ===== FONDO ===== */
+
+.pagina-invitar {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #202f3e 0%, #075b99 100%);
+    overflow-x: hidden;
+}
+
+/* ===== ENCABEZADO ===== */
+
+.encabezado-invitar {
+    width: 100%;
+    min-height: 75px;
+    padding: 12px 6%;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    box-shadow: 0 3px 12px #00000018;
+}
+
+.logo-invitar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #172333;
+    font-size: 23px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.logo-invitar img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+/* ===== NAVEGACIÓN ===== */
+
+.nav-invitar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.nav-invitar a {
+    padding: 10px 20px;
+    border-radius: 25px;
+    background-color: #080ba8;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.nav-invitar a:hover {
+    background-color: #2529d9;
+    transform: translateY(-2px);
+}
+
+/* ===== CONTENIDO ===== */
+
+.contenido-invitar {
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 40px 25px 60px;
+}
+
+/* ===== TÍTULO ===== */
+
+.titulo-invitar {
+    padding: 27px 30px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 8px 25px #00132620;
+}
+
+.titulo-invitar h1 {
+    margin-bottom: 10px;
+    color: #172333;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.titulo-invitar p {
+    color: #647084;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ===== TARJETA DEL FORMULARIO ===== */
+
+.tarjeta-invitar {
+    width: 100%;
+    padding: 35px 45px 28px;
+    background-color: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px #00132625;
+}
+
+.tarjeta-invitar form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 35px;
+    row-gap: 23px;
+}
+
+/* ===== CAMPOS ===== */
+
+.campo-invitar {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-width: 0;
+}
+
+.campo-invitar label {
+    color: #263445;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.campo-invitar input,
+.campo-invitar textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid #e0e5ec;
+    border-radius: 11px;
+    background-color: #f5f7fa;
+    color: #172333;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.campo-invitar input {
+    height: 47px;
+}
+
+.campo-invitar textarea {
+    min-height: 125px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.campo-invitar input::placeholder,
+.campo-invitar textarea::placeholder {
+    color: #929eb1;
+}
+
+/* Efecto al seleccionar un campo */
+
+.campo-invitar input:focus,
+.campo-invitar textarea:focus {
+    outline: none;
+    border-color: #168cff;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px #168cff20;
+}
+
+/* Descripción a lo ancho */
+
+.campo-completo {
+    grid-column: 1 / -1;
+}
+
+/* ===== BOTÓN GENERAR LINK ===== */
+
+.acciones-invitar {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 2px;
+}
+
+.acciones-invitar input {
+    min-width: 180px;
+    min-height: 47px;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 25px;
+    background-color: #080ba8;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px #080ba830;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.acciones-invitar input:hover {
+    background-color: #2529d9;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px #080ba840;
+}
+
+.acciones-invitar input:active {
+    transform: translateY(0);
+}
+
+/* ===== ENLACE A MIS INVITACIONES ===== */
+
+.enlace-invitaciones {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e8eaf0;
+    text-align: center;
+}
+
+.enlace-invitaciones a {
+    color: #080ba8;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.enlace-invitaciones a:hover {
+    color: #2529d9;
+    text-decoration: underline;
+}
+
+/* ===== TABLETS ===== */
+
+@media (max-width: 800px) {
+    .encabezado-invitar {
+        padding: 15px 4%;
+        flex-wrap: wrap;
+    }
+
+    .nav-invitar {
+        gap: 7px;
+    }
+
+    .nav-invitar a {
+        padding: 9px 13px;
+    }
+
+    .contenido-invitar {
+        padding: 30px 20px 45px;
+    }
+
+    .tarjeta-invitar {
+        padding: 30px;
+    }
+
+    .tarjeta-invitar form {
+        column-gap: 22px;
+    }
+}
+
+/* ===== CELULARES ===== */
+
+@media (max-width: 600px) {
+    .encabezado-invitar {
+        flex-direction: column;
+        padding: 17px 12px;
+        gap: 15px;
+    }
+
+    .nav-invitar {
+        width: 100%;
+        gap: 7px;
+    }
+
+    .nav-invitar a {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .contenido-invitar {
+        padding: 22px 12px 35px;
+    }
+
+    .titulo-invitar {
+        padding: 24px 16px;
+    }
+
+    .titulo-invitar h1 {
+        font-size: 25px;
+    }
+
+    .titulo-invitar p {
+        font-size: 13px;
+    }
+
+    .tarjeta-invitar {
+        padding: 25px 20px;
+    }
+
+    .tarjeta-invitar form {
+        grid-template-columns: 1fr;
+        row-gap: 20px;
+    }
+
+    .campo-completo,
+    .acciones-invitar {
+        grid-column: auto;
+    }
+
+    .acciones-invitar input {
+        width: 100%;
+    }
+}
