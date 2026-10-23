@@ -1,6 +1,5 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
-    var actividades = ViewBag.Actividades as List<string> ?? new List<string>();
 }
 
 <div class="panel-principal">
@@ -70,12 +69,12 @@
                 <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más, con acceso simultáneo para @ViewBag.EmpleadosActivos empleados activos.</p>
             </section>
 
-            
+
             <div class="actividades">
                 <h2>Actividades recientes</h2>
                 <a href="">Ver todas</a>
 
-                @if (ViewBag.Actividades != null)
+                @if (ViewBag.Actividades.Count > 0)
                 {
                     foreach (string actividad in ViewBag.Actividades)
                     {
@@ -92,14 +91,9 @@
             <section class="actividades">
                 <h2>Cursos de tu empresa</h2>
 
-                @if (actividades.Count > 0)
+                @if (ViewBag.CantidadCursos > 0)
                 {
-                    @foreach (string actividad in actividades)
-                    {
-                        <div class="actividad">
-                            <p>Curso: @actividad</p>
-                        </div>
-                    }
+                    <p>Tu empresa tiene @ViewBag.CantidadCursos cursos creados.</p>
                 }
                 else
                 {

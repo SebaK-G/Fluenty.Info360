@@ -19,26 +19,21 @@ public class HomeController : Controller
     }
 
     public IActionResult Index(){
-        string nombreUsuario = HttpContext.Session.GetString("Nombre") ?? "Usuario";
-        string emailUsuario = HttpContext.Session.GetString("Email") ?? "";
-        string nombreEmpresa = HttpContext.Session.GetString("NombreEmpresa") ?? "Ferran";
-
-        ViewBag.Nombre = nombreUsuario;
-        ViewBag.NombreEmpresa = nombreEmpresa;
-        ViewBag.CantidadCursos = 0;
-        ViewBag.CantidadEmpleados = 0;
-        ViewBag.Actividades = new List<string>();
-
-        if (!string.IsNullOrWhiteSpace(emailUsuario))
-        {
-            BD bd = new BD();
-            var usuario = bd.Login(emailUsuario, HttpContext.Session.GetString("Contrasena") ?? "");
-            if (usuario != null)
-            {
-                ViewBag.Nombre = usuario.Nombre;
-                ViewBag.NombreEmpresa = usuario.IdEmpresa > 0 ? "Empresa " + usuario.IdEmpresa : "Ferran";
-            }
+        // Si no hay nadie logueado, lo mandamos al login
+        if (HttpContext.Session.GetString("IdEmpresa") == null){
+            return RedirectToAction("Acceso");
         }
+
+        int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
+        BD bd = new BD();
+
+        ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+        ViewBag.NombreEmpresa = bd.TraerNombreEmpresa(idEmpresa);
+        ViewBag.CantidadCursos = bd.ContarCursosEmpresa(idEmpresa);
+        ViewBag.CantidadEmpleados = bd.ContarEmpleadosEmpresa(idEmpresa);
+        ViewBag.EmpleadosActivos = ViewBag.CantidadEmpleados;
+        ViewBag.MesesRestantes = 12; // fijo hasta que haya una tabla de planes
+        ViewBag.Actividades = new List<string>(); // todavía no hay tabla de actividades
 
         return View();
     }
@@ -122,7 +117,9 @@ public class HomeController : Controller
         if (usuario != null){
             HttpContext.Session.SetString("Nombre", usuario.Nombre);
             HttpContext.Session.SetString("Email", usuario.Email);
-            return View("Index");
+            HttpContext.Session.SetString("IdEmpresa", usuario.IdEmpresa.ToString());
+            // RedirectToAction (no View) para que se ejecute la acción Index y cargue los ViewBag
+            return RedirectToAction("Index");
         }
         ViewBag.Mensaje = "Email o contraseña incorrectos";
         return View("Acceso");
@@ -163,8 +160,8 @@ public class HomeController : Controller
             HttpContext.Session.SetString("TipoUsuario", TipoUsuario);
             HttpContext.Session.SetString("Nombre", Nombre);
             HttpContext.Session.SetString("Email", Email);
-            HttpContext.Session.SetString("Contrasena", Contrasena);
-            HttpContext.Session.SetString("NombreEmpresa", NombreEmpresa);
+            // En vez de la contraseña y el nombre de la empresa, guardamos el IdEmpresa
+            HttpContext.Session.SetString("IdEmpresa", idEmpresa.Value.ToString());
 
             return RedirectToAction("formularioTipoUsuario", new { tipoUsuario = TipoUsuario });
         }
