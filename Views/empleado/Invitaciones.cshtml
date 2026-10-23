@@ -1,0 +1,19 @@
+@using Fluenty.Info360.Models
+@{
+    ViewData["Title"] = "Mis invitaciones";
+}
+
+<h1>Mis invitaciones</h1>
+<a href='@Url.Action("Invitar", "Empleado")'>Invitar empleado</a>
+
+@foreach (Invitaciones invitacion in ViewBag.Invitaciones)
+{
+    <div>
+        <h3>@invitacion.Nombre @invitacion.Apellido</h3>
+        <p>@invitacion.Puesto - Estado: @invitacion.Estado</p>
+        @if (invitacion.Estado == "Pendiente")
+        {
+            <a href='@Url.Action("Completar", "Formulario", new { Codigo = invitacion.Codigo })'>Link del formulario</a>
+        }
+    </div>
+}

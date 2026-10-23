@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Link generado";
+}
+
+<h1>¡Listo!</h1>
+<p>Mandale este link a @ViewBag.Nombre por WhatsApp o mail para que complete su formulario:</p>
+
+<p><a href='@Url.Action("Completar", "Formulario", new { Codigo = ViewBag.Codigo })'>Link del formulario de @ViewBag.Nombre</a></p>
+<p>(Clic derecho sobre el link → "Copiar dirección del enlace")</p>
+
+<a href='@Url.Action("Invitar", "Empleado")'>Invitar a otro</a>
+<a href='@Url.Action("Invitaciones", "Empleado")'>Ver mis invitaciones</a>

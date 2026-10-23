@@ -1,6 +1,6 @@
 using Microsoft.Data.SqlClient;
 using Dapper;
-
+using System.Data;
 namespace Fluenty.Info360.Models;
 
 public class BD
@@ -31,10 +31,10 @@ public class BD
         }
     }
 
-    public void Signup(Usuarios usuario){
+       public void Signup(Usuarios usuario){
         string query = "INSERT INTO Usuarios (Nombre, Apellido, IdEmpresa, Email, IdEmpleador, IdEmpleado, Dni, Telefono, Contrasena) VALUES (@pNombre, @pApellido, @pIdEmpresa, @pEmail, @pIdEmpleador, @pIdEmpleado, @pDni, @pTelefono, @pContrasena)";
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            connection.Execute(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pIdEmpresa = usuario.IdEmpresa, pEmail = usuario.Email, pIdEmpleador = usuario.IdEmpleador, pIdEmpleado = usuario.IdEmpleado, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena});
+            connection.Execute(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pIdEmpresa = usuario.IdEmpresa, pEmail = usuario.Email, pIdEmpleador = usuario.IdEmpleador, pIdEmpleado = usuario.IdEmpleado, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena });
         }
     }
 
@@ -73,6 +73,44 @@ public class BD
                 pIdEmpleador = idEmpleador,
                 pEmail = email
             });
+        }
+    }
+        public void CrearInvitacion(Invitaciones invitacion){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_CrearInvitacion";
+            connection.Execute(storedProcedure, new { IdEmpresa = invitacion.IdEmpresa, Nombre = invitacion.Nombre, Apellido = invitacion.Apellido, Email = invitacion.Email, Puesto = invitacion.Puesto, InfoEmpleador = invitacion.InfoEmpleador, Codigo = invitacion.Codigo }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public Invitaciones TraerInvitacionPorCodigo(string codigo){
+        Invitaciones invitacion = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerInvitacionPorCodigo";
+            invitacion = connection.QueryFirstOrDefault<Invitaciones>(storedProcedure, new { Codigo = codigo }, commandType: CommandType.StoredProcedure);
+        }
+        return invitacion;
+    }
+
+    public List<Invitaciones> TraerInvitacionesEmpresa(int idEmpresa){
+        List<Invitaciones> invitaciones = new List<Invitaciones>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerInvitacionesEmpresa";
+            invitaciones = connection.Query<Invitaciones>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return invitaciones;
+    }
+
+    public void CompletarInvitacion(string codigo, int idEmpleado){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_CompletarInvitacion";
+            connection.Execute(storedProcedure, new { Codigo = codigo, IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public void AgregarFormularioEmpleado(FormulariosEmpleado formulario){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_AgregarFormularioEmpleado";
+            connection.Execute(storedProcedure, new { IdEmpleado = formulario.IdEmpleado, NivelIA = formulario.NivelIA, Tareas = formulario.Tareas, Herramientas = formulario.Herramientas, Dificultades = formulario.Dificultades, Objetivos = formulario.Objetivos, TiempoXDia = formulario.TiempoXDia }, commandType: CommandType.StoredProcedure);
         }
     }
 }

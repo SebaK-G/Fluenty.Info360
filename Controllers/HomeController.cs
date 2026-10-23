@@ -107,6 +107,7 @@ public class HomeController : Controller
         if (usuario != null){
             HttpContext.Session.SetString("Nombre", usuario.Nombre);
             HttpContext.Session.SetString("Email", usuario.Email);
+            HttpContext.Session.SetString("IdEmpresa", usuario.IdEmpresa.ToString());
             return View("Index");
         }
         ViewBag.Mensaje = "Email o contraseña incorrectos";

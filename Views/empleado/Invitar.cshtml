@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Invitar empleado";
+}
+
+<h1>Invitar empleado</h1>
+<p>Cargá lo básico. El empleado va a completar el resto desde su link.</p>
+
+<form action='@Url.Action("Invitar", "Empleado")' method="POST">
+    <p>Nombre</p>
+    <input type="text" name="Nombre" maxlength="50" required />
+
+    <p>Apellido</p>
+    <input type="text" name="Apellido" maxlength="50" required />
+
+    <p>Email</p>
+    <input type="email" name="Email" maxlength="50" required />
+
+    <p>Puesto</p>
+    <input type="text" name="Puesto" maxlength="50" required />
+
+    <p>¿Qué sabés de lo que hace en su puesto?</p>
+    <textarea name="InfoEmpleador" rows="4" maxlength="500" required></textarea>
+
+    <br />
+    <input type="submit" value="Generar link" />
+</form>
+
+<a href='@Url.Action("Invitaciones", "Empleado")'>Ver mis invitaciones</a>

@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Tu formulario";
+}
+
+<h1>¡Hola, @ViewBag.Invitacion.Nombre!</h1>
+<p>Tu empresa te invitó a Fluenty como @ViewBag.Invitacion.Puesto. Contanos de tu trabajo para armarte tu curso.</p>
+
+<p>@ViewBag.Mensaje</p>
+
+<form action='@Url.Action("Completar", "Formulario")' method="POST">
+    <input type="hidden" name="Codigo" value="@ViewBag.Invitacion.Codigo" />
+
+    <h2>Tu trabajo</h2>
+    <p>¿Cuáles son las 3 tareas que más tiempo te sacan y sentís repetitivas?</p>
+    <input type="text" name="Tarea1" maxlength="80" placeholder="Tarea 1" required />
+    <input type="text" name="Tarea2" maxlength="80" placeholder="Tarea 2" required />
+    <input type="text" name="Tarea3" maxlength="80" placeholder="Tarea 3" required />
+
+    <p>¿Qué errores o dificultades te aparecen en esas tareas?</p>
+    <textarea name="Dificultades" rows="3" maxlength="250" required></textarea>
+
+    <p>¿Qué te gustaría lograr al terminar el curso?</p>
+    <textarea name="Objetivos" rows="3" maxlength="250" required></textarea>
+
+    <p>¿Qué herramientas usás? (Ej: Gmail, Excel)</p>
+    <input type="text" name="Herramientas" maxlength="50" required />
+
+    <p>¿Cuál es tu nivel con la IA?</p>
+    <select name="NivelIA">
+        <option value="1">Principiante</option>
+        <option value="2">Intermedio</option>
+        <option value="3">Avanzado</option>
+    </select>
+
+    <p>¿Cuántos minutos por día podés dedicarle al curso?</p>
+    <input type="number" name="TiempoXDia" required />
+
+    <h2>Tu cuenta</h2>
+    <p>DNI</p>
+    <input type="text" name="Dni" maxlength="50" required />
+    <p>Teléfono</p>
+    <input type="tel" name="Telefono" maxlength="50" required />
+    <p>Contraseña</p>
+    <input type="password" name="Contrasena" maxlength="50" required />
+
+    <br />
+    <input type="submit" value="Enviar formulario" />
+</form>
