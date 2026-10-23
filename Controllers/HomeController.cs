@@ -19,13 +19,28 @@ public class HomeController : Controller
     }
 
     public IActionResult Index(){
-        ViewBag.Nombre = HttpContext.Session.GetString("Nombre") ?? "Usuario";
-        ViewBag.NombreEmpresa = "Ferran";
+        string nombreUsuario = HttpContext.Session.GetString("Nombre") ?? "Usuario";
+        string emailUsuario = HttpContext.Session.GetString("Email") ?? "";
+        string nombreEmpresa = HttpContext.Session.GetString("NombreEmpresa") ?? "Ferran";
+
+        ViewBag.Nombre = nombreUsuario;
+        ViewBag.NombreEmpresa = nombreEmpresa;
         ViewBag.CantidadCursos = 0;
         ViewBag.CantidadEmpleados = 0;
         ViewBag.Actividades = new List<string>();
 
-        return View("Acceso");
+        if (!string.IsNullOrWhiteSpace(emailUsuario))
+        {
+            BD bd = new BD();
+            var usuario = bd.Login(emailUsuario, HttpContext.Session.GetString("Contrasena") ?? "");
+            if (usuario != null)
+            {
+                ViewBag.Nombre = usuario.Nombre;
+                ViewBag.NombreEmpresa = usuario.IdEmpresa > 0 ? "Empresa " + usuario.IdEmpresa : "Ferran";
+            }
+        }
+
+        return View();
     }
     public IActionResult Acceso(){
         return View();
@@ -107,7 +122,12 @@ public class HomeController : Controller
         if (usuario != null){
             HttpContext.Session.SetString("Nombre", usuario.Nombre);
             HttpContext.Session.SetString("Email", usuario.Email);
-            return View("Index");
+            HttpContext.Session.SetString("Contrasena", Contrasena);
+
+            string nombreEmpresa = bd.ObtenerNombreEmpresaPorId(usuario.IdEmpresa) ?? "Ferran";
+            HttpContext.Session.SetString("NombreEmpresa", nombreEmpresa);
+
+            return RedirectToAction("Index");
         }
         ViewBag.Mensaje = "Email o contraseña incorrectos";
         return View("Acceso");
@@ -146,6 +166,10 @@ public class HomeController : Controller
             bd.Signup(usuario);
             HttpContext.Session.SetString("RegistroEmail", Email);
             HttpContext.Session.SetString("TipoUsuario", TipoUsuario);
+            HttpContext.Session.SetString("Nombre", Nombre);
+            HttpContext.Session.SetString("Email", Email);
+            HttpContext.Session.SetString("Contrasena", Contrasena);
+            HttpContext.Session.SetString("NombreEmpresa", NombreEmpresa);
 
             return RedirectToAction("formularioTipoUsuario", new { tipoUsuario = TipoUsuario });
         }
