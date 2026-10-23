@@ -32,7 +32,7 @@ public class HomeController : Controller
         ViewBag.CantidadCursos = bd.ContarCursosEmpresa(idEmpresa);
         ViewBag.CantidadEmpleados = bd.ContarEmpleadosEmpresa(idEmpresa);
         ViewBag.EmpleadosActivos = ViewBag.CantidadEmpleados;
-        ViewBag.MesesRestantes = 12; // fijo hasta que haya una tabla de planes
+        ViewBag.MesesRestantes = bd.TraerMesesRestantesPlan();
         ViewBag.Actividades = new List<string>(); // todavía no hay tabla de actividades
 
         return View();
@@ -42,6 +42,8 @@ public class HomeController : Controller
     }
 
     public IActionResult Landing(){
+        BD bd = new BD();
+        ViewBag.PorcentajeAhorro = bd.TraerPorcentajeAhorro();
         return View();
     }
 
@@ -102,11 +104,15 @@ public class HomeController : Controller
 
     [HttpPost]
     public IActionResult CalcularEficiencia(int Empleados, int HorasSemana, int CostoHora){
-        int horasMes = Empleados * HorasSemana * 4 * 25 / 100;
+        BD bd = new BD();
+        int porcentajeAhorro = bd.TraerPorcentajeAhorro();
+
+        int horasMes = Empleados * HorasSemana * 4 * porcentajeAhorro / 100;
         ViewBag.HorasMes = horasMes;
         ViewBag.HorasAnio = horasMes * 12;
         ViewBag.AhorroMes = horasMes * CostoHora;
         ViewBag.AhorroAnio = horasMes * CostoHora * 12;
+        ViewBag.PorcentajeAhorro = porcentajeAhorro;
         return View("Landing");
     }
 
