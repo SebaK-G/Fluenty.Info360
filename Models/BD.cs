@@ -120,4 +120,30 @@ public class BD
             connection.Execute(storedProcedure, new { IdEmpleado = formulario.IdEmpleado, NivelIA = formulario.NivelIA, Tareas = formulario.Tareas, Herramientas = formulario.Herramientas, Dificultades = formulario.Dificultades, Objetivos = formulario.Objetivos, TiempoXDia = formulario.TiempoXDia }, commandType: CommandType.StoredProcedure);
         }
     }
+        public string TraerNombreEmpresa(int idEmpresa){
+        string nombre = "";
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerNombreEmpresa";
+            nombre = connection.QueryFirstOrDefault<string>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure);
+        }
+        return nombre;
+    }
+
+    public int ContarEmpleadosEmpresa(int idEmpresa){
+        int cantidad = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_ContarEmpleadosEmpresa";
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure);
+        }
+        return cantidad;
+    }
+
+    public int ContarCursosEmpresa(int idEmpresa){
+        int cantidad = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_ContarCursosEmpresa";
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure);
+        }
+        return cantidad;
+    }
 }
