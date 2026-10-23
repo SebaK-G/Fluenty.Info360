@@ -1,104 +1,193 @@
+
 @{
     ViewData["Title"] = "Acceso";
 }
 
+<link rel="stylesheet" href="~/css/acceso.css" asp-append-version="true" />
 
-<h1>Acceso</h1>
-<button type="button" onclick="mostrarFormulario('login')">Iniciar sesión</button>
-<button type="button" onclick="mostrarFormulario('registro')">Registrarse</button>
+<header class="encabezado">
+    <div class="logo-superior">
+    <img src="LogoAffinity.png" alt="Logo de Fluenty" />
+    <span>Fluenty</span>
+</div>
+</header>
 
-<div id="form-login">
-    <h2>Iniciar sesión</h2>
-    <form asp-action="Login" asp-controller="Home" method="post">
-        <div>
-            <label for="Email">Email:</label><br />
-            <input type="email" id="Email" name="Email" required />
-        </div>
-        <div>
-            <label for="Contrasena">Contraseña:</label><br />
-            <input type="password" id="Contrasena" name="Contrasena" required />
-        </div>
-        <div>
-            <input type="submit" value="Ingresar" />
-        </div>
-    </form>
+<main class="fondo-principal">
+    <div class="contenedor-acceso">
+
+        <section class="panel-formularios">
+
+           <div class="logo-principal">
+    <img src="LogoAffinity.png" alt="Logo de Fluenty" />
+    <h1>Fluenty</h1>
 </div>
 
-<div id="form-registro" hidden>
-    <h2>Registrarse</h2>
-    <form asp-action="Signup" asp-controller="Home" method="post">
-        <div>
-            <label for="Nombre">Nombre:</label><br />
-            <input type="text" id="Nombre" name="Nombre" required />
-        </div>
-        <div>
-            <label for="Apellido">Apellido:</label><br />
-            <input type="text" id="Apellido" name="Apellido" required />
-        </div>
-        <div>
-            <label for="Email">Email:</label><br />
-            <input type="email" id="Email" name="Email" required />
-        </div>
-        <div>
-            <label for="NombreEmpresa">Nombre de la empresa:</label><br />
-            <input type="text" id="NombreEmpresa" name="NombreEmpresa" required />
-        </div>
-        <div>
-            <label>Tipo de usuario:</label><br />
-            <label>
-                <input type="radio" name="TipoUsuario" value="Empleado" checked /> Empleado
-            </label>
-            <label>
-                <input type="radio" name="TipoUsuario" value="Empleador" /> Empleador
-            </label>
-        </div>
-        <div>
-            <label for="Dni">DNI:</label><br />
-            <input type="text" id="Dni" name="Dni" required />
-        </div>
-        <div>
-            <label for="Telefono">Teléfono:</label><br />
-            <input type="text" id="Telefono" name="Telefono" required />
-        </div>
-        <div>
-            <label for="Contrasena">Contraseña:</label><br />
-            <input type="password" id="Contrasena" name="Contrasena" required />
-        </div>
-        <div>
-            <input type="submit" value="Registrarme" />
-        </div>
-    </form>
-</div>
+            <nav class="pestanas">
+                <button type="button" id="boton-login"
+                        class="pestana activa"
+                        onclick="mostrarFormulario('login')">
+                    Iniciar sesión
+                </button>
 
-<p>@ViewBag.Mensaje</p>
-<p>@ViewBag.MensajeRegistro</p>
+                <button type="button" id="boton-registro"
+                        class="pestana"
+                        onclick="mostrarFormulario('registro')">
+                    Registrarse
+                </button>
+            </nav>
 
+            <div id="form-login" class="formulario">
+                <h2 class="titulo-formulario">Iniciar sesión</h2>
 
-<section class="promo-panel">
-    <h1>Bienvenido a Fluenty</h1>
-    <p>Donde todos se pueden capacitar para usar la Inteligencia Artificial.</p>
+                <form asp-action="Login" asp-controller="Home" method="post">
+                    <div class="campo">
+                        <label for="EmailLogin">Email:</label>
+                        <input type="email" id="EmailLogin" name="Email"
+                               placeholder="Ingresa tu correo electrónico" required />
+                    </div>
 
-    <div class="stat-item">
-        <div class="icon">✓</div>
-        <div class="stat-text">
-            <h2>+200</h2>
-            <p>Cursos creados</p>
-        </div>
+                    <div class="campo">
+                        <label for="ContrasenaLogin">Contraseña:</label>
+                        <input type="password" id="ContrasenaLogin" name="Contrasena"
+                               placeholder="Ingresa la contraseña" required />
+                    </div>
+
+                    <div>
+                        <input class="boton-enviar" type="submit" value="Acceder a Fluenty" />
+                    </div>
+                </form>
+            </div>
+
+            <div id="form-registro" class="formulario" hidden>
+                <h2 class="titulo-formulario">Registrarse</h2>
+
+                <form asp-action="Signup" asp-controller="Home" method="post">
+                    <div class="campos-registro">
+                        <div class="campo">
+                            <label for="Nombre">Nombre:</label>
+                            <input type="text" id="Nombre" name="Nombre"
+                                   placeholder="Ingresa tu nombre" required />
+                        </div>
+
+                        <div class="campo">
+                            <label for="Apellido">Apellido:</label>
+                            <input type="text" id="Apellido" name="Apellido"
+                                   placeholder="Ingresa tu apellido" required />
+                        </div>
+
+                        <div class="campo">
+                            <label for="EmailRegistro">Email:</label>
+                            <input type="email" id="EmailRegistro" name="Email"
+                                   placeholder="Ingresa tu correo electrónico" required />
+                        </div>
+
+                        <div class="campo">
+                            <label for="NombreEmpresa">Nombre de la empresa:</label>
+                            <input type="text" id="NombreEmpresa" name="NombreEmpresa"
+                                   placeholder="Ingresa el nombre de la empresa" required />
+                        </div>
+
+                        <div class="campo">
+                            <label>Tipo de usuario:</label>
+
+                            <div class="opciones-radio">
+                                <label>
+                                    <input type="radio" name="TipoUsuario"
+                                           value="Empleado" checked /> Empleado
+                                </label>
+
+                                <label>
+                                    <input type="radio" name="TipoUsuario"
+                                           value="Empleador" /> Empleador
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="campo">
+                            <label for="Dni">DNI:</label>
+                            <input type="text" id="Dni" name="Dni"
+                                   placeholder="Ingresa tu DNI" required />
+                        </div>
+
+                        <div class="campo">
+                            <label for="Telefono">Teléfono:</label>
+                            <input type="text" id="Telefono" name="Telefono"
+                                   placeholder="Ingresa tu teléfono" required />
+                        </div>
+
+                        <div class="campo">
+                            <label for="ContrasenaRegistro">Contraseña:</label>
+                            <input type="password" id="ContrasenaRegistro" name="Contrasena"
+                                   placeholder="Crea una contraseña" required />
+                        </div>
+                    </div>
+
+                    <div class="boton-registro">
+                        <input class="boton-enviar" type="submit" value="Registrarme" />
+                    </div>
+                </form>
+            </div>
+
+            <div class="mensajes">
+                <p>@ViewBag.Mensaje</p>
+                <p>@ViewBag.MensajeRegistro</p>
+            </div>
+        </section>
+
+        <section class="promo-panel">
+            <h1>Bienvenido a Fluenty</h1>
+
+            <p class="texto-promo">
+                Donde todos se pueden capacitar para usar la Inteligencia Artificial.
+            </p>
+
+            <div class="stat-item">
+                <div class="icon">✓</div>
+                <div class="stat-text">
+                    <h2>+200</h2>
+                    <p>Cursos creados</p>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="icon">◌</div>
+                <div class="stat-text">
+                    <h2>+1.234.567</h2>
+                    <p>Empleados capacitados</p>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="icon">▣</div>
+                <div class="stat-text">
+                    <h2>2.314 días</h2>
+                    <p>de tiempo ahorrado para las empresas</p>
+                </div>
+            </div>
+        </section>
+
     </div>
+</main>
 
-    <div class="stat-item">
-        <div class="icon">◌</div>
-        <div class="stat-text">
-            <h2>+1.234.567</h2>
-            <p>Empleados capacitados</p>
-        </div>
-    </div>
+<script>
+    function mostrarFormulario(tipo) {
+        const login = document.getElementById("form-login");
+        const registro = document.getElementById("form-registro");
+        const botonLogin = document.getElementById("boton-login");
+        const botonRegistro = document.getElementById("boton-registro");
 
-    <div class="stat-item">
-        <div class="icon">▣</div>
-        <div class="stat-text">
-            <h2>2.314 días</h2>
-            <p>de tiempo ahorrado para las empresas</p>
-        </div>
-    </div>
-</section>
+        if (tipo === "login") {
+            login.hidden = false;
+            registro.hidden = true;
+
+            botonLogin.classList.add("activa");
+            botonRegistro.classList.remove("activa");
+        } else {
+            login.hidden = true;
+            registro.hidden = false;
+
+            botonRegistro.classList.add("activa");
+            botonLogin.classList.remove("activa");
+        }
+    }
+</script>
