@@ -1,59 +1,81 @@
+
 @{
-    ViewData["Title"] = "Formulario de tipo de usuario";
+    ViewData["Title"] = "formularioTipoUsuario";
     var tipoUsuario = ViewBag.TipoUsuario as string;
 }
 
-<h2>Completá tu perfil</h2>
+<link rel="stylesheet" href="~/css/perfil.css" asp-append-version="true" />
 
-@if (!string.IsNullOrEmpty(ViewBag.MensajeTipoUsuario))
-{
-    <p>@ViewBag.MensajeTipoUsuario</p>
-}
+<div class="contenedor-perfil">
+    <div class="panel-perfil">
 
-<div id="form-empleado" style="@(tipoUsuario == "Empleado" ? "display:block" : "display:none")">
-    <h3>Empleado</h3>
-    <form asp-action="GuardarPerfilUsuario" asp-controller="Home" method="post">
-        <input type="hidden" name="TipoUsuario" value="Empleado" />
+        <h2>Completá tu perfil</h2>
 
-        <div>
-            <label for="empleado_Puesto">Puesto:</label><br />
-            <input type="text" id="empleado_Puesto" name="empleado.Puesto" required />
-        </div>
+        @if (!string.IsNullOrEmpty(ViewBag.MensajeTipoUsuario))
+        {
+            <p class="mensaje-perfil">@ViewBag.MensajeTipoUsuario</p>
+        }
 
-        <div>
-            <label for="empleado_Estado">Estado:</label><br />
-            <select id="empleado_Estado" name="empleado.Estado">
-                <option value="true" selected>Activo</option>
-                <option value="false">Inactivo</option>
-            </select>
-        </div>
+        @if (tipoUsuario == "Empleado")
+        {
+            <div id="form-empleado">
+                <h3>Empleado</h3>
 
-        <div>
-            <input type="submit" value="Guardar perfil de empleado" />
-        </div>
-    </form>
-</div>
+                <form asp-action="GuardarPerfilUsuario" asp-controller="Home" method="post">
+                    <input type="hidden" name="TipoUsuario" value="Empleado" />
 
-<div id="form-empleador" style="@(tipoUsuario == "Empleador" ? "display:block" : "display:none")">
-    <h3>Empleador</h3>
-    <form asp-action="GuardarPerfilUsuario" asp-controller="Home" method="post">
-        <input type="hidden" name="TipoUsuario" value="Empleador" />
+                    <div class="campo-perfil">
+                        <label for="empleado_Puesto">Puesto:</label>
+                        <input type="text" id="empleado_Puesto"
+                               name="empleado.Puesto" required />
+                    </div>
 
-        <div>
-            <label for="empleador_Cargo">Cargo:</label><br />
-            <input type="text" id="empleador_Cargo" name="empleador.Cargo" required />
-        </div>
+                    <div class="campo-perfil">
+                        <label for="empleado_Estado">Estado:</label>
+                        <select id="empleado_Estado" name="empleado.Estado">
+                            <option value="true" selected>Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
 
-        <div>
-            <label for="empleador_Estado">Estado:</label><br />
-            <select id="empleador_Estado" name="empleador.Estado">
-                <option value="true" selected>Activo</option>
-                <option value="false">Inactivo</option>
-            </select>
-        </div>
+                    <input class="boton-perfil" type="submit"
+                           value="Guardar perfil de empleado" />
+                </form>
+            </div>
+        }
+        else if (tipoUsuario == "Empleador")
+        {
+            <div id="form-empleador">
+                <h3>Empleador</h3>
 
-        <div>
-            <input type="submit" value="Guardar perfil de empleador" />
-        </div>
-    </form>
+                <form asp-action="GuardarPerfilUsuario" asp-controller="Home" method="post">
+                    <input type="hidden" name="TipoUsuario" value="Empleador" />
+
+                    <div class="campo-perfil">
+                        <label for="empleador_Cargo">Cargo:</label>
+                        <input type="text" id="empleador_Cargo"
+                               name="empleador.Cargo" required />
+                    </div>
+
+                    <div class="campo-perfil">
+                        <label for="empleador_Estado">Estado:</label>
+                        <select id="empleador_Estado" name="empleador.Estado">
+                            <option value="true" selected>Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+
+                    <input class="boton-perfil" type="submit"
+                           value="Guardar perfil de empleador" />
+                </form>
+            </div>
+        }
+        else
+        {
+            <p class="mensaje-perfil">
+                No se recibió el tipo de usuario. Volvé al paso anterior e intentá nuevamente.
+            </p>
+        }
+
+    </div>
 </div>
