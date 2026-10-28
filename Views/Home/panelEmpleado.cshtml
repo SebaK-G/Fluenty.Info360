@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Mi panel";
+}
+
+<link rel="stylesheet" href="~/css/panelempleado.css" asp-append-version="true" />
+
+<div class="panel-empleado">
+
+    <header class="encabezado-empleado">
+        <div class="logo-empleado">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        <nav class="nav-empleado">
+            <a href='@Url.Action("PanelEmpleado", "Home")' class="activo">Mi panel</a>
+            <a href='@Url.Action("Acceso", "Home")'>Salir</a>
+        </nav>
+    </header>
+
+    <main class="contenido-empleado">
+        <h1>¡Hola, @ViewBag.Nombre!</h1>
+        <p class="subtitulo">Estás en el espacio de capacitación de @ViewBag.NombreEmpresa.</p>
+
+        <div class="bloques-empleado">
+            <section class="tarjeta-empleado">
+                <h2>Mis cursos</h2>
+                <p>Acá vas a ver los cursos que tu empresa creó para vos.</p>
+                <p class="proximamente">Todavía no tenés cursos asignados.</p>
+            </section>
+
+            <section class="tarjeta-empleado">
+                <h2>Mis estadísticas</h2>
+                <p>Tu progreso, tus puntos y tus resultados.</p>
+                <p class="proximamente">Próximamente.</p>
+            </section>
+        </div>
+    </main>
+</div>

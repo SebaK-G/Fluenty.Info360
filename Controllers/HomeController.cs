@@ -23,6 +23,10 @@ public class HomeController : Controller
         if (HttpContext.Session.GetString("IdEmpresa") == null){
             return RedirectToAction("Acceso");
         }
+                // Un empleado no puede ver el panel del empleador
+        if (HttpContext.Session.GetString("TipoUsuario") == "Empleado"){
+            return RedirectToAction("PanelEmpleado");
+        }
 
         int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
         BD bd = new BD();
@@ -35,6 +39,17 @@ public class HomeController : Controller
         ViewBag.MesesRestantes = bd.TraerMesesRestantesPlan();
         ViewBag.Actividades = new List<string>(); // todavía no hay tabla de actividades
 
+        return View();
+    }
+        public IActionResult PanelEmpleado(){
+        // Solo entra un empleado logueado
+        if (HttpContext.Session.GetString("TipoUsuario") != "Empleado"){
+            return RedirectToAction("Acceso");
+        }
+        BD bd = new BD();
+        int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
+        ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
+        ViewBag.NombreEmpresa = bd.TraerNombreEmpresa(idEmpresa);
         return View();
     }
     public IActionResult Acceso(){
@@ -116,7 +131,7 @@ public class HomeController : Controller
         return View("Landing");
     }
 
-    [HttpPost]
+      [HttpPost]
     public IActionResult Login(string Email, string Contrasena){
         BD bd = new BD();
         Usuarios usuario = bd.Login(Email, Contrasena);
@@ -124,7 +139,15 @@ public class HomeController : Controller
             HttpContext.Session.SetString("Nombre", usuario.Nombre);
             HttpContext.Session.SetString("Email", usuario.Email);
             HttpContext.Session.SetString("IdEmpresa", usuario.IdEmpresa.ToString());
-            // RedirectToAction (no View) para que se ejecute la acción Index y cargue los ViewBag
+
+            // Si tiene IdEmpleado es empleado, si no es empleador
+            if (usuario.IdEmpleado != null && usuario.IdEmpleado > 0){
+                HttpContext.Session.SetString("TipoUsuario", "Empleado");
+                HttpContext.Session.SetString("IdEmpleado", usuario.IdEmpleado.ToString());
+                return RedirectToAction("PanelEmpleado");
+            }
+
+            HttpContext.Session.SetString("TipoUsuario", "Empleador");
             return RedirectToAction("Index");
         }
         ViewBag.Mensaje = "Email o contraseña incorrectos";
