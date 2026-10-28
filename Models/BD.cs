@@ -173,4 +173,116 @@ public class BD
         }
         return estado;
     }
+        // ===================== CURSOS =====================
+
+    public List<EmpleadoCurso> TraerEmpleadosConCurso(int idEmpresa){
+        List<EmpleadoCurso> lista = new List<EmpleadoCurso>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerEmpleadosConCurso";
+            lista = connection.Query<EmpleadoCurso>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return lista;
+    }
+
+    public Empleados TraerEmpleado(int idEmpleado){
+        Empleados empleado = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerEmpleado";
+            empleado = connection.QueryFirstOrDefault<Empleados>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
+        }
+        return empleado;
+    }
+
+    public FormulariosEmpleado TraerFormularioEmpleado(int idEmpleado){
+        FormulariosEmpleado formulario = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerFormularioEmpleado";
+            formulario = connection.QueryFirstOrDefault<FormulariosEmpleado>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
+        }
+        return formulario;
+    }
+
+    public string TraerInfoEmpleador(int idEmpleado){
+        string info = "";
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerInfoEmpleador";
+            info = connection.QueryFirstOrDefault<string>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
+        }
+        return info;
+    }
+
+    public FormulariosEmpleador TraerFormularioEmpleadorEmpresa(int idEmpresa){
+        FormulariosEmpleador formulario = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerFormularioEmpleadorEmpresa";
+            formulario = connection.QueryFirstOrDefault<FormulariosEmpleador>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure);
+        }
+        return formulario;
+    }
+
+    public int CrearCurso(Cursos curso){
+        int idCurso = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_CrearCurso";
+            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdEmpleado = curso.IdEmpleado, Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel }, commandType: CommandType.StoredProcedure);
+        }
+        return idCurso;
+    }
+
+    public void AgregarParteCurso(PartesCurso parte){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_AgregarParteCurso";
+            connection.Execute(storedProcedure, new { IdCurso = parte.IdCurso, Numero = parte.Numero, Titulo = parte.Titulo, Contenido = parte.Contenido }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public void AgregarPregunta(Preguntas pregunta){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_AgregarPregunta";
+            connection.Execute(storedProcedure, new { IdCurso = pregunta.IdCurso, NumeroParte = pregunta.NumeroParte, Texto = pregunta.Texto, OpcionA = pregunta.OpcionA, OpcionB = pregunta.OpcionB, OpcionC = pregunta.OpcionC, Correcta = pregunta.Correcta }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public Cursos TraerCurso(int idCurso){
+        Cursos curso = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerCurso";
+            curso = connection.QueryFirstOrDefault<Cursos>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure);
+        }
+        return curso;
+    }
+
+    public Cursos TraerCursoPorEmpleado(int idEmpleado){
+        Cursos curso = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerCursoPorEmpleado";
+            curso = connection.QueryFirstOrDefault<Cursos>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
+        }
+        return curso;
+    }
+
+    public List<PartesCurso> TraerPartesCurso(int idCurso){
+        List<PartesCurso> partes = new List<PartesCurso>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerPartesCurso";
+            partes = connection.Query<PartesCurso>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return partes;
+    }
+
+    public List<Preguntas> TraerPreguntasCurso(int idCurso){
+        List<Preguntas> preguntas = new List<Preguntas>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerPreguntasCurso";
+            preguntas = connection.Query<Preguntas>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return preguntas;
+    }
+
+    public void ActualizarProgreso(int idCurso, int progreso){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_ActualizarProgreso";
+            connection.Execute(storedProcedure, new { IdCurso = idCurso, Progreso = progreso }, commandType: CommandType.StoredProcedure);
+        }
+    }
 }
