@@ -2,22 +2,22 @@
     ViewData["Title"] = "Prueba Groq";
 }
 
-<h1>Prueba de Groq</h1>
+<link rel="stylesheet" href="~/css/mensajes.css" asp-append-version="true" />
 
-<form action='@Url.Action("Index", "IA")' method="post">
-    <p>
+<div class="mensaje">
+    <h1>Prueba de Groq</h1>
+
+    <form action='@Url.Action("Index", "IA")' method="post">
         <label for="pregunta">Escribí una pregunta:</label>
-    </p>
-    <p>
-        <textarea id="pregunta" name="pregunta" rows="4" cols="60"></textarea>
-    </p>
-    <p>
-        <input type="submit" value="Enviar" />
-    </p>
-</form>
+        <textarea id="pregunta" name="pregunta" rows="4"></textarea>
+        <div>
+            <input class="boton" type="submit" value="Enviar" />
+        </div>
+    </form>
 
-@if (ViewBag.Respuesta != null)
-{
-    <h3>Respuesta</h3>
-    <p>@ViewBag.Respuesta</p>
-}
+    @if (ViewBag.Respuesta != null)
+    {
+        <h3>Respuesta</h3>
+        <p class="respuesta">@ViewBag.Respuesta</p>
+    }
+</div>

@@ -1,0 +1,104 @@
+/* ===== Pantallas cortas: Listo, LinkInvalido y Prueba de IA ===== */
+
+.mensaje {
+    width: 90%;
+    margin: 80px auto;
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    color: #172333;
+    box-shadow: 0 6px 20px #00000040;
+    animation: aparecer 0.6s ease;
+}
+
+.mensaje-chico {
+    width: 480px;
+}
+
+.mensaje h1 {
+    font-size: 30px;
+    margin-bottom: 14px;
+    color: #075b99;
+}
+
+.mensaje-error h1 {
+    color: #b3261e;
+}
+
+.mensaje h3 {
+    margin: 24px 0 10px 0;
+    color: #075b99;
+}
+
+.mensaje p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #44546a;
+    margin-bottom: 22px;
+}
+
+.mensaje form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+}
+
+.mensaje label {
+    font-weight: bold;
+}
+
+.mensaje textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #c4d0de;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+}
+
+.mensaje .respuesta {
+    text-align: left;
+    background-color: #eef4fa;
+    border-radius: 10px;
+    padding: 16px;
+    white-space: pre-line;
+}
+
+.boton {
+    display: inline-block;
+    background: linear-gradient(135deg, #0b1ca6, #075b99);
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 26px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.boton:hover {
+    background: linear-gradient(135deg, #075b99, #0b1ca6);
+    color: #ffffff;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .mensaje,
+    .mensaje-chico {
+        width: 100%;
+        padding: 26px;
+    }
+}

@@ -1,0 +1,380 @@
+/* ===== LANDING ===== */
+
+.landing {
+    width: 100%;
+    color: #ffffff;
+    padding-bottom: 30px;
+}
+
+/* ----- Encabezado ----- */
+
+.landing header {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 14px 4%;
+    margin-top: 12px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px #00000030;
+}
+
+.landing header ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+}
+
+.landing header li:first-child {
+    margin-right: auto;
+}
+
+.landing header li:first-child a {
+    font-size: 26px;
+    font-weight: bold;
+    color: #172333;
+}
+
+.landing header a {
+    color: #172333;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.landing header a:hover {
+    color: #075b99;
+}
+
+.landing header li:last-child a {
+    background-color: #075b99;
+    color: #ffffff;
+    padding: 9px 18px;
+    border-radius: 8px;
+}
+
+/* ----- Secciones ----- */
+
+.landing section {
+    width: 90%;
+    margin: 0 auto;
+    padding: 60px 0;
+    border-bottom: 1px solid #ffffff22;
+    animation: aparecer 0.8s ease;
+}
+
+.landing h1 {
+    font-size: 52px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+}
+
+.landing h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+}
+
+.landing h3 {
+    font-size: 19px;
+    margin-bottom: 8px;
+}
+
+.landing p,
+.landing li {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #dce7f2;
+    margin-bottom: 10px;
+}
+
+.landing section a {
+    color: #8fd3ff;
+}
+
+/* ----- Inicio (hero) ----- */
+
+.landing #inicio {
+    text-align: center;
+    padding: 90px 0;
+}
+
+.landing #inicio h2 {
+    font-size: 22px;
+    font-weight: normal;
+    color: #8fd3ff;
+}
+
+.landing #inicio p {
+    width: 70%;
+    margin: 0 auto 14px auto;
+}
+
+.landing #inicio div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 26px 0;
+}
+
+.landing #inicio div p {
+    width: auto;
+    margin: 0;
+}
+
+/* ----- Botones ----- */
+
+.landing button,
+.landing input[type="submit"] {
+    background: linear-gradient(135deg, #0b1ca6, #075b99);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 28px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.landing button:hover,
+.landing input[type="submit"]:hover {
+    background: linear-gradient(135deg, #075b99, #0b1ca6);
+}
+
+/* ----- Cómo funciona ----- */
+
+.landing #como-funciona ol {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-top: 24px;
+    list-style-position: inside;
+}
+
+.landing #como-funciona li,
+.landing #funcionalidades article,
+.landing #para-quien article,
+.landing #cursos div {
+    background-color: #ffffff;
+    color: #172333;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 4px 14px #00000030;
+}
+
+.landing #como-funciona li p,
+.landing #funcionalidades article p,
+.landing #para-quien article li,
+.landing #cursos div p,
+.landing #cursos div li {
+    color: #44546a;
+}
+
+.landing #como-funciona h3,
+.landing #funcionalidades h3,
+.landing #para-quien h3,
+.landing #cursos h3 {
+    color: #075b99;
+}
+
+/* ----- Funcionalidades ----- */
+
+.landing #funcionalidades {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.landing #funcionalidades h2 {
+    grid-column: 1 / 3;
+}
+
+/* ----- Cursos ----- */
+
+.landing #cursos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.landing #cursos h2,
+.landing #cursos > p {
+    grid-column: 1 / 3;
+}
+
+.landing #cursos ul,
+.landing #para-quien ul {
+    padding-left: 20px;
+}
+
+/* ----- Para quién ----- */
+
+.landing #para-quien {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.landing #para-quien h2 {
+    grid-column: 1 / 3;
+}
+
+/* ----- Extras ----- */
+
+.landing #extras ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.landing #extras li {
+    background-color: #ffffff18;
+    border: 1px solid #ffffff40;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0;
+    width: 31%;
+}
+
+/* ----- Calculadora ----- */
+
+.landing #calculadora form {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 26px;
+    margin: 20px 0;
+    width: 60%;
+}
+
+.landing #calculadora form p {
+    color: #172333;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.landing #calculadora input[type="number"] {
+    padding: 10px;
+    border: 1px solid #c4d0de;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.landing #calculadora div {
+    background: linear-gradient(135deg, #0b1ca6, #075b99);
+    border-radius: 14px;
+    padding: 22px;
+    width: 60%;
+    margin-bottom: 16px;
+}
+
+.landing #calculadora div p {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* ----- Preguntas ----- */
+
+.landing #preguntas h3 {
+    margin-top: 22px;
+    color: #8fd3ff;
+}
+
+/* ----- Empezar ----- */
+
+.landing #empezar {
+    text-align: center;
+    border-bottom: none;
+}
+
+.landing #empezar div {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.landing #empezar form:last-child button {
+    background: #ffffff;
+    color: #075b99;
+}
+
+/* ----- Footer ----- */
+
+.landing footer {
+    background-color: #172333;
+    border-radius: 14px;
+    padding: 26px 4%;
+    text-align: center;
+}
+
+.landing footer p {
+    margin-bottom: 6px;
+}
+
+.landing footer ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 12px;
+}
+
+.landing footer a {
+    color: #8fd3ff;
+    text-decoration: none;
+}
+
+/* ----- Animación ----- */
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ----- Celular ----- */
+
+@media (max-width: 900px) {
+    .landing h1 {
+        font-size: 36px;
+    }
+
+    .landing #inicio p,
+    .landing #calculadora form,
+    .landing #calculadora div {
+        width: 100%;
+    }
+
+    .landing #inicio div,
+    .landing #empezar div {
+        flex-direction: column;
+    }
+
+    .landing #como-funciona ol,
+    .landing #funcionalidades,
+    .landing #cursos,
+    .landing #para-quien {
+        grid-template-columns: 1fr;
+    }
+
+    .landing #funcionalidades h2,
+    .landing #cursos h2,
+    .landing #cursos > p,
+    .landing #para-quien h2 {
+        grid-column: 1;
+    }
+
+    .landing #extras li {
+        width: 100%;
+    }
+
+    .landing header li:first-child {
+        width: 100%;
+    }
+}
