@@ -83,28 +83,11 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult GuardarPerfilUsuario(string TipoUsuario, Empleados empleado, Empleadores empleador){
+    public IActionResult GuardarPerfilUsuario(string TipoUsuario, Empleadores empleador){
         try{
             BD bd = new BD();
 
-            if (TipoUsuario == "Empleado"){
-                if (string.IsNullOrWhiteSpace(empleado.Puesto)){
-                    ViewBag.TipoUsuario = TipoUsuario;
-                    ViewBag.MensajeTipoUsuario = "Debe ingresar el puesto del empleado.";
-                    return View("formularioTipoUsuario");
-                }
-
-                empleado.Estado = true;
-                int idEmpleado = bd.CrearEmpleado(empleado);
-
-                string email = HttpContext.Session.GetString("RegistroEmail");
-                if (!string.IsNullOrWhiteSpace(email)){
-                    bd.ActualizarUsuarioTipo(email, idEmpleado, null);
-                }
-
-                return RedirectToAction("Index");
-            }
-
+            // Solo se registran empleadores: los empleados se suman con el link de la empresa
             if (TipoUsuario == "Empleador"){
                 if (string.IsNullOrWhiteSpace(empleador.Cargo)){
                     ViewBag.TipoUsuario = TipoUsuario;
@@ -119,6 +102,8 @@ public class HomeController : Controller
                 if (!string.IsNullOrWhiteSpace(email)){
                     bd.ActualizarUsuarioTipo(email, null, idEmpleador);
                 }
+                HttpContext.Session.SetString("TipoUsuario", "Empleador");
+                HttpContext.Session.SetString("IdEmpleador", idEmpleador.ToString());
 
                 return RedirectToAction("Index");
             }

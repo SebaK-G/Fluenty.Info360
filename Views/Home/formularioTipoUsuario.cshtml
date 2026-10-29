@@ -16,34 +16,7 @@
             <p class="mensaje-perfil">@ViewBag.MensajeTipoUsuario</p>
         }
 
-        @if (tipoUsuario == "Empleado")
-        {
-            <div id="form-empleado">
-                <h3>Empleado</h3>
-
-                <form asp-action="GuardarPerfilUsuario" asp-controller="Home" method="post">
-                    <input type="hidden" name="TipoUsuario" value="Empleado" />
-
-                    <div class="campo-perfil">
-                        <label for="empleado_Puesto">Puesto:</label>
-                        <input type="text" id="empleado_Puesto"
-                               name="empleado.Puesto" required />
-                    </div>
-
-                    <div class="campo-perfil">
-                        <label for="empleado_Estado">Estado:</label>
-                        <select id="empleado_Estado" name="empleado.Estado">
-                            <option value="true" selected>Activo</option>
-                            <option value="false">Inactivo</option>
-                        </select>
-                    </div>
-
-                    <input class="boton-perfil" type="submit"
-                           value="Guardar perfil de empleado" />
-                </form>
-            </div>
-        }
-        else if (tipoUsuario == "Empleador")
+        @if (tipoUsuario == "Empleador")
         {
             <div id="form-empleador">
                 <h3>Empleador</h3>

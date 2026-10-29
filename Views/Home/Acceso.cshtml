@@ -87,21 +87,8 @@
                                    placeholder="Ingresa el nombre de la empresa" required />
                         </div>
 
-                        <div class="campo">
-                            <label>Tipo de usuario:</label>
-
-                            <div class="opciones-radio">
-                                <label>
-                                    <input type="radio" name="TipoUsuario"
-                                           value="Empleado" checked /> Empleado
-                                </label>
-
-                                <label>
-                                    <input type="radio" name="TipoUsuario"
-                                           value="Empleador" /> Empleador
-                                </label>
-                            </div>
-                        </div>
+                        <!-- Desde acá solo se registran empleadores. Los empleados se suman con el link de su empresa -->
+                        <input type="hidden" name="TipoUsuario" value="Empleador" />
 
                         <div class="campo">
                             <label for="Dni">DNI:</label>

@@ -16,13 +16,6 @@ public class BD
         return usuario;
     }
 
-    public string ObtenerNombreEmpresaPorId(int idEmpresa){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string query = "SELECT Nombre FROM Empresas WHERE IdEmpresa = @pIdEmpresa";
-            return connection.QueryFirstOrDefault<string>(query, new { pIdEmpresa = idEmpresa });
-        }
-    }
-
     public int? ObtenerIdEmpresaPorNombre(string nombreEmpresa){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string query = "SELECT IdEmpresa FROM Empresas WHERE Nombre = @pNombre";
@@ -82,38 +75,6 @@ public class BD
             });
         }
     }
-        public void CrearInvitacion(Invitaciones invitacion){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_CrearInvitacion";
-            connection.Execute(storedProcedure, new { IdEmpresa = invitacion.IdEmpresa, Nombre = invitacion.Nombre, Apellido = invitacion.Apellido, Email = invitacion.Email, Puesto = invitacion.Puesto, InfoEmpleador = invitacion.InfoEmpleador, Codigo = invitacion.Codigo }, commandType: CommandType.StoredProcedure);
-        }
-    }
-
-    public Invitaciones TraerInvitacionPorCodigo(string codigo){
-        Invitaciones invitacion = null;
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerInvitacionPorCodigo";
-            invitacion = connection.QueryFirstOrDefault<Invitaciones>(storedProcedure, new { Codigo = codigo }, commandType: CommandType.StoredProcedure);
-        }
-        return invitacion;
-    }
-
-    public List<Invitaciones> TraerInvitacionesEmpresa(int idEmpresa){
-        List<Invitaciones> invitaciones = new List<Invitaciones>();
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerInvitacionesEmpresa";
-            invitaciones = connection.Query<Invitaciones>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
-        }
-        return invitaciones;
-    }
-
-    public void CompletarInvitacion(string codigo, int idEmpleado){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_CompletarInvitacion";
-            connection.Execute(storedProcedure, new { Codigo = codigo, IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
-        }
-    }
-
     public void AgregarFormularioEmpleado(FormulariosEmpleado formulario){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AgregarFormularioEmpleado";
@@ -165,14 +126,6 @@ public class BD
         return porcentaje;
     }
 
-    public string TraerEstadoInvitacionPendiente(){
-        string estado = "";
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerEstadoInvitacionPendiente";
-            estado = connection.QueryFirstOrDefault<string>(storedProcedure, commandType: CommandType.StoredProcedure);
-        }
-        return estado;
-    }
         // ===================== CURSOS =====================
 
     public List<EmpleadoCurso> TraerEmpleadosConCurso(int idEmpresa){
@@ -200,15 +153,6 @@ public class BD
             formulario = connection.QueryFirstOrDefault<FormulariosEmpleado>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
         }
         return formulario;
-    }
-
-    public string TraerInfoEmpleador(int idEmpleado){
-        string info = "";
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerInfoEmpleador";
-            info = connection.QueryFirstOrDefault<string>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
-        }
-        return info;
     }
 
     public FormulariosEmpleador TraerFormularioEmpleadorEmpresa(int idEmpresa){
