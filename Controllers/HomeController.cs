@@ -148,6 +148,7 @@ public class HomeController : Controller
             }
 
             HttpContext.Session.SetString("TipoUsuario", "Empleador");
+            HttpContext.Session.SetString("IdEmpleador", usuario.IdEmpleador.ToString());
             return RedirectToAction("Index");
         }
         ViewBag.Mensaje = "Email o contraseña incorrectos";

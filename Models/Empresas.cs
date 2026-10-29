@@ -7,4 +7,5 @@ public class Empresas
 	public string Email { get; set; }
 	public int CantidadEmpleados { get; set; }
 	public string Cuit { get; set; }
+	public string Codigo { get; set; }
 }

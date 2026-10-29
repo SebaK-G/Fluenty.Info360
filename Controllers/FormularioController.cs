@@ -68,6 +68,10 @@ public class FormularioController : Controller
         formulario.Dificultades = Dificultades;
         formulario.Objetivos = Objetivos;
         formulario.TiempoXDia = TiempoXDia;
+        formulario.DificultadPrincipal = "";
+        formulario.MejoraEmpresa = "";
+        formulario.FortalezasDebilidades = "";
+        formulario.MejoraPersonal = "";
         bd.AgregarFormularioEmpleado(formulario);
 
         // 4. Marcamos la invitación como completada

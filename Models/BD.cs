@@ -117,7 +117,7 @@ public class BD
     public void AgregarFormularioEmpleado(FormulariosEmpleado formulario){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AgregarFormularioEmpleado";
-            connection.Execute(storedProcedure, new { IdEmpleado = formulario.IdEmpleado, NivelIA = formulario.NivelIA, Tareas = formulario.Tareas, Herramientas = formulario.Herramientas, Dificultades = formulario.Dificultades, Objetivos = formulario.Objetivos, TiempoXDia = formulario.TiempoXDia }, commandType: CommandType.StoredProcedure);
+            connection.Execute(storedProcedure, new { IdEmpleado = formulario.IdEmpleado, NivelIA = formulario.NivelIA, Tareas = formulario.Tareas, Herramientas = formulario.Herramientas, Dificultades = formulario.Dificultades, Objetivos = formulario.Objetivos, TiempoXDia = formulario.TiempoXDia, DificultadPrincipal = formulario.DificultadPrincipal, MejoraEmpresa = formulario.MejoraEmpresa, FortalezasDebilidades = formulario.FortalezasDebilidades, MejoraPersonal = formulario.MejoraPersonal }, commandType: CommandType.StoredProcedure);
         }
     }
         public string TraerNombreEmpresa(int idEmpresa){
@@ -284,5 +284,62 @@ public class BD
             string storedProcedure = "sp_ActualizarProgreso";
             connection.Execute(storedProcedure, new { IdCurso = idCurso, Progreso = progreso }, commandType: CommandType.StoredProcedure);
         }
+    }
+
+    // ===================== NUEVO FLUJO: link, formulario del empleador y confirmación =====================
+
+    public string TraerCodigoEmpresa(int idEmpresa){
+        string codigo = "";
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerCodigoEmpresa";
+            codigo = connection.QueryFirstOrDefault<string>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure);
+        }
+        return codigo;
+    }
+
+    public void GuardarCodigoEmpresa(int idEmpresa, string codigo){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_GuardarCodigoEmpresa";
+            connection.Execute(storedProcedure, new { IdEmpresa = idEmpresa, Codigo = codigo }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public Empresas TraerEmpresaPorCodigo(string codigo){
+        Empresas empresa = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerEmpresaPorCodigo";
+            empresa = connection.QueryFirstOrDefault<Empresas>(storedProcedure, new { Codigo = codigo }, commandType: CommandType.StoredProcedure);
+        }
+        return empresa;
+    }
+
+    public void GuardarFormularioEmpleador(FormulariosEmpleador formulario){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_GuardarFormularioEmpleador";
+            connection.Execute(storedProcedure, new { IdEmpleador = formulario.IdEmpleador, Dificultades = formulario.Dificultades, Herramientas = formulario.Herramientas, Objetivos = formulario.Objetivos }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public void ConfirmarCurso(int idCurso){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_ConfirmarCurso";
+            connection.Execute(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public void BorrarCurso(int idCurso){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_BorrarCurso";
+            connection.Execute(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public List<ActividadCurso> TraerActividadesEmpresa(int idEmpresa){
+        List<ActividadCurso> actividades = new List<ActividadCurso>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerActividadesEmpresa";
+            actividades = connection.Query<ActividadCurso>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return actividades;
     }
 }

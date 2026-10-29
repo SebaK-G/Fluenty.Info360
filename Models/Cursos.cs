@@ -9,4 +9,5 @@ public class Cursos
     public string Modelo { get; set; }
     public int Nivel { get; set; }
     public int Progreso { get; set; }
+    public string Estado { get; set; }
 }

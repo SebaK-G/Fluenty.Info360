@@ -10,4 +10,8 @@ public class FormulariosEmpleado
     public string Dificultades { get; set; }
     public string Objetivos { get; set; }
     public int TiempoXDia { get; set; }
+    public string DificultadPrincipal { get; set; }
+    public string MejoraEmpresa { get; set; }
+    public string FortalezasDebilidades { get; set; }
+    public string MejoraPersonal { get; set; }
 }
