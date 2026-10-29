@@ -143,7 +143,7 @@ public class BD
         int idCurso = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_CrearCurso";
-            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = curso.IdUsuario, Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel }, commandType: CommandType.StoredProcedure);
+            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = curso.IdUsuario, Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel, Objetivos = curso.Objetivos, UnidadInicial = curso.UnidadInicial, MotivoNivel = curso.MotivoNivel }, commandType: CommandType.StoredProcedure);
         }
         return idCurso;
     }
@@ -260,5 +260,41 @@ public class BD
             actividades = connection.Query<ActividadCurso>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
         }
         return actividades;
+    }
+
+    // ===================== CURSO POR NIVELES: unidades y lecciones =====================
+
+    public int AgregarUnidad(Unidades unidad){
+        int idUnidad = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_AgregarUnidad";
+            idUnidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdCurso = unidad.IdCurso, Numero = unidad.Numero, Titulo = unidad.Titulo, Objetivo = unidad.Objetivo }, commandType: CommandType.StoredProcedure);
+        }
+        return idUnidad;
+    }
+
+    public void AgregarLeccion(Lecciones leccion){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_AgregarLeccion";
+            connection.Execute(storedProcedure, new { IdUnidad = leccion.IdUnidad, Numero = leccion.Numero, Titulo = leccion.Titulo, Objetivo = leccion.Objetivo, Estado = leccion.Estado }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public List<Unidades> TraerUnidadesCurso(int idCurso){
+        List<Unidades> unidades = new List<Unidades>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerUnidadesCurso";
+            unidades = connection.Query<Unidades>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return unidades;
+    }
+
+    public List<Lecciones> TraerLeccionesCurso(int idCurso){
+        List<Lecciones> lecciones = new List<Lecciones>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerLeccionesCurso";
+            lecciones = connection.Query<Lecciones>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return lecciones;
     }
 }

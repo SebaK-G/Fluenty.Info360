@@ -10,4 +10,7 @@ public class Cursos
     public int Nivel { get; set; }
     public int Progreso { get; set; }
     public string Estado { get; set; }
+    public string Objetivos { get; set; }
+    public int UnidadInicial { get; set; }
+    public string MotivoNivel { get; set; }
 }
