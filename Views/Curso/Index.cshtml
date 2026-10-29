@@ -1,0 +1,90 @@
+@using Fluenty.Info360.Models
+@{
+    ViewData["Title"] = "Crear cursos";
+}
+
+<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+
+<div class="pagina-curso">
+
+    <header class="encabezado-curso">
+        <div class="logo-curso">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        <nav class="nav-curso">
+            <a href='@Url.Action("Index", "Home")'>Home</a>
+            <a href='@Url.Action("Index", "Curso")' class="activo">Cursos</a>
+            <a href='@Url.Action("Invitar", "Empleado")'>Empleados</a>
+        </nav>
+    </header>
+
+    <main class="contenido-curso">
+        <div class="tarjeta-curso titulo-pantalla">
+            <h1>Crea tu curso con IA</h1>
+            <p>Elegí un empleado y la IA arma su curso a partir del formulario que completó y de lo que contaste de él.</p>
+        </div>
+
+        @if (ViewBag.Mensaje != null)
+        {
+            <p class="aviso">@ViewBag.Mensaje</p>
+        }
+
+        @if (ViewBag.Empleados.Count == 0)
+        {
+            <div class="tarjeta-curso vacio">
+                <h2>Todavía no tenés empleados</h2>
+                <p>Invitá a alguien de tu equipo y, cuando complete su formulario, vas a poder crear su curso.</p>
+                <a class="boton-curso" href='@Url.Action("Invitar", "Empleado")'>Invitar empleado</a>
+            </div>
+        }
+        else
+        {
+            <div class="tarjeta-curso">
+                <h2 class="centrado-texto">Empleados registrados</h2>
+
+                @foreach (EmpleadoCurso empleado in ViewBag.Empleados)
+                {
+                    <div class="fila-empleado">
+                        <div>
+                            <p class="nombre-empleado">@empleado.Nombre @empleado.Apellido</p>
+                            <p class="puesto">@empleado.Puesto</p>
+                        </div>
+
+                        @if (empleado.IdCurso != null)
+                        {
+                            <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso })'>Ver curso</a>
+                        }
+                        else
+                        {
+                            <form method="post" action='@Url.Action("Generar", "Curso")' onsubmit="mostrarCarga()">
+                                <input type="hidden" name="IdEmpleado" value="@empleado.IdEmpleado" />
+                                <input class="boton-curso" type="submit" value="Crear curso" />
+                            </form>
+                        }
+                    </div>
+                }
+
+                <div class="centrado">
+                    <a class="boton-curso" href='@Url.Action("Invitar", "Empleado")'>Compartir link a un empleado nuevo</a>
+                </div>
+            </div>
+        }
+    </main>
+</div>
+
+<!-- Pantalla "Carga de datos" del Figma: se muestra mientras la IA arma el curso -->
+<div id="carga" class="fondo-carga">
+    <div class="tarjeta-curso caja-carga">
+        <h2>Cargando datos a los cursos IA</h2>
+        <p>Procesando información</p>
+        <div class="barra"><div class="barra-relleno animada"></div></div>
+        <p>Nuestra IA está utilizando los datos ingresados para armar el curso. Puede tardar unos segundos.</p>
+    </div>
+</div>
+
+<script>
+    function mostrarCarga() {
+        document.getElementById("carga").style.display = "flex";
+    }
+</script>
