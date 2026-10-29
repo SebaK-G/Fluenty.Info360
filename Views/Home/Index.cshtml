@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -35,7 +35,7 @@
 
             <div>
                 <h2>@ViewBag.CantidadEmpleados</h2>
-                <p>Empleados registrados</p>
+                <p>Empleados en tu equipo</p>
             </div>
         </div>
 
@@ -51,9 +51,9 @@
                 </div>
 
                 <div>
-                    <h3>Nuevo empleado</h3>
-                    <p>Registrá a un nuevo integrante de tu empresa.</p>
-                    <a href='@Url.Action("Invitar", "Empleado")'>Crear</a>
+                    <h3>Visualizar empleados</h3>
+                    <p>Mirá tu equipo y los cursos que le asignaste.</p>
+                    <a href='@Url.Action("Index", "Empleado")'>Seguir</a>
                 </div>
 
                 <div>

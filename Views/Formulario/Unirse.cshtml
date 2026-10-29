@@ -1,0 +1,156 @@
+@{
+    ViewData["Title"] = "Sumate a tu equipo";
+}
+
+<link rel="stylesheet" href="~/css/completar.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+
+<div class="pagina-completar">
+
+    <header class="encabezado-invitar">
+        <div class="logo-invitar">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Fluenty" />
+            <span>Fluenty</span>
+        </div>
+    </header>
+
+    <main class="contenido-completar">
+
+        <section class="titulo-completar">
+            <h1>Sumate al equipo de @ViewBag.Empresa.Nombre</h1>
+            <p>Creá tu cuenta y contanos de tu trabajo. Con esto tu empresa te arma un curso de IA a tu medida.</p>
+        </section>
+
+        @if (ViewBag.Mensaje != null)
+        {
+            <p class="mensaje-completar">@ViewBag.Mensaje</p>
+        }
+
+        <section class="tarjeta-completar">
+            <form action='@Url.Action("Unirse", "Formulario")' method="POST">
+                <input type="hidden" name="Codigo" value="@ViewBag.Empresa.Codigo" />
+
+                <!-- ===== Tu cuenta ===== -->
+                <div class="seccion-completar">
+                    <h2>Tu cuenta</h2>
+                </div>
+
+                <div class="campo-curso">
+                    <label for="Nombre">Nombre</label>
+                    <input type="text" id="Nombre" name="Nombre" maxlength="50" required placeholder="Ingresá tu nombre" />
+                </div>
+                <div class="campo-curso">
+                    <label for="Apellido">Apellido</label>
+                    <input type="text" id="Apellido" name="Apellido" maxlength="50" required placeholder="Ingresá tu apellido" />
+                </div>
+                <div class="campo-curso">
+                    <label for="Email">Correo electrónico</label>
+                    <input type="email" id="Email" name="Email" maxlength="50" required placeholder="Ingresá tu correo" />
+                </div>
+                <div class="campo-curso">
+                    <label for="Dni">DNI</label>
+                    <input type="text" id="Dni" name="Dni" maxlength="50" required placeholder="Ingresá tu DNI" />
+                </div>
+                <div class="campo-curso">
+                    <label for="Telefono">Teléfono</label>
+                    <input type="tel" id="Telefono" name="Telefono" maxlength="50" required placeholder="Ingresá tu teléfono" />
+                </div>
+                <div class="campo-curso">
+                    <label for="Contrasena">Contraseña</label>
+                    <input type="password" id="Contrasena" name="Contrasena" maxlength="50" required placeholder="Creá una contraseña" />
+                </div>
+
+                <!-- ===== Bloque D: información para personalizar el curso ===== -->
+                <div class="seccion-completar">
+                    <h2>Tu puesto</h2>
+                </div>
+
+                <div class="campo-curso">
+                    <label for="Puesto">Puesto de trabajo</label>
+                    <input type="text" id="Puesto" name="Puesto" maxlength="50" required placeholder="Ej.: administrativo, vendedor, recruiter" />
+                </div>
+                <div class="campo-curso">
+                    <label for="NivelIA">Nivel actual de IA</label>
+                    <select id="NivelIA" name="NivelIA">
+                        <option value="1">Principiante</option>
+                        <option value="2">Intermedio</option>
+                        <option value="3">Avanzado</option>
+                    </select>
+                </div>
+                <div class="campo-curso">
+                    <label for="Herramientas">Herramientas que usás</label>
+                    <input type="text" id="Herramientas" name="Herramientas" maxlength="250" required placeholder="Ej.: ChatGPT, Excel, Gmail, CRM" />
+                </div>
+
+                <!-- ===== Bloque A: tu trabajo y tus objetivos ===== -->
+                <div class="seccion-completar">
+                    <h2>Tu trabajo y tus objetivos</h2>
+                </div>
+
+                <div class="campo-curso">
+                    <label for="DificultadPrincipal">1. ¿Cuál es la principal dificultad que tenés actualmente en tu trabajo?</label>
+                    <select id="DificultadPrincipal" name="DificultadPrincipal">
+                        <option value="Ahorrar tiempo en las tareas diarias">Ahorrar tiempo en las tareas diarias</option>
+                        <option value="Reducir errores humanos">Reducir errores humanos</option>
+                        <option value="Mejorar la atención al cliente">Mejorar la atención al cliente</option>
+                        <option value="Acelerar las ventas o los cierres comerciales">Acelerar las ventas o los cierres comerciales</option>
+                        <option value="Organizar mejor la información y las tareas">Organizar mejor la información y las tareas</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                </div>
+                <div class="campo-curso">
+                    <label for="MejoraEmpresa">2. ¿Qué te gustaría que tu empresa mejorara en tu puesto de trabajo?</label>
+                    <textarea id="MejoraEmpresa" name="MejoraEmpresa" rows="3" maxlength="500" required placeholder="Ej.: reducir el tiempo de elaboración de reportes"></textarea>
+                </div>
+                <div class="campo-curso">
+                    <label for="FortalezasDebilidades">3. ¿Cuáles son tus principales fortalezas y debilidades en el trabajo?</label>
+                    <textarea id="FortalezasDebilidades" name="FortalezasDebilidades" rows="3" maxlength="500" required placeholder="Ej.: buena comunicación con los clientes, pero me cuesta usar Excel"></textarea>
+                </div>
+                <div class="campo-curso">
+                    <label for="MejoraPersonal">4. ¿Qué te gustaría mejorar personalmente en tu forma de trabajar?</label>
+                    <textarea id="MejoraPersonal" name="MejoraPersonal" rows="3" maxlength="500" required placeholder="Ej.: redactar mejores correos o usar herramientas de IA"></textarea>
+                </div>
+
+                <!-- ===== Bloque B: tus tareas cotidianas ===== -->
+                <div class="seccion-completar">
+                    <h2>Tus tareas cotidianas</h2>
+                </div>
+
+                <div class="campo-curso">
+                    <label for="Tarea1">5. ¿Cuáles son las tres tareas que más tiempo te consumen durante la semana y que considerás repetitivas?</label>
+                    <input type="text" id="Tarea1" name="Tarea1" maxlength="80" required placeholder="Tarea 1 (ej.: responder correos)" />
+                    <input type="text" id="Tarea2" name="Tarea2" maxlength="80" required placeholder="Tarea 2 (ej.: cargar datos a mano)" />
+                    <input type="text" id="Tarea3" name="Tarea3" maxlength="80" required placeholder="Tarea 3 (ej.: armar reportes)" />
+                </div>
+                <div class="campo-curso">
+                    <label for="Dificultades">6. ¿Qué errores o dificultades suelen aparecer durante esas tareas?</label>
+                    <textarea id="Dificultades" name="Dificultades" rows="3" maxlength="500" required placeholder="Ej.: errores de escritura, fórmulas incorrectas, demoras"></textarea>
+                </div>
+
+                <!-- ===== Bloque C: tus expectativas ===== -->
+                <div class="seccion-completar">
+                    <h2>Tus expectativas</h2>
+                </div>
+
+                <div class="campo-curso opciones-varias">
+                    <label>7. ¿Qué te gustaría conseguir al terminar el curso? (podés elegir varias)</label>
+                    <label><input type="checkbox" name="Objetivo1" value="Reducir el tiempo dedicado a tareas repetitivas" /> Reducir el tiempo dedicado a tareas repetitivas</label>
+                    <label><input type="checkbox" name="Objetivo2" value="Cometer menos errores" /> Cometer menos errores</label>
+                    <label><input type="checkbox" name="Objetivo3" value="Aprender a utilizar herramientas de IA" /> Aprender a utilizar herramientas de IA</label>
+                    <label><input type="checkbox" name="Objetivo4" value="Mejorar la calidad del trabajo" /> Mejorar la calidad del trabajo</label>
+                    <label><input type="checkbox" name="Objetivo5" value="Organizar mejor las tareas" /> Organizar mejor las tareas</label>
+                    <label><input type="checkbox" name="Objetivo6" value="Desarrollar habilidades útiles para mi carrera profesional" /> Desarrollar habilidades útiles para mi carrera profesional</label>
+                    <input type="text" name="OtroObjetivo" maxlength="100" placeholder="Otro (opcional)" />
+                </div>
+                <div class="campo-curso">
+                    <label for="TiempoXDia">¿Cuántos minutos por día podés dedicarle al curso?</label>
+                    <input type="number" id="TiempoXDia" name="TiempoXDia" min="1" required placeholder="Ej.: 30" />
+                </div>
+
+                <div class="acciones-completar">
+                    <input type="submit" value="Unirme al equipo" />
+                </div>
+            </form>
+        </section>
+    </main>
+</div>

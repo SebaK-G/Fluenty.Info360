@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Crea tu curso con IA";
+}
+
+<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+
+<div class="pagina-curso">
+
+    <header class="encabezado-curso">
+        <div class="logo-curso">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        <nav class="nav-curso">
+            <a href='@Url.Action("Index", "Home")'>Home</a>
+            <a href='@Url.Action("Index", "Curso")' class="activo">Cursos</a>
+            <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
+        </nav>
+    </header>
+
+    <main class="contenido-curso">
+        <div class="tarjeta-curso titulo-pantalla">
+            <h1>Crea tu curso con IA</h1>
+            <p>Antes de empezar, contanos cómo querés que sean los cursos de tu equipo. La IA va a usar estas respuestas en todos los cursos que genere.</p>
+        </div>
+
+        <div class="tarjeta-curso">
+            <h2 class="centrado-texto">Formulario de Creación de Cursos</h2>
+
+            <form method="post" action='@Url.Action("FormularioEmpresa", "Curso")'>
+                <div class="campo-curso">
+                    <label for="Dificultades">1. ¿Cuáles son los principales problemas o dificultades que enfrenta tu equipo en el trabajo diario? ¿Qué tareas o procesos te gustaría mejorar?</label>
+                    <textarea id="Dificultades" name="Dificultades" rows="4" maxlength="500" required placeholder="Ej.: tardamos mucho en responder mails y armar reportes"></textarea>
+                </div>
+
+                <div class="campo-curso">
+                    <label for="Herramientas">2. ¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? Si es así, ¿cuáles?</label>
+                    <textarea id="Herramientas" name="Herramientas" rows="3" maxlength="250" required placeholder="Ej.: Gmail, Excel, WhatsApp Business. No usamos IA todavía"></textarea>
+                </div>
+
+                <div class="campo-curso">
+                    <label for="Objetivos">3. ¿Qué te gustaría lograr mediante la capacitación de tus empleados? ¿Qué mejoras esperás conseguir en la productividad o en la forma de trabajar?</label>
+                    <textarea id="Objetivos" name="Objetivos" rows="4" maxlength="500" required placeholder="Ej.: ahorrar horas en tareas repetitivas y cometer menos errores"></textarea>
+                </div>
+
+                <div class="centrado">
+                    <input class="boton-curso grande" type="submit" value="Guardar y continuar" />
+                </div>
+            </form>
+        </div>
+    </main>
+</div>

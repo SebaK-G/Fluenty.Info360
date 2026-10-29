@@ -320,3 +320,66 @@
         flex-direction: column;
     }
 }
+
+/* ----- Formularios y link ----- */
+
+.campo-curso {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.campo-curso label {
+    font-weight: bold;
+    color: #172333;
+}
+
+.campo-curso input,
+.campo-curso textarea,
+.campo-curso select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #c4d0de;
+    border-radius: 10px;
+    background-color: #f3f4f6;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+}
+
+.opciones-varias label {
+    font-weight: normal;
+}
+
+.link-empresa {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #c4d0de;
+    border-radius: 10px;
+    background-color: #f3f4f6;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.grande {
+    font-size: 17px;
+    padding: 13px 30px;
+}
+
+.boton-rojo {
+    background-color: #d90000;
+}
+
+.boton-rojo:hover {
+    background-color: #a80000;
+}
+
+.estado {
+    background-color: #075b99;
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: bold;
+}

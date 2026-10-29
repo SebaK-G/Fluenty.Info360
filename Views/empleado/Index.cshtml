@@ -1,0 +1,49 @@
+@using Fluenty.Info360.Models
+@{
+    ViewData["Title"] = "Empleados";
+}
+
+<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+
+<div class="pagina-curso">
+
+    <header class="encabezado-curso">
+        <div class="logo-curso">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        <nav class="nav-curso">
+            <a href='@Url.Action("Index", "Home")'>Home</a>
+            <a href='@Url.Action("Index", "Curso")'>Cursos</a>
+            <a href='@Url.Action("Index", "Empleado")' class="activo">Empleados</a>
+        </nav>
+    </header>
+
+    <main class="contenido-curso">
+        <div class="tarjeta-curso">
+            <h1 class="titulo-curso centrado-texto">Empleados</h1>
+
+            @if (ViewBag.Equipo.Count == 0)
+            {
+                <p class="centrado-texto">Todavía no hay empleados en tu equipo. Cuando confirmes el curso de alguien, aparece acá.</p>
+                <div class="centrado">
+                    <a class="boton-curso" href='@Url.Action("Index", "Curso")'>Ir a Cursos</a>
+                </div>
+            }
+            else
+            {
+                @foreach (EmpleadoCurso empleado in ViewBag.Equipo)
+                {
+                    <div class="fila-empleado">
+                        <div>
+                            <p class="nombre-empleado">@empleado.Nombre @empleado.Apellido</p>
+                            <p class="puesto">@empleado.Puesto</p>
+                        </div>
+                        <span class="estado">En capacitación · @empleado.Progreso%</span>
+                        <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso })'>Ver curso</a>
+                    </div>
+                }
+            }
+        </div>
+    </main>
+</div>

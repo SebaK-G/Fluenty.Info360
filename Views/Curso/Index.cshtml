@@ -1,6 +1,6 @@
 @using Fluenty.Info360.Models
 @{
-    ViewData["Title"] = "Crear cursos";
+    ViewData["Title"] = "Cursos";
 }
 
 <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
@@ -15,14 +15,20 @@
         <nav class="nav-curso">
             <a href='@Url.Action("Index", "Home")'>Home</a>
             <a href='@Url.Action("Index", "Curso")' class="activo">Cursos</a>
-            <a href='@Url.Action("Invitar", "Empleado")'>Empleados</a>
+            <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
         </nav>
     </header>
 
     <main class="contenido-curso">
+
+        <!-- Compartir el link para que los empleados se unan solos -->
         <div class="tarjeta-curso titulo-pantalla">
-            <h1>Crea tu curso con IA</h1>
-            <p>Elegí un empleado y la IA arma su curso a partir del formulario que completó y de lo que contaste de él.</p>
+            <h1>Sumá a tu equipo</h1>
+            <p>Compartí este link con tus empleados. Cada uno se registra y completa su formulario; después le generás el curso desde acá.</p>
+            <input class="link-empresa" type="text" value="@ViewBag.Link" readonly />
+            <div class="botones">
+                <a class="boton-curso grande" href="https://wa.me/?text=Sumate%20a%20nuestro%20equipo%20en%20Fluenty%20y%20complet%C3%A1%20tu%20formulario:%20@(ViewBag.Link)">Compartir por WhatsApp</a>
+            </div>
         </div>
 
         @if (ViewBag.Mensaje != null)
@@ -30,46 +36,38 @@
             <p class="aviso">@ViewBag.Mensaje</p>
         }
 
-        @if (ViewBag.Empleados.Count == 0)
-        {
-            <div class="tarjeta-curso vacio">
-                <h2>Todavía no tenés empleados</h2>
-                <p>Invitá a alguien de tu equipo y, cuando complete su formulario, vas a poder crear su curso.</p>
-                <a class="boton-curso" href='@Url.Action("Invitar", "Empleado")'>Invitar empleado</a>
-            </div>
-        }
-        else
-        {
-            <div class="tarjeta-curso">
-                <h2 class="centrado-texto">Empleados registrados</h2>
+        <div class="tarjeta-curso">
+            <h2 class="centrado-texto">Empleados que completaron el formulario</h2>
 
-                @foreach (EmpleadoCurso empleado in ViewBag.Empleados)
+            @if (ViewBag.Solicitudes.Count == 0)
+            {
+                <p class="centrado-texto">Todavía no se sumó nadie. Cuando un empleado complete el formulario del link, va a aparecer acá.</p>
+            }
+            else
+            {
+                @foreach (EmpleadoCurso empleado in ViewBag.Solicitudes)
                 {
                     <div class="fila-empleado">
                         <div>
                             <p class="nombre-empleado">@empleado.Nombre @empleado.Apellido</p>
-                            <p class="puesto">@empleado.Puesto</p>
+                            <p class="puesto"><strong>@empleado.Puesto</strong> · Tareas: @empleado.Tareas</p>
                         </div>
 
                         @if (empleado.IdCurso != null)
                         {
-                            <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso })'>Ver curso</a>
+                            <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso })'>Revisar curso</a>
                         }
                         else
                         {
                             <form method="post" action='@Url.Action("Generar", "Curso")' onsubmit="mostrarCarga()">
                                 <input type="hidden" name="IdEmpleado" value="@empleado.IdEmpleado" />
-                                <input class="boton-curso" type="submit" value="Crear curso" />
+                                <input class="boton-curso" type="submit" value="Generar curso" />
                             </form>
                         }
                     </div>
                 }
-
-                <div class="centrado">
-                    <a class="boton-curso" href='@Url.Action("Invitar", "Empleado")'>Compartir link a un empleado nuevo</a>
-                </div>
-            </div>
-        }
+            }
+        </div>
     </main>
 </div>
 
@@ -87,4 +85,9 @@
     function mostrarCarga() {
         document.getElementById("carga").style.display = "flex";
     }
+
+    // Si el empleador vuelve para atrás, el cartel de carga se cierra
+    window.onpageshow = function () {
+        document.getElementById("carga").style.display = "none";
+    };
 </script>
