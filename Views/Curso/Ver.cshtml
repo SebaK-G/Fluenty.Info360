@@ -1,7 +1,6 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = ViewBag.Curso.Titulo;
-    int numeroPregunta = 0;
 }
 
 <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
@@ -28,41 +27,80 @@
     </header>
 
     <main class="contenido-curso">
-        <div class="tarjeta-curso">
+
+        <!-- ===== Portada del curso ===== -->
+        <div class="tarjeta-curso portada">
             <p class="modelo">@ViewBag.Curso.Modelo</p>
             <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
             <p>@ViewBag.Curso.Descripcion</p>
+
+            <div class="datos-curso">
+                <div><strong>4</strong><span>unidades</span></div>
+                <div><strong>20</strong><span>lecciones</span></div>
+                <div><strong>1</strong><span>lección por día</span></div>
+            </div>
+
+            <h3>Lo que vas a lograr</h3>
+            <p class="objetivos">@ViewBag.Curso.Objetivos</p>
+
+            <div class="nivelacion">
+                <p><strong>🎯 Nivelación: arranca en la Unidad @ViewBag.Curso.UnidadInicial</strong></p>
+                <p>@ViewBag.Curso.MotivoNivel</p>
+            </div>
         </div>
 
-        @foreach (PartesCurso parte in ViewBag.Partes)
+        <!-- ===== El camino: unidades y lecciones ===== -->
+        @foreach (Unidades unidad in ViewBag.Unidades)
         {
-            <section class="tarjeta-curso parte">
-                <p class="numero-parte">Parte @parte.Numero</p>
-                <h2>@parte.Titulo</h2>
+            string claseUnidad = "unidad unidad-color-" + unidad.Numero;
+            string etiqueta = "";
+            if (unidad.Numero < ViewBag.Curso.UnidadInicial)
+            {
+                claseUnidad = "unidad unidad-sabida";
+                etiqueta = "Ya lo sabés";
+            }
+            if (unidad.Numero == ViewBag.Curso.UnidadInicial)
+            {
+                etiqueta = "Empezás acá";
+            }
 
-                @if (parte.Contenido != "")
-                {
-                    <p class="texto-parte">@parte.Contenido</p>
-                }
-
-                @foreach (Preguntas pregunta in ViewBag.Preguntas)
-                {
-                    if (pregunta.NumeroParte == parte.Numero)
+            <section class="@claseUnidad">
+                <div class="encabezado-unidad">
+                    <p class="numero-unidad">Unidad @unidad.Numero</p>
+                    <h2>@unidad.Titulo</h2>
+                    <p>@unidad.Objetivo</p>
+                    @if (etiqueta != "")
                     {
-                        numeroPregunta++;
-                        <div class="pregunta">
-                            <p><strong>@numeroPregunta. @pregunta.Texto</strong></p>
-                            <p class="opcion">A) @pregunta.OpcionA</p>
-                            <p class="opcion">B) @pregunta.OpcionB</p>
-                            <p class="opcion">C) @pregunta.OpcionC</p>
-                            @if (ViewBag.EsEmpleador)
-                            {
-                                <p class="correcta">Respuesta correcta: @pregunta.Correcta</p>
-                            }
-                        </div>
+                        <span class="etiqueta-unidad">@etiqueta</span>
                     }
-                }
+                </div>
+
+                <div class="camino">
+                    @foreach (Lecciones leccion in ViewBag.Lecciones)
+                    {
+                        if (leccion.NumeroUnidad == unidad.Numero)
+                        {
+                            string icono = "🔒";
+                            if (leccion.Estado == "Disponible") { icono = "▶"; }
+                            if (leccion.Estado == "Completada" || leccion.Estado == "YaSabe") { icono = "✓"; }
+                            if (leccion.Numero == 5) { icono = "🏆"; }
+
+                            <div class="paso paso-@leccion.Numero">
+                                <div class="circulo circulo-@leccion.Estado">@icono</div>
+                                <div class="texto-paso">
+                                    <p class="titulo-paso">@leccion.Titulo</p>
+                                    <p class="objetivo-paso">@leccion.Objetivo</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
             </section>
+        }
+
+        @if (!ViewBag.EsEmpleador)
+        {
+            <p class="aviso centrado-texto">Muy pronto vas a poder hacer las lecciones desde acá, una por día. 🚀</p>
         }
 
         <div class="centrado">

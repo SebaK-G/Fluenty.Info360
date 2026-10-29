@@ -35,13 +35,13 @@ Header: `Authorization: Bearer <API key guardada en User Secrets>`
 
 ```json
 {
-  "model": "openai/gpt-oss-20b",
+  "model": "openai/gpt-oss-120b",
   "temperature": 0.4,
-  "max_tokens": 6000,
+  "max_tokens": 8000,
   "response_format": { "type": "json_object" },
   "messages": [
     { "role": "system", "content": "<INSTRUCCIONES FIJAS (punto 3)>" },
-    { "role": "user",   "content": "<DATOS DEL EMPLEADO Y LA EMPRESA (punto 1)>" }
+    { "role": "user",   "content": "<LOS DOS FORMULARIOS (punto 1)>" }
   ]
 }
 ```
@@ -51,41 +51,42 @@ Header: `Authorization: Bearer <API key guardada en User Secrets>`
 
 ## 3. Instrucciones fijas (el prompt)
 
-> Sos un diseñador de cursos cortos de Fluenty. Tu trabajo es enseñarle a un empleado a usar inteligencia artificial en SU trabajo real.
+El curso es **estilo Duolingo**: un camino de **4 unidades × 5 lecciones** (20 lecciones, una por día, unas 4 semanas). En este pedido la IA arma **solo el plan** (títulos y objetivos); el contenido de cada lección se genera más adelante, cuando el empleado la abre, para que cada pedido sea chico y completo.
+
+> Sos un diseñador de cursos de Fluenty, una app que enseña a usar IA en el trabajo con el estilo de Duolingo.
 >
-> **Cómo pensar el curso:**
-> 1. Leé las 3 tareas repetitivas del empleado. Para cada una pensá cómo la IA le ahorra tiempo o le evita los errores que contó.
-> 2. Usá las herramientas que ya usa (Excel, Gmail, WhatsApp, etc.) y apuntá a los objetivos del empleado y de la empresa.
-> 3. Dale ejemplos de pedidos (prompts) concretos que pueda copiar y usar en ChatGPT, Gemini o la IA que use la empresa.
-> 4. Adaptá la dificultad a su nivel de IA y el largo al tiempo por día que tiene.
+> **Tu tarea:** armar el PLAN de un curso de 4 semanas: 4 unidades de 5 lecciones.
 >
-> **Elegí uno de estos 7 modelos de curso** según el puesto: Tareas de escritorio · Oficio y campo · Ventas y atención al cliente · Gestión y liderazgo · Creativo y marketing · Técnico y datos · Primer contacto (si es principiante y casi no usa tecnología).
+> **Unidades:** 1) fundamentos de IA adaptados a su puesto · 2) su primera tarea repetitiva · 3) su segunda y tercera tarea · 4) un proyecto real de su puesto con los objetivos de la empresa. La lección 5 de cada unidad es un **"Desafío:"** que repasa la unidad. Las lecciones van de simple a difícil, no se repiten y enseñan una cosa concreta usando sus tareas y herramientas reales.
 >
-> **El curso tiene 5 partes:**
-> 1. Explicación simple y ordenada, con sus tareas reales.
-> 2. 3 preguntas de opción múltiple (A, B, C) sobre la parte 1.
-> 3. Cómo optimizar sus tareas con IA, con ejemplos de prompts.
-> 4. 3 preguntas de opción múltiple (A, B, C) sobre la parte 3.
-> 5. Un ejercicio de práctica corto con una situación real de su puesto.
+> **Nivelación:** decidí en qué unidad arranca (1 a 4) según lo que ya sabe de IA y explicá por qué.
 >
-> **Reglas:** español rioplatense, claro y sin relleno. Nunca pidas ni uses datos privados de clientes. Cada texto de parte, como máximo 2500 caracteres. Respondé SOLO con el JSON del formato pedido, sin texto antes ni después.
+> **Modelo de curso:** elegí uno de los 7 del doc "Logica de los Cursos".
+>
+> **Reglas:** español rioplatense, claro y motivador; títulos cortos; objetivos que empiecen con un verbo; nunca pedir datos privados de clientes. Respondé SOLO con el JSON del punto 4.
 
 ## 4. Formato de respuesta que esperamos
 
 ```json
 {
   "modelo": "Tareas de escritorio",
-  "titulo": "Mails y reportes en la mitad de tiempo",
-  "descripcion": "Cómo usar ChatGPT para responder mails y armar el reporte semanal.",
-  "partes": [
-    { "numero": 1, "titulo": "Lo que tenés que saber", "contenido": "texto...", "preguntas": [] },
-    { "numero": 2, "titulo": "Comprobá lo que aprendiste", "contenido": "",
-      "preguntas": [
-        { "texto": "¿...?", "opcionA": "...", "opcionB": "...", "opcionC": "...", "correcta": "B" }
+  "titulo": "Mails y reportes con IA en 4 semanas",
+  "descripcion": "Un camino diario para que la IA te ahorre horas en mails y reportes.",
+  "objetivos": ["Responder mails en la mitad de tiempo", "Armar el reporte semanal con IA", "Revisar textos sin errores"],
+  "unidadInicial": 2,
+  "motivoNivel": "Ya usa ChatGPT para cosas simples, así que arranca aplicándolo a sus tareas.",
+  "unidades": [
+    { "numero": 1, "titulo": "Primeros pasos con IA", "objetivo": "...",
+      "lecciones": [
+        { "numero": 1, "titulo": "Qué es y qué no es la IA", "objetivo": "Entender..." },
+        { "numero": 2, "titulo": "...", "objetivo": "..." },
+        { "numero": 3, "titulo": "...", "objetivo": "..." },
+        { "numero": 4, "titulo": "...", "objetivo": "..." },
+        { "numero": 5, "titulo": "Desafío: tu primer pedido perfecto", "objetivo": "..." }
       ] },
-    { "numero": 3, "titulo": "Cómo optimizar tus tareas", "contenido": "texto...", "preguntas": [] },
-    { "numero": 4, "titulo": "Comprobá otra vez", "contenido": "", "preguntas": [ "...3 preguntas..." ] },
-    { "numero": 5, "titulo": "Ejercicio de práctica", "contenido": "consigna...", "preguntas": [] }
+    { "numero": 2, "...": "..." },
+    { "numero": 3, "...": "..." },
+    { "numero": 4, "...": "..." }
   ]
 }
 ```
@@ -94,12 +95,14 @@ Header: `Authorization: Bearer <API key guardada en User Secrets>`
 
 | JSON | Tabla / columna |
 |---|---|
-| `modelo`, `titulo`, `descripcion` + el empleado elegido | `Cursos` (Modelo, Titulo, Descripcion, **IdUsuario** → así queda asignado; Estado = "Borrador") |
-| cada elemento de `partes` | `PartesCurso` (IdCurso, Numero, Titulo, Contenido) |
-| cada elemento de `preguntas` | `Preguntas` (IdCurso, NumeroParte, Texto, OpcionA, OpcionB, OpcionC, Correcta) |
+| `modelo`, `titulo`, `descripcion`, `objetivos`, `unidadInicial`, `motivoNivel` + el empleado elegido | `Cursos` (**IdUsuario** → así queda asignado; Estado = "Borrador") |
+| cada elemento de `unidades` | `Unidades` (IdCurso, Numero, Titulo, Objetivo) |
+| cada elemento de `lecciones` | `Lecciones` (IdUnidad, Numero, Titulo, Objetivo, Estado) |
 
-Antes de guardar, el controller **valida**: que haya título, 5 partes y preguntas en las partes 2 y 4 con correcta A, B o C. Si la respuesta viene mal, le pide a la IA una vez más. Los textos se recortan al largo máximo de cada columna.
+**Estado de cada lección según la nivelación:** las unidades anteriores a `unidadInicial` quedan **YaSabe**; la lección 1 de la unidad inicial queda **Disponible**; el resto **Bloqueada**. Cuando el empleado termine una lección, se desbloquea la siguiente.
 
-El curso queda como **Borrador**: el empleador lo revisa y toca **Confirmar** (Estado = "Confirmado"). Recién ahí el empleado pasa a la lista de Empleados y ve el curso en su panel. Si no le gusta, lo **descarta** y lo genera de nuevo.
+Antes de guardar, el controller **valida**: título, objetivos, `unidadInicial` entre 1 y 4, y exactamente 4 unidades de 5 lecciones. Si la respuesta viene mal, le pide a la IA una vez más. Los textos se recortan al largo máximo de cada columna.
+
+El curso queda como **Borrador**: el empleador revisa el camino y toca **Confirmar** (Estado = "Confirmado"). Recién ahí el empleado pasa a la lista de Empleados y ve el curso en su panel. Si no le gusta, lo **descarta** y lo genera de nuevo.
 
 **La IA nunca escribe en la base:** solo devuelve texto. Lo guarda nuestro código con stored procedures.

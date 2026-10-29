@@ -148,20 +148,6 @@ public class BD
         return idCurso;
     }
 
-    public void AgregarParteCurso(PartesCurso parte){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_AgregarParteCurso";
-            connection.Execute(storedProcedure, new { IdCurso = parte.IdCurso, Numero = parte.Numero, Titulo = parte.Titulo, Contenido = parte.Contenido }, commandType: CommandType.StoredProcedure);
-        }
-    }
-
-    public void AgregarPregunta(Preguntas pregunta){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_AgregarPregunta";
-            connection.Execute(storedProcedure, new { IdCurso = pregunta.IdCurso, NumeroParte = pregunta.NumeroParte, Texto = pregunta.Texto, OpcionA = pregunta.OpcionA, OpcionB = pregunta.OpcionB, OpcionC = pregunta.OpcionC, Correcta = pregunta.Correcta }, commandType: CommandType.StoredProcedure);
-        }
-    }
-
     public Cursos TraerCurso(int idCurso){
         Cursos curso = null;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
@@ -178,24 +164,6 @@ public class BD
             curso = connection.QueryFirstOrDefault<Cursos>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
         }
         return curso;
-    }
-
-    public List<PartesCurso> TraerPartesCurso(int idCurso){
-        List<PartesCurso> partes = new List<PartesCurso>();
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerPartesCurso";
-            partes = connection.Query<PartesCurso>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
-        }
-        return partes;
-    }
-
-    public List<Preguntas> TraerPreguntasCurso(int idCurso){
-        List<Preguntas> preguntas = new List<Preguntas>();
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerPreguntasCurso";
-            preguntas = connection.Query<Preguntas>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
-        }
-        return preguntas;
     }
 
     public void ActualizarProgreso(int idCurso, int progreso){

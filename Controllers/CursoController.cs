@@ -143,38 +143,56 @@ public class CursoController : Controller
         }
 
         // 3) Guardamos el curso como borrador, asignado al empleado por IdUsuario
+        string objetivos = "";
+        foreach (string objetivo in cursoIA.Objetivos)
+        {
+            objetivos = objetivos + objetivo + "\n";
+        }
+
         Cursos curso = new Cursos();
         curso.IdUsuario = IdUsuario;
         curso.Titulo = Recortar(cursoIA.Titulo, 100);
         curso.Descripcion = Recortar(cursoIA.Descripcion, 300);
         curso.Modelo = Recortar(cursoIA.Modelo, 50);
         curso.Nivel = formEmpleado.NivelIA;
+        curso.Objetivos = Recortar(objetivos, 600);
+        curso.UnidadInicial = cursoIA.UnidadInicial;
+        curso.MotivoNivel = Recortar(cursoIA.MotivoNivel, 300);
         int idCurso = bd.CrearCurso(curso);
 
-        foreach (ParteIA parteIA in cursoIA.Partes)
+        // 4) Las 4 unidades con sus 5 lecciones. La nivelación decide el estado de cada lección:
+        //    las unidades anteriores a la inicial quedan como "YaSabe",
+        //    la primera lección de la unidad inicial queda "Disponible" y el resto "Bloqueada"
+        foreach (UnidadIA unidadIA in cursoIA.Unidades)
         {
-            PartesCurso parte = new PartesCurso();
-            parte.IdCurso = idCurso;
-            parte.Numero = parteIA.Numero;
-            parte.Titulo = Recortar(parteIA.Titulo, 100);
-            parte.Contenido = Recortar(parteIA.Contenido, 4000);
-            bd.AgregarParteCurso(parte);
+            Unidades unidad = new Unidades();
+            unidad.IdCurso = idCurso;
+            unidad.Numero = unidadIA.Numero;
+            unidad.Titulo = Recortar(unidadIA.Titulo, 100);
+            unidad.Objetivo = Recortar(unidadIA.Objetivo, 300);
+            int idUnidad = bd.AgregarUnidad(unidad);
 
-            foreach (PreguntaIA preguntaIA in parteIA.Preguntas)
+            foreach (LeccionIA leccionIA in unidadIA.Lecciones)
             {
-                Preguntas pregunta = new Preguntas();
-                pregunta.IdCurso = idCurso;
-                pregunta.NumeroParte = parteIA.Numero;
-                pregunta.Texto = Recortar(preguntaIA.Texto, 300);
-                pregunta.OpcionA = Recortar(preguntaIA.OpcionA, 200);
-                pregunta.OpcionB = Recortar(preguntaIA.OpcionB, 200);
-                pregunta.OpcionC = Recortar(preguntaIA.OpcionC, 200);
-                pregunta.Correcta = preguntaIA.Correcta;
-                bd.AgregarPregunta(pregunta);
+                Lecciones leccion = new Lecciones();
+                leccion.IdUnidad = idUnidad;
+                leccion.Numero = leccionIA.Numero;
+                leccion.Titulo = Recortar(leccionIA.Titulo, 100);
+                leccion.Objetivo = Recortar(leccionIA.Objetivo, 300);
+                leccion.Estado = "Bloqueada";
+                if (unidadIA.Numero < cursoIA.UnidadInicial)
+                {
+                    leccion.Estado = "YaSabe";
+                }
+                if (unidadIA.Numero == cursoIA.UnidadInicial && leccionIA.Numero == 1)
+                {
+                    leccion.Estado = "Disponible";
+                }
+                bd.AgregarLeccion(leccion);
             }
         }
 
-        // 4) El empleador lo revisa antes de confirmarlo
+        // 5) El empleador revisa el plan antes de confirmarlo
         return RedirectToAction("Ver", new { IdCurso = idCurso });
     }
 
@@ -203,8 +221,8 @@ public class CursoController : Controller
         }
 
         ViewBag.Curso = curso;
-        ViewBag.Partes = bd.TraerPartesCurso(IdCurso);
-        ViewBag.Preguntas = bd.TraerPreguntasCurso(IdCurso);
+        ViewBag.Unidades = bd.TraerUnidadesCurso(IdCurso);
+        ViewBag.Lecciones = bd.TraerLeccionesCurso(IdCurso);
         ViewBag.EsEmpleador = tipoUsuario == "Empleador";
         return View();
     }
@@ -265,31 +283,20 @@ public class CursoController : Controller
             return null;
         }
 
-        if (curso == null || curso.Titulo == null || curso.Titulo == "" || curso.Partes == null || curso.Partes.Count != 5)
+        // Tiene que venir completo: título, 3 objetivos, unidad inicial entre 1 y 4, 4 unidades de 5 lecciones
+        if (curso == null || curso.Titulo == null || curso.Titulo == "" || curso.Objetivos == null || curso.Unidades == null)
         {
             return null;
         }
-        foreach (ParteIA parte in curso.Partes)
+        if (curso.Objetivos.Count == 0 || curso.Unidades.Count != 4 || curso.UnidadInicial < 1 || curso.UnidadInicial > 4)
         {
-            if (parte.Preguntas == null)
-            {
-                parte.Preguntas = new List<PreguntaIA>();
-            }
-            if ((parte.Numero == 2 || parte.Numero == 4) && parte.Preguntas.Count == 0)
+            return null;
+        }
+        foreach (UnidadIA unidad in curso.Unidades)
+        {
+            if (unidad.Lecciones == null || unidad.Lecciones.Count != 5)
             {
                 return null;
-            }
-            foreach (PreguntaIA pregunta in parte.Preguntas)
-            {
-                if (pregunta.Correcta == null)
-                {
-                    return null;
-                }
-                pregunta.Correcta = pregunta.Correcta.ToUpper().Replace(" ", "");
-                if (pregunta.Correcta != "A" && pregunta.Correcta != "B" && pregunta.Correcta != "C")
-                {
-                    return null;
-                }
             }
         }
         return curso;
@@ -312,14 +319,24 @@ public class CursoController : Controller
     // El prompt fijo: cómo tiene que pensar la IA y en qué formato responder (ver PROMPT-IA.md)
     private string ArmarInstrucciones()
     {
-        string texto = "Sos un diseñador de cursos cortos de Fluenty. Tu trabajo es enseñarle a un empleado a usar inteligencia artificial en SU trabajo real.\n\n";
+        string texto = "Sos un diseñador de cursos de Fluenty, una app que enseña a usar inteligencia artificial en el trabajo con el estilo de Duolingo: ";
+        texto = texto + "un camino largo de lecciones cortas, una por día, que se van desbloqueando.\n\n";
 
-        texto = texto + "CÓMO PENSAR EL CURSO:\n";
-        texto = texto + "1. Leé las 3 tareas repetitivas del empleado. Para cada una pensá cómo la IA le ahorra tiempo o le evita los errores que contó.\n";
-        texto = texto + "2. Usá las herramientas que ya usa y apuntá a lo que quiere mejorar él y a los objetivos de la empresa.\n";
-        texto = texto + "3. Aprovechá sus fortalezas y trabajá sus debilidades.\n";
-        texto = texto + "4. Dale ejemplos de pedidos (prompts) concretos que pueda copiar y usar en ChatGPT, Gemini o la IA que use la empresa.\n";
-        texto = texto + "5. Adaptá la dificultad a su nivel de IA y el largo al tiempo por día que tiene.\n\n";
+        texto = texto + "TU TAREA: armar el PLAN de un curso de 4 semanas para este empleado: 4 unidades de 5 lecciones cada una (20 lecciones, una por día). ";
+        texto = texto + "Todavía no escribas el contenido de las lecciones: solo el plan.\n\n";
+
+        texto = texto + "CÓMO ARMAR LAS UNIDADES:\n";
+        texto = texto + "Unidad 1: fundamentos de IA adaptados a su puesto (qué es, qué no es, cómo pedirle bien las cosas, cuidar los datos).\n";
+        texto = texto + "Unidad 2: aplicar la IA a su PRIMERA tarea repetitiva.\n";
+        texto = texto + "Unidad 3: aplicar la IA a su SEGUNDA y TERCERA tarea repetitiva.\n";
+        texto = texto + "Unidad 4: llevarlo todo junto a un proyecto real de su puesto, apuntando a los objetivos de la empresa.\n";
+        texto = texto + "La lección 5 de cada unidad es SIEMPRE un desafío que repasa la unidad: su título empieza con \"Desafío:\".\n";
+        texto = texto + "Las lecciones van de lo simple a lo difícil, no se repiten y cada una enseña UNA cosa concreta que el empleado puede usar al día siguiente en su trabajo. ";
+        texto = texto + "Usá sus tareas, herramientas, dificultades y objetivos reales en los títulos y objetivos de las lecciones.\n\n";
+
+        texto = texto + "NIVELACIÓN: decidí en qué unidad arranca (unidadInicial, de 1 a 4) según lo que ya sabe de IA. ";
+        texto = texto + "Un principiante arranca en la 1. Un intermedio que ya usa ChatGPT puede arrancar en la 2. Solo un avanzado que ya lo usa en su trabajo arranca en la 3. ";
+        texto = texto + "Casi nunca se arranca en la 4. En motivoNivel explicá en una oración por qué lo ubicaste ahí.\n\n";
 
         texto = texto + "ELEGÍ UNO DE ESTOS 7 MODELOS DE CURSO según el puesto: ";
         texto = texto + "Tareas de escritorio (administrativos, contadores, RR.HH.: textos, mails, planillas). ";
@@ -328,26 +345,21 @@ public class CursoController : Controller
         texto = texto + "Gestión y liderazgo (dueños, gerentes, encargados: decisiones, delegación, reuniones, números). ";
         texto = texto + "Creativo y marketing (ideas, textos, imágenes; cuidado con la originalidad y los derechos de autor). ";
         texto = texto + "Técnico y datos (programadores, analistas, soporte: más avanzado, encontrar errores, comparar soluciones). ";
-        texto = texto + "Primer contacto (si es principiante y casi no usa tecnología: qué es la IA, qué no es y un primer uso fácil).\n\n";
+        texto = texto + "Primer contacto (si es principiante y casi no usa tecnología).\n\n";
 
-        texto = texto + "EL CURSO TIENE EXACTAMENTE 5 PARTES:\n";
-        texto = texto + "Parte 1: explicación simple y ordenada, usando sus tareas reales.\n";
-        texto = texto + "Parte 2: 3 preguntas de opción múltiple (A, B, C) sobre la parte 1. Su contenido va vacío.\n";
-        texto = texto + "Parte 3: cómo optimizar sus tareas con IA, con ejemplos de prompts.\n";
-        texto = texto + "Parte 4: 3 preguntas de opción múltiple (A, B, C) sobre la parte 3. Su contenido va vacío.\n";
-        texto = texto + "Parte 5: un ejercicio de práctica corto con una situación real de su puesto.\n\n";
-
-        texto = texto + "REGLAS: escribí en español rioplatense, claro y sin relleno. Nunca pidas ni uses datos privados de clientes. ";
-        texto = texto + "Cada contenido de parte tiene como máximo 2500 caracteres. Las partes 1, 3 y 5 llevan la lista de preguntas vacía.\n\n";
+        texto = texto + "REGLAS: español rioplatense, claro, motivador y sin relleno. Títulos de lección cortos (máximo 60 caracteres). ";
+        texto = texto + "Objetivo de cada lección: una oración que empiece con un verbo (\"Aprender a...\", \"Usar...\", \"Detectar...\"). Nunca pidas datos privados de clientes.\n\n";
 
         texto = texto + "RESPONDÉ SOLO CON UN JSON CON ESTE FORMATO EXACTO:\n";
-        texto = texto + "{\"modelo\": \"nombre del modelo elegido\", \"titulo\": \"titulo corto\", \"descripcion\": \"una o dos oraciones\", ";
-        texto = texto + "\"partes\": [";
-        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"contenido\": \"...\", \"preguntas\": []}, ";
-        texto = texto + "{\"numero\": 2, \"titulo\": \"...\", \"contenido\": \"\", \"preguntas\": [{\"texto\": \"...\", \"opcionA\": \"...\", \"opcionB\": \"...\", \"opcionC\": \"...\", \"correcta\": \"A\"}]}, ";
-        texto = texto + "{\"numero\": 3, \"titulo\": \"...\", \"contenido\": \"...\", \"preguntas\": []}, ";
-        texto = texto + "{\"numero\": 4, \"titulo\": \"...\", \"contenido\": \"\", \"preguntas\": [ ...3 preguntas como en la parte 2... ]}, ";
-        texto = texto + "{\"numero\": 5, \"titulo\": \"...\", \"contenido\": \"...\", \"preguntas\": []}";
+        texto = texto + "{\"modelo\": \"nombre del modelo elegido\", \"titulo\": \"título del curso\", \"descripcion\": \"una o dos oraciones\", ";
+        texto = texto + "\"objetivos\": [\"lo que va a lograr 1\", \"lo que va a lograr 2\", \"lo que va a lograr 3\"], ";
+        texto = texto + "\"unidadInicial\": 1, \"motivoNivel\": \"por qué arranca en esa unidad\", ";
+        texto = texto + "\"unidades\": [";
+        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\", \"lecciones\": [";
+        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\"}, ";
+        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}, ";
+        texto = texto + "{\"numero\": 5, \"titulo\": \"Desafío: ...\", \"objetivo\": \"...\"}]}, ";
+        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}";
         texto = texto + "]}";
 
         return texto;

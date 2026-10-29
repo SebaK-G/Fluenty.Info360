@@ -10,7 +10,7 @@ public class GroqService
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
     private const string Url = "https://api.groq.com/openai/v1/chat/completions";
-    private const string Modelo = "openai/gpt-oss-20b";
+    private const string Modelo = "openai/gpt-oss-120b";
 
     public GroqService(HttpClient httpClient, IConfiguration configuration)
     {
@@ -43,7 +43,7 @@ public class GroqService
         };
         if (pedirJson)
         {
-            cuerpo = new { model = Modelo, temperature = 0.4, max_tokens = 6000, response_format = new { type = "json_object" }, messages = mensajes };
+            cuerpo = new { model = Modelo, temperature = 0.4, max_tokens = 8000, response_format = new { type = "json_object" }, messages = mensajes };
         }
         else
         {

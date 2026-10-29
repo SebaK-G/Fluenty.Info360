@@ -383,3 +383,199 @@
     font-size: 13px;
     font-weight: bold;
 }
+
+/* ===== CURSO POR NIVELES (estilo Duolingo) ===== */
+
+.portada h3 {
+    margin-top: 18px;
+    margin-bottom: 6px;
+    color: #172333;
+}
+
+.datos-curso {
+    display: flex;
+    gap: 14px;
+    margin: 16px 0;
+}
+
+.datos-curso div {
+    flex: 1;
+    background-color: #eef4fa;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.datos-curso strong {
+    font-size: 26px;
+    color: #0b1ca6;
+}
+
+.datos-curso span {
+    font-size: 13px;
+    color: #44546a;
+}
+
+.objetivos {
+    white-space: pre-line;
+}
+
+.nivelacion {
+    background: linear-gradient(135deg, #0b1ca6, #075b99);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-top: 14px;
+}
+
+.nivelacion p {
+    color: #ffffff !important;
+    margin-bottom: 4px;
+}
+
+/* ----- Unidades ----- */
+
+.unidad {
+    margin-top: 26px;
+    animation: aparecer 0.6s ease;
+}
+
+.encabezado-unidad {
+    background-color: #58cc02;
+    border-radius: 16px;
+    padding: 18px 22px;
+    position: relative;
+}
+
+.encabezado-unidad h2 {
+    color: #ffffff;
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.encabezado-unidad p {
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+.numero-unidad {
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.etiqueta-unidad {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    background-color: #ffffff;
+    color: #172333;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 5px 12px;
+}
+
+/* Cada unidad con su color */
+.unidad-color-2 .encabezado-unidad { background-color: #1cb0f6; }
+.unidad-color-3 .encabezado-unidad { background-color: #ce82ff; }
+.unidad-color-4 .encabezado-unidad { background-color: #ff9600; }
+
+.unidad-sabida .encabezado-unidad {
+    background-color: #8a96a6;
+}
+
+/* ----- El camino de lecciones ----- */
+
+.camino {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 22px;
+    margin-top: 10px;
+    box-shadow: 0 4px 14px #00000030;
+}
+
+.paso {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.paso:last-child {
+    margin-bottom: 0;
+}
+
+/* Zigzag como en Duolingo */
+.paso-1 { margin-left: 0%; }
+.paso-2 { margin-left: 12%; }
+.paso-3 { margin-left: 22%; }
+.paso-4 { margin-left: 12%; }
+.paso-5 { margin-left: 0%; }
+
+.circulo {
+    width: 62px;
+    height: 62px;
+    min-width: 62px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #d0d7e1;
+    box-shadow: 0 5px 0 #a9b4c2;
+}
+
+.circulo-Disponible {
+    background-color: #58cc02;
+    box-shadow: 0 5px 0 #46a302;
+    animation: latir 1.6s infinite;
+}
+
+.circulo-Completada {
+    background-color: #ffc800;
+    box-shadow: 0 5px 0 #d9a800;
+}
+
+.circulo-YaSabe {
+    background-color: #8a96a6;
+    box-shadow: 0 5px 0 #6b7686;
+}
+
+.titulo-paso {
+    font-weight: bold;
+    color: #172333 !important;
+    margin-bottom: 2px !important;
+}
+
+.objetivo-paso {
+    font-size: 13px;
+    margin-bottom: 0 !important;
+}
+
+@keyframes latir {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 900px) {
+    .paso-1, .paso-2, .paso-3, .paso-4, .paso-5 {
+        margin-left: 0%;
+    }
+
+    .datos-curso {
+        flex-direction: column;
+    }
+
+    .etiqueta-unidad {
+        position: relative;
+        top: 0;
+        right: 0;
+        display: inline-block;
+        margin-top: 10px;
+    }
+}
