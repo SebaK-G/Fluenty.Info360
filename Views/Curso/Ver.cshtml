@@ -1,0 +1,93 @@
+@using Fluenty.Info360.Models
+@{
+    ViewData["Title"] = ViewBag.Curso.Titulo;
+    int numeroPregunta = 0;
+}
+
+<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+
+<div class="pagina-curso">
+
+    <header class="encabezado-curso">
+        <div class="logo-curso">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        <nav class="nav-curso">
+            @if (ViewBag.EsEmpleador)
+            {
+                <a href='@Url.Action("Index", "Home")'>Home</a>
+                <a href='@Url.Action("Index", "Curso")' class="activo">Cursos</a>
+                <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
+            }
+            else
+            {
+                <a href='@Url.Action("PanelEmpleado", "Home")' class="activo">Mi panel</a>
+            }
+        </nav>
+    </header>
+
+    <main class="contenido-curso">
+        <div class="tarjeta-curso">
+            <p class="modelo">@ViewBag.Curso.Modelo</p>
+            <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
+            <p>@ViewBag.Curso.Descripcion</p>
+        </div>
+
+        @foreach (PartesCurso parte in ViewBag.Partes)
+        {
+            <section class="tarjeta-curso parte">
+                <p class="numero-parte">Parte @parte.Numero</p>
+                <h2>@parte.Titulo</h2>
+
+                @if (parte.Contenido != "")
+                {
+                    <p class="texto-parte">@parte.Contenido</p>
+                }
+
+                @foreach (Preguntas pregunta in ViewBag.Preguntas)
+                {
+                    if (pregunta.NumeroParte == parte.Numero)
+                    {
+                        numeroPregunta++;
+                        <div class="pregunta">
+                            <p><strong>@numeroPregunta. @pregunta.Texto</strong></p>
+                            <p class="opcion">A) @pregunta.OpcionA</p>
+                            <p class="opcion">B) @pregunta.OpcionB</p>
+                            <p class="opcion">C) @pregunta.OpcionC</p>
+                            @if (ViewBag.EsEmpleador)
+                            {
+                                <p class="correcta">Respuesta correcta: @pregunta.Correcta</p>
+                            }
+                        </div>
+                    }
+                }
+            </section>
+        }
+
+        <div class="centrado">
+            @if (ViewBag.EsEmpleador && ViewBag.Curso.Estado == "Borrador")
+            {
+                <p class="aviso">Este curso es un borrador: el empleado todavía no lo ve. Revisalo y confirmalo para sumarlo a tu equipo.</p>
+                <div class="botones">
+                    <form method="post" action='@Url.Action("Descartar", "Curso")'>
+                        <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
+                        <input class="boton-curso boton-rojo" type="submit" value="Descartar y volver a generar" />
+                    </form>
+                    <form method="post" action='@Url.Action("Confirmar", "Curso")'>
+                        <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
+                        <input class="boton-curso grande" type="submit" value="Confirmar curso" />
+                    </form>
+                </div>
+            }
+            else if (ViewBag.EsEmpleador)
+            {
+                <a class="boton-curso" href='@Url.Action("Index", "Empleado")'>Volver a empleados</a>
+            }
+            else
+            {
+                <a class="boton-curso" href='@Url.Action("PanelEmpleado", "Home")'>Volver a mi panel</a>
+            }
+        </div>
+    </main>
+</div>

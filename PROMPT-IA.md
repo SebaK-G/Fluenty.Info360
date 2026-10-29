@@ -2,19 +2,31 @@
 
 ## 1. Qué datos le mandamos
 
-Cuando el empleador toca **"Crear curso"** en un empleado, el `CursoController` junta:
+Cuando el empleador toca **"Generar curso"** en un empleado que se sumó con el link, el `CursoController` junta los **dos formularios** (preguntas del doc "Logica de los Cursos"):
 
-| Dato | De dónde sale |
+**Formulario del empleado** (lo completa él al unirse con el link):
+
+| Pregunta | Dónde se guarda |
 |---|---|
 | Puesto | `Empleados.Puesto` |
 | Nivel de IA (1 principiante, 2 intermedio, 3 avanzado) | `FormulariosEmpleado.NivelIA` |
-| Las 3 tareas repetitivas | `FormulariosEmpleado.Tareas` |
 | Herramientas que usa | `FormulariosEmpleado.Herramientas` |
-| Dificultades / errores frecuentes | `FormulariosEmpleado.Dificultades` |
-| Qué quiere lograr | `FormulariosEmpleado.Objetivos` |
+| 1. Principal dificultad en su trabajo | `FormulariosEmpleado.DificultadPrincipal` |
+| 2. Qué le gustaría que la empresa mejore en su puesto | `FormulariosEmpleado.MejoraEmpresa` |
+| 3. Fortalezas y debilidades | `FormulariosEmpleado.FortalezasDebilidades` |
+| 4. Qué quiere mejorar personalmente | `FormulariosEmpleado.MejoraPersonal` |
+| 5. Las 3 tareas repetitivas | `FormulariosEmpleado.Tareas` |
+| 6. Errores o dificultades en esas tareas | `FormulariosEmpleado.Dificultades` |
+| 7. Qué quiere conseguir con el curso | `FormulariosEmpleado.Objetivos` |
 | Minutos por día para capacitarse | `FormulariosEmpleado.TiempoXDia` |
-| Lo que dijo el empleador del empleado | `Invitaciones.InfoEmpleador` |
-| Dificultades, herramientas y objetivos de la empresa (si los cargó) | `FormulariosEmpleador` |
+
+**Formulario de la empresa** (lo completa el empleador la primera vez que entra a Cursos):
+
+| Pregunta | Dónde se guarda |
+|---|---|
+| 1. Dificultades del equipo | `FormulariosEmpleador.Dificultades` |
+| 2. Herramientas digitales (¿usan IA?) | `FormulariosEmpleador.Herramientas` |
+| 3. Objetivos de la capacitación | `FormulariosEmpleador.Objetivos` |
 
 ## 2. Cómo se lo mandamos (solicitud HTTP)
 
@@ -23,7 +35,7 @@ Header: `Authorization: Bearer <API key guardada en User Secrets>`
 
 ```json
 {
-  "model": "llama-3.3-70b-versatile",
+  "model": "openai/gpt-oss-20b",
   "temperature": 0.4,
   "max_tokens": 6000,
   "response_format": { "type": "json_object" },
@@ -82,10 +94,12 @@ Header: `Authorization: Bearer <API key guardada en User Secrets>`
 
 | JSON | Tabla / columna |
 |---|---|
-| `modelo`, `titulo`, `descripcion` + el empleado elegido | `Cursos` (Modelo, Titulo, Descripcion, **IdEmpleado** → así queda asignado) |
+| `modelo`, `titulo`, `descripcion` + el empleado elegido | `Cursos` (Modelo, Titulo, Descripcion, **IdEmpleado** → así queda asignado; Estado = "Borrador") |
 | cada elemento de `partes` | `PartesCurso` (IdCurso, Numero, Titulo, Contenido) |
 | cada elemento de `preguntas` | `Preguntas` (IdCurso, NumeroParte, Texto, OpcionA, OpcionB, OpcionC, Correcta) |
 
 Antes de guardar, el controller **valida**: que haya título, 5 partes y preguntas en las partes 2 y 4 con correcta A, B o C. Si la respuesta viene mal, le pide a la IA una vez más. Los textos se recortan al largo máximo de cada columna.
+
+El curso queda como **Borrador**: el empleador lo revisa y toca **Confirmar** (Estado = "Confirmado"). Recién ahí el empleado pasa a la lista de Empleados y ve el curso en su panel. Si no le gusta, lo **descarta** y lo genera de nuevo.
 
 **La IA nunca escribe en la base:** solo devuelve texto. Lo guarda nuestro código con stored procedures.
