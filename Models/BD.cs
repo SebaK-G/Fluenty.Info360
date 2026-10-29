@@ -16,13 +16,6 @@ public class BD
         return usuario;
     }
 
-    public int? ObtenerIdEmpresaPorNombre(string nombreEmpresa){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string query = "SELECT IdEmpresa FROM Empresas WHERE Nombre = @pNombre";
-            return connection.QueryFirstOrDefault<int?>(query, new { pNombre = nombreEmpresa.Trim() });
-        }
-    }
-
     public bool ExisteUsuarioDuplicado(string email, string dni, string telefono){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string query = @"SELECT TOP 1 IdUsuario FROM Usuarios WHERE Email = @pEmail OR Dni = @pDni OR Telefono = @pTelefono";
@@ -31,7 +24,7 @@ public class BD
         }
     }
 
-    // Crea el usuario (empleador o empleado) y devuelve su IdUsuario
+    // Crea el usuario y devuelve su IdUsuario (hoy lo usa el link para unirse; después, el alta desde la Landing)
     public int Signup(Usuarios usuario){
         int idUsuario = 0;
         string query = "INSERT INTO Usuarios (Nombre, Apellido, IdEmpresa, Email, Dni, Telefono, Contrasena, Rol, Puesto) VALUES (@pNombre, @pApellido, @pIdEmpresa, @pEmail, @pDni, @pTelefono, @pContrasena, @pRol, @pPuesto); SELECT CAST(SCOPE_IDENTITY() as int)";

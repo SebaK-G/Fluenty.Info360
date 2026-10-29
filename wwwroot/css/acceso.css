@@ -92,33 +92,6 @@ body {
     display: none;
 }
 
-/* Botones de navegación */
-
-.pestanas {
-    display: flex;
-    justify-content: center;
-    gap: 45px;
-    margin-bottom: 28px;
-}
-
-.pestana {
-    background: none;
-    border: none;
-    border-bottom: 2px solid #b6ccf6;
-    padding: 0 0 7px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.pestana:hover {
-    color: #001aab;
-}
-
-.pestana.activa {
-    border-bottom: 2px solid #0713a7;
-}
-
 /* Formularios */
 
 .formulario form {
@@ -172,35 +145,6 @@ body {
 
 .boton-enviar:hover {
     background-color: #171bc9;
-}
-
-/* Registro */
-
-.campos-registro {
-    display: flex;
-    flex-direction: column;
-    gap: 13px;
-}
-
-.opciones-radio {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.opciones-radio label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-}
-
-.opciones-radio input {
-    accent-color: #080ba8;
-}
-
-.boton-registro {
-    margin-top: 18px;
 }
 
 .mensajes {
@@ -309,16 +253,6 @@ body {
     .texto-promo {
         font-size: 21px;
     }
-
-    .pestanas {
-        gap: 35px;
-    }
-}
-
-/* Mantiene oculto el formulario que no está seleccionado */
-
-[hidden] {
-    display: none !important;
 }
 
 .logo-superior img {

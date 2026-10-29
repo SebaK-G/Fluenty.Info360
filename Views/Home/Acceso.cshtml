@@ -22,20 +22,6 @@
     <h1>Fluenty</h1>
 </div>
 
-            <nav class="pestanas">
-                <button type="button" id="boton-login"
-                        class="pestana activa"
-                        onclick="mostrarFormulario('login')">
-                    Iniciar sesión
-                </button>
-
-                <button type="button" id="boton-registro"
-                        class="pestana"
-                        onclick="mostrarFormulario('registro')">
-                    Registrarse
-                </button>
-            </nav>
-
             <div id="form-login" class="formulario">
                 <h2 class="titulo-formulario">Iniciar sesión</h2>
 
@@ -58,70 +44,8 @@
                 </form>
             </div>
 
-            <div id="form-registro" class="formulario" hidden>
-                <h2 class="titulo-formulario">Registrarse</h2>
-
-                <form asp-action="Signup" asp-controller="Home" method="post">
-                    <div class="campos-registro">
-                        <div class="campo">
-                            <label for="Nombre">Nombre:</label>
-                            <input type="text" id="Nombre" name="Nombre"
-                                   placeholder="Ingresa tu nombre" required />
-                        </div>
-
-                        <div class="campo">
-                            <label for="Apellido">Apellido:</label>
-                            <input type="text" id="Apellido" name="Apellido"
-                                   placeholder="Ingresa tu apellido" required />
-                        </div>
-
-                        <div class="campo">
-                            <label for="EmailRegistro">Email:</label>
-                            <input type="email" id="EmailRegistro" name="Email"
-                                   placeholder="Ingresa tu correo electrónico" required />
-                        </div>
-
-                        <div class="campo">
-                            <label for="NombreEmpresa">Nombre de la empresa:</label>
-                            <input type="text" id="NombreEmpresa" name="NombreEmpresa"
-                                   placeholder="Ingresa el nombre de la empresa" required />
-                        </div>
-
-                        <!-- Desde acá solo se registran empleadores. Los empleados se suman con el link de su empresa -->
-                        <div class="campo">
-                            <label for="Cargo">Tu cargo en la empresa:</label>
-                            <input type="text" id="Cargo" name="Cargo"
-                                   placeholder="Ej.: Dueño, Gerente de RR.HH." required />
-                        </div>
-
-                        <div class="campo">
-                            <label for="Dni">DNI:</label>
-                            <input type="text" id="Dni" name="Dni"
-                                   placeholder="Ingresa tu DNI" required />
-                        </div>
-
-                        <div class="campo">
-                            <label for="Telefono">Teléfono:</label>
-                            <input type="text" id="Telefono" name="Telefono"
-                                   placeholder="Ingresa tu teléfono" required />
-                        </div>
-
-                        <div class="campo">
-                            <label for="ContrasenaRegistro">Contraseña:</label>
-                            <input type="password" id="ContrasenaRegistro" name="Contrasena"
-                                   placeholder="Crea una contraseña" required />
-                        </div>
-                    </div>
-
-                    <div class="boton-registro">
-                        <input class="boton-enviar" type="submit" value="Registrarme" />
-                    </div>
-                </form>
-            </div>
-
             <div class="mensajes">
                 <p>@ViewBag.Mensaje</p>
-                <p>@ViewBag.MensajeRegistro</p>
             </div>
         </section>
 
@@ -159,26 +83,3 @@
 
     </div>
 </main>
-
-<script>
-    function mostrarFormulario(tipo) {
-        const login = document.getElementById("form-login");
-        const registro = document.getElementById("form-registro");
-        const botonLogin = document.getElementById("boton-login");
-        const botonRegistro = document.getElementById("boton-registro");
-
-        if (tipo === "login") {
-            login.hidden = false;
-            registro.hidden = true;
-
-            botonLogin.classList.add("activa");
-            botonRegistro.classList.remove("activa");
-        } else {
-            login.hidden = true;
-            registro.hidden = false;
-
-            botonRegistro.classList.add("activa");
-            botonLogin.classList.remove("activa");
-        }
-    }
-</script>
