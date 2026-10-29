@@ -3,7 +3,7 @@ namespace Fluenty.Info360.Models;
 public class FormulariosEmpleado
 {
     public int IdFormularioEmpleado { get; set; }
-    public int IdEmpleado { get; set; }
+    public int IdUsuario { get; set; }
     public int NivelIA { get; set; }
     public string Tareas { get; set; }
     public string Herramientas { get; set; }

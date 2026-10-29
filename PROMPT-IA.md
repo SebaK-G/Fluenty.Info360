@@ -8,7 +8,7 @@ Cuando el empleador toca **"Generar curso"** en un empleado que se sumó con el 
 
 | Pregunta | Dónde se guarda |
 |---|---|
-| Puesto | `Empleados.Puesto` |
+| Puesto | `Usuarios.Puesto` |
 | Nivel de IA (1 principiante, 2 intermedio, 3 avanzado) | `FormulariosEmpleado.NivelIA` |
 | Herramientas que usa | `FormulariosEmpleado.Herramientas` |
 | 1. Principal dificultad en su trabajo | `FormulariosEmpleado.DificultadPrincipal` |
@@ -94,7 +94,7 @@ Header: `Authorization: Bearer <API key guardada en User Secrets>`
 
 | JSON | Tabla / columna |
 |---|---|
-| `modelo`, `titulo`, `descripcion` + el empleado elegido | `Cursos` (Modelo, Titulo, Descripcion, **IdEmpleado** → así queda asignado; Estado = "Borrador") |
+| `modelo`, `titulo`, `descripcion` + el empleado elegido | `Cursos` (Modelo, Titulo, Descripcion, **IdUsuario** → así queda asignado; Estado = "Borrador") |
 | cada elemento de `partes` | `PartesCurso` (IdCurso, Numero, Titulo, Contenido) |
 | cada elemento de `preguntas` | `Preguntas` (IdCurso, NumeroParte, Texto, OpcionA, OpcionB, OpcionC, Correcta) |
 

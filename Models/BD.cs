@@ -31,11 +31,14 @@ public class BD
         }
     }
 
-       public void Signup(Usuarios usuario){
-        string query = "INSERT INTO Usuarios (Nombre, Apellido, IdEmpresa, Email, IdEmpleador, IdEmpleado, Dni, Telefono, Contrasena) VALUES (@pNombre, @pApellido, @pIdEmpresa, @pEmail, @pIdEmpleador, @pIdEmpleado, @pDni, @pTelefono, @pContrasena)";
+    // Crea el usuario (empleador o empleado) y devuelve su IdUsuario
+    public int Signup(Usuarios usuario){
+        int idUsuario = 0;
+        string query = "INSERT INTO Usuarios (Nombre, Apellido, IdEmpresa, Email, Dni, Telefono, Contrasena, Rol, Puesto) VALUES (@pNombre, @pApellido, @pIdEmpresa, @pEmail, @pDni, @pTelefono, @pContrasena, @pRol, @pPuesto); SELECT CAST(SCOPE_IDENTITY() as int)";
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            connection.Execute(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pIdEmpresa = usuario.IdEmpresa, pEmail = usuario.Email, pIdEmpleador = usuario.IdEmpleador, pIdEmpleado = usuario.IdEmpleado, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena });
+            idUsuario = connection.QuerySingle<int>(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pIdEmpresa = usuario.IdEmpresa, pEmail = usuario.Email, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena, pRol = usuario.Rol, pPuesto = usuario.Puesto });
         }
+        return idUsuario;
     }
 
     public int CrearEmpresa(Empresas empresa){
@@ -47,38 +50,10 @@ public class BD
         return idEmpresa;
     }
 
-    public int CrearEmpleado(Empleados empleado){
-        int idEmpleado = 0;
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string query = "INSERT INTO Empleados (Puesto, Estado) VALUES (@pPuesto, @pEstado); SELECT CAST(SCOPE_IDENTITY() as int)";
-            idEmpleado = connection.QuerySingle<int>(query, new { pPuesto = empleado.Puesto, pEstado = empleado.Estado });
-        }
-        return idEmpleado;
-    }
-
-    public int CrearEmpleador(Empleadores empleador){
-        int idEmpleador = 0;
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string query = "INSERT INTO Empleadores (Cargo, Estado) VALUES (@pCargo, @pEstado); SELECT CAST(SCOPE_IDENTITY() as int)";
-            idEmpleador = connection.QuerySingle<int>(query, new { pCargo = empleador.Cargo, pEstado = empleador.Estado });
-        }
-        return idEmpleador;
-    }
-
-    public void ActualizarUsuarioTipo(string email, int? idEmpleado, int? idEmpleador){
-        string query = @"UPDATE Usuarios SET IdEmpleado = @pIdEmpleado, IdEmpleador = @pIdEmpleador WHERE Email = @pEmail";
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            connection.Execute(query, new {
-                pIdEmpleado = idEmpleado,
-                pIdEmpleador = idEmpleador,
-                pEmail = email
-            });
-        }
-    }
     public void AgregarFormularioEmpleado(FormulariosEmpleado formulario){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AgregarFormularioEmpleado";
-            connection.Execute(storedProcedure, new { IdEmpleado = formulario.IdEmpleado, NivelIA = formulario.NivelIA, Tareas = formulario.Tareas, Herramientas = formulario.Herramientas, Dificultades = formulario.Dificultades, Objetivos = formulario.Objetivos, TiempoXDia = formulario.TiempoXDia, DificultadPrincipal = formulario.DificultadPrincipal, MejoraEmpresa = formulario.MejoraEmpresa, FortalezasDebilidades = formulario.FortalezasDebilidades, MejoraPersonal = formulario.MejoraPersonal }, commandType: CommandType.StoredProcedure);
+            connection.Execute(storedProcedure, new { IdUsuario = formulario.IdUsuario, NivelIA = formulario.NivelIA, Tareas = formulario.Tareas, Herramientas = formulario.Herramientas, Dificultades = formulario.Dificultades, Objetivos = formulario.Objetivos, TiempoXDia = formulario.TiempoXDia, DificultadPrincipal = formulario.DificultadPrincipal, MejoraEmpresa = formulario.MejoraEmpresa, FortalezasDebilidades = formulario.FortalezasDebilidades, MejoraPersonal = formulario.MejoraPersonal }, commandType: CommandType.StoredProcedure);
         }
     }
         public string TraerNombreEmpresa(int idEmpresa){
@@ -137,20 +112,20 @@ public class BD
         return lista;
     }
 
-    public Empleados TraerEmpleado(int idEmpleado){
-        Empleados empleado = null;
+    public Usuarios TraerEmpleado(int idUsuario){
+        Usuarios empleado = null;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_TraerEmpleado";
-            empleado = connection.QueryFirstOrDefault<Empleados>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
+            empleado = connection.QueryFirstOrDefault<Usuarios>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
         }
         return empleado;
     }
 
-    public FormulariosEmpleado TraerFormularioEmpleado(int idEmpleado){
+    public FormulariosEmpleado TraerFormularioEmpleado(int idUsuario){
         FormulariosEmpleado formulario = null;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_TraerFormularioEmpleado";
-            formulario = connection.QueryFirstOrDefault<FormulariosEmpleado>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
+            formulario = connection.QueryFirstOrDefault<FormulariosEmpleado>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
         }
         return formulario;
     }
@@ -168,7 +143,7 @@ public class BD
         int idCurso = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_CrearCurso";
-            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdEmpleado = curso.IdEmpleado, Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel }, commandType: CommandType.StoredProcedure);
+            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = curso.IdUsuario, Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel }, commandType: CommandType.StoredProcedure);
         }
         return idCurso;
     }
@@ -196,11 +171,11 @@ public class BD
         return curso;
     }
 
-    public Cursos TraerCursoPorEmpleado(int idEmpleado){
+    public Cursos TraerCursoPorEmpleado(int idUsuario){
         Cursos curso = null;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_TraerCursoPorEmpleado";
-            curso = connection.QueryFirstOrDefault<Cursos>(storedProcedure, new { IdEmpleado = idEmpleado }, commandType: CommandType.StoredProcedure);
+            curso = connection.QueryFirstOrDefault<Cursos>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
         }
         return curso;
     }
@@ -260,7 +235,7 @@ public class BD
     public void GuardarFormularioEmpleador(FormulariosEmpleador formulario){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_GuardarFormularioEmpleador";
-            connection.Execute(storedProcedure, new { IdEmpleador = formulario.IdEmpleador, Dificultades = formulario.Dificultades, Herramientas = formulario.Herramientas, Objetivos = formulario.Objetivos }, commandType: CommandType.StoredProcedure);
+            connection.Execute(storedProcedure, new { IdUsuario = formulario.IdUsuario, Dificultades = formulario.Dificultades, Herramientas = formulario.Herramientas, Objetivos = formulario.Objetivos }, commandType: CommandType.StoredProcedure);
         }
     }
 

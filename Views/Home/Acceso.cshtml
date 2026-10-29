@@ -88,7 +88,11 @@
                         </div>
 
                         <!-- Desde acá solo se registran empleadores. Los empleados se suman con el link de su empresa -->
-                        <input type="hidden" name="TipoUsuario" value="Empleador" />
+                        <div class="campo">
+                            <label for="Cargo">Tu cargo en la empresa:</label>
+                            <input type="text" id="Cargo" name="Cargo"
+                                   placeholder="Ej.: Dueño, Gerente de RR.HH." required />
+                        </div>
 
                         <div class="campo">
                             <label for="Dni">DNI:</label>

@@ -4,7 +4,7 @@ namespace Fluenty.Info360.Models;
 // Si todavía no tiene curso, IdCurso, Progreso y EstadoCurso quedan en null.
 public class EmpleadoCurso
 {
-    public int IdEmpleado { get; set; }
+    public int IdUsuario { get; set; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
     public string Puesto { get; set; }

@@ -69,12 +69,12 @@ public class CursoController : Controller
     [HttpPost]
     public IActionResult FormularioEmpresa(string Dificultades, string Herramientas, string Objetivos)
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador" || HttpContext.Session.GetString("IdEmpleador") == null)
+        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador" || HttpContext.Session.GetString("IdUsuario") == null)
         {
             return RedirectToAction("Acceso", "Home");
         }
         FormulariosEmpleador formulario = new FormulariosEmpleador();
-        formulario.IdEmpleador = int.Parse(HttpContext.Session.GetString("IdEmpleador"));
+        formulario.IdUsuario = int.Parse(HttpContext.Session.GetString("IdUsuario"));
         formulario.Dificultades = Dificultades;
         formulario.Herramientas = Herramientas;
         formulario.Objetivos = Objetivos;
@@ -86,7 +86,7 @@ public class CursoController : Controller
 
     // ============ EMPLEADOR: la IA genera el curso (queda como borrador) ============
     [HttpPost]
-    public async Task<IActionResult> Generar(int IdEmpleado)
+    public async Task<IActionResult> Generar(int IdUsuario)
     {
         if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
         {
@@ -96,7 +96,7 @@ public class CursoController : Controller
         int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
 
         // Si ya tiene curso (borrador o confirmado), no se genera otro
-        Cursos existente = bd.TraerCursoPorEmpleado(IdEmpleado);
+        Cursos existente = bd.TraerCursoPorEmpleado(IdUsuario);
         if (existente != null)
         {
             return RedirectToAction("Ver", new { IdCurso = existente.IdCurso });
@@ -108,8 +108,8 @@ public class CursoController : Controller
         }
 
         // 1) Los dos formularios
-        Empleados empleado = bd.TraerEmpleado(IdEmpleado);
-        FormulariosEmpleado formEmpleado = bd.TraerFormularioEmpleado(IdEmpleado);
+        Usuarios empleado = bd.TraerEmpleado(IdUsuario);
+        FormulariosEmpleado formEmpleado = bd.TraerFormularioEmpleado(IdUsuario);
         FormulariosEmpleador formEmpleador = bd.TraerFormularioEmpleadorEmpresa(idEmpresa);
 
         if (empleado == null || formEmpleado == null)
@@ -142,9 +142,9 @@ public class CursoController : Controller
             return MostrarError("La IA respondió con un formato incorrecto. Probá de nuevo.");
         }
 
-        // 3) Guardamos el curso como borrador, asignado al empleado por IdEmpleado
+        // 3) Guardamos el curso como borrador, asignado al empleado por IdUsuario
         Cursos curso = new Cursos();
-        curso.IdEmpleado = IdEmpleado;
+        curso.IdUsuario = IdUsuario;
         curso.Titulo = Recortar(cursoIA.Titulo, 100);
         curso.Descripcion = Recortar(cursoIA.Descripcion, 300);
         curso.Modelo = Recortar(cursoIA.Modelo, 50);
@@ -196,7 +196,7 @@ public class CursoController : Controller
         // Un empleado solo puede ver su propio curso, y solo si ya está confirmado
         if (tipoUsuario == "Empleado")
         {
-            if (curso.IdEmpleado.ToString() != HttpContext.Session.GetString("IdEmpleado") || curso.Estado != "Confirmado")
+            if (curso.IdUsuario.ToString() != HttpContext.Session.GetString("IdUsuario") || curso.Estado != "Confirmado")
             {
                 return RedirectToAction("PanelEmpleado", "Home");
             }
@@ -354,7 +354,7 @@ public class CursoController : Controller
     }
 
     // Los datos de los dos formularios: el del empleado y el de la empresa
-    private string ArmarDatos(Empleados empleado, FormulariosEmpleado formEmpleado, FormulariosEmpleador formEmpleador)
+    private string ArmarDatos(Usuarios empleado, FormulariosEmpleado formEmpleado, FormulariosEmpleador formEmpleador)
     {
         string nivel = "principiante";
         if (formEmpleado.NivelIA == 2)

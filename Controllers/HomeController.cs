@@ -60,8 +60,8 @@ public class HomeController : Controller
         ViewBag.NombreEmpresa = bd.TraerNombreEmpresa(idEmpresa);
 
         // Su curso, solo si el empleador ya lo confirmó
-        int idEmpleado = int.Parse(HttpContext.Session.GetString("IdEmpleado"));
-        Cursos curso = bd.TraerCursoPorEmpleado(idEmpleado);
+        int idUsuario = int.Parse(HttpContext.Session.GetString("IdUsuario"));
+        Cursos curso = bd.TraerCursoPorEmpleado(idUsuario);
         if (curso != null && curso.Estado == "Confirmado"){
             ViewBag.Curso = curso;
         }
@@ -75,46 +75,6 @@ public class HomeController : Controller
         BD bd = new BD();
         ViewBag.PorcentajeAhorro = bd.TraerPorcentajeAhorro();
         return View();
-    }
-
-    public IActionResult formularioTipoUsuario(string tipoUsuario){
-        ViewBag.TipoUsuario = tipoUsuario;
-        return View();
-    }
-
-    [HttpPost]
-    public IActionResult GuardarPerfilUsuario(string TipoUsuario, Empleadores empleador){
-        try{
-            BD bd = new BD();
-
-            // Solo se registran empleadores: los empleados se suman con el link de la empresa
-            if (TipoUsuario == "Empleador"){
-                if (string.IsNullOrWhiteSpace(empleador.Cargo)){
-                    ViewBag.TipoUsuario = TipoUsuario;
-                    ViewBag.MensajeTipoUsuario = "Debe ingresar el cargo del empleador.";
-                    return View("formularioTipoUsuario");
-                }
-
-                empleador.Estado = true;
-                int idEmpleador = bd.CrearEmpleador(empleador);
-
-                string email = HttpContext.Session.GetString("RegistroEmail");
-                if (!string.IsNullOrWhiteSpace(email)){
-                    bd.ActualizarUsuarioTipo(email, null, idEmpleador);
-                }
-                HttpContext.Session.SetString("TipoUsuario", "Empleador");
-                HttpContext.Session.SetString("IdEmpleador", idEmpleador.ToString());
-
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.MensajeTipoUsuario = "Debe seleccionar un tipo de usuario.";
-            return View("Acceso");
-        }
-        catch (Exception ex){
-            ViewBag.MensajeTipoUsuario = "No se pudo guardar la información: " + ex.Message;
-            return View("formularioTipoUsuario");
-        }
     }
 
     [HttpPost]
@@ -140,15 +100,13 @@ public class HomeController : Controller
             HttpContext.Session.SetString("Email", usuario.Email);
             HttpContext.Session.SetString("IdEmpresa", usuario.IdEmpresa.ToString());
 
-            // Si tiene IdEmpleado es empleado, si no es empleador
-            if (usuario.IdEmpleado != null && usuario.IdEmpleado > 0){
-                HttpContext.Session.SetString("TipoUsuario", "Empleado");
-                HttpContext.Session.SetString("IdEmpleado", usuario.IdEmpleado.ToString());
+            HttpContext.Session.SetString("IdUsuario", usuario.IdUsuario.ToString());
+
+            // El Rol dice si es empleado o empleador
+            HttpContext.Session.SetString("TipoUsuario", usuario.Rol);
+            if (usuario.Rol == "Empleado"){
                 return RedirectToAction("PanelEmpleado");
             }
-
-            HttpContext.Session.SetString("TipoUsuario", "Empleador");
-            HttpContext.Session.SetString("IdEmpleador", usuario.IdEmpleador.ToString());
             return RedirectToAction("Index");
         }
         ViewBag.Mensaje = "Email o contraseña incorrectos";
@@ -156,10 +114,10 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Signup(string Nombre, string Apellido, string Email, string NombreEmpresa, string TipoUsuario, string Dni, string Telefono, string Contrasena){
+    public IActionResult Signup(string Nombre, string Apellido, string Email, string NombreEmpresa, string Cargo, string Dni, string Telefono, string Contrasena){
         try{
             if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(Apellido) || string.IsNullOrWhiteSpace(Email) ||
-                string.IsNullOrWhiteSpace(NombreEmpresa) || string.IsNullOrWhiteSpace(TipoUsuario) ||
+                string.IsNullOrWhiteSpace(NombreEmpresa) || string.IsNullOrWhiteSpace(Cargo) ||
                 string.IsNullOrWhiteSpace(Dni) || string.IsNullOrWhiteSpace(Telefono) || string.IsNullOrWhiteSpace(Contrasena)){
                 ViewBag.MensajeRegistro = "Faltan datos obligatorios para registrar el usuario.";
                 return View("Acceso");
@@ -184,16 +142,19 @@ public class HomeController : Controller
             usuario.Dni = Dni;
             usuario.Telefono = Telefono;
             usuario.Contrasena = Contrasena;
+            // Desde acá solo se registran empleadores; los empleados se suman con el link
+            usuario.Rol = "Empleador";
+            usuario.Puesto = Cargo;
 
-            bd.Signup(usuario);
-            HttpContext.Session.SetString("RegistroEmail", Email);
-            HttpContext.Session.SetString("TipoUsuario", TipoUsuario);
+            int idUsuario = bd.Signup(usuario);
+            HttpContext.Session.SetString("IdUsuario", idUsuario.ToString());
+            HttpContext.Session.SetString("TipoUsuario", "Empleador");
             HttpContext.Session.SetString("Nombre", Nombre);
             HttpContext.Session.SetString("Email", Email);
             // En vez de la contraseña y el nombre de la empresa, guardamos el IdEmpresa
             HttpContext.Session.SetString("IdEmpresa", idEmpresa.Value.ToString());
 
-            return RedirectToAction("formularioTipoUsuario", new { tipoUsuario = TipoUsuario });
+            return RedirectToAction("Index");
         }
         catch (Exception ex){
             ViewBag.MensajeRegistro = "No se pudo registrar el usuario: " + ex.Message;

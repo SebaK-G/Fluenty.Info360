@@ -49,27 +49,22 @@ public class FormularioController : Controller
         if (Objetivo6 != null) { objetivos = objetivos + Objetivo6 + "; "; }
         if (OtroObjetivo != null && OtroObjetivo != "") { objetivos = objetivos + OtroObjetivo; }
 
-        // 1. Creamos el empleado con su puesto
-        Empleados empleado = new Empleados();
-        empleado.Puesto = Puesto;
-        empleado.Estado = true;
-        int idEmpleado = bd.CrearEmpleado(empleado);
-
-        // 2. Creamos su usuario, conectado a la empresa del link
+        // 1. Creamos su usuario con rol Empleado, conectado a la empresa del link
         Usuarios usuario = new Usuarios();
         usuario.Nombre = Nombre;
         usuario.Apellido = Apellido;
         usuario.Email = Email;
         usuario.IdEmpresa = empresa.IdEmpresa;
-        usuario.IdEmpleado = idEmpleado;
         usuario.Dni = Dni;
         usuario.Telefono = Telefono;
         usuario.Contrasena = Contrasena;
-        bd.Signup(usuario);
+        usuario.Rol = "Empleado";
+        usuario.Puesto = Puesto;
+        int idUsuario = bd.Signup(usuario);
 
-        // 3. Guardamos su formulario (preguntas del doc "Logica de los Cursos")
+        // 2. Guardamos su formulario (preguntas del doc "Logica de los Cursos")
         FormulariosEmpleado formulario = new FormulariosEmpleado();
-        formulario.IdEmpleado = idEmpleado;
+        formulario.IdUsuario = idUsuario;
         formulario.NivelIA = NivelIA;
         formulario.Herramientas = Herramientas;
         formulario.DificultadPrincipal = DificultadPrincipal;
