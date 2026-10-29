@@ -37,7 +37,15 @@ public class HomeController : Controller
         ViewBag.CantidadEmpleados = bd.ContarEmpleadosEmpresa(idEmpresa);
         ViewBag.EmpleadosActivos = ViewBag.CantidadEmpleados;
         ViewBag.MesesRestantes = bd.TraerMesesRestantesPlan();
-        ViewBag.Actividades = new List<string>(); // todavía no hay tabla de actividades
+        // Actividades recientes: los últimos 5 cursos confirmados de la empresa
+        List<ActividadCurso> cursosConfirmados = bd.TraerActividadesEmpresa(idEmpresa);
+        List<string> actividades = new List<string>();
+        foreach (ActividadCurso actividad in cursosConfirmados){
+            if (actividades.Count < 5){
+                actividades.Add("Curso \"" + actividad.Titulo + "\" asignado a " + actividad.Nombre + " " + actividad.Apellido);
+            }
+        }
+        ViewBag.Actividades = actividades;
 
         return View();
     }
@@ -50,6 +58,13 @@ public class HomeController : Controller
         int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
         ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
         ViewBag.NombreEmpresa = bd.TraerNombreEmpresa(idEmpresa);
+
+        // Su curso, solo si el empleador ya lo confirmó
+        int idEmpleado = int.Parse(HttpContext.Session.GetString("IdEmpleado"));
+        Cursos curso = bd.TraerCursoPorEmpleado(idEmpleado);
+        if (curso != null && curso.Estado == "Confirmado"){
+            ViewBag.Curso = curso;
+        }
         return View();
     }
     public IActionResult Acceso(){

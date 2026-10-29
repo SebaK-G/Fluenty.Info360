@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Curso creado";
+}
+
+<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+
+<div class="pagina-curso">
+    <main class="contenido-curso">
+        <div class="tarjeta-curso resultado">
+            <p class="tilde">✓</p>
+            <p>Ya puede ver el seguimiento de sus empleados</p>
+            <h1>El curso fue creado sin problemas</h1>
+            <p class="subtitulo-oscuro">"@ViewBag.Titulo"</p>
+            <div class="botones">
+                <a class="boton-curso" href='@Url.Action("Index", "Home")'>Volver</a>
+                <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.IdCurso })'>Ver curso</a>
+                <a class="boton-curso" href='@Url.Action("Index", "Empleado")'>Ver empleados</a>
+            </div>
+        </div>
+    </main>
+</div>

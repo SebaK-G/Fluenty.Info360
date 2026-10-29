@@ -209,6 +209,39 @@ public class CursoController : Controller
         return View();
     }
 
+    // ============ EMPLEADOR: confirma el curso y el empleado entra al equipo ============
+    [HttpPost]
+    public IActionResult Confirmar(int IdCurso)
+    {
+        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
+        {
+            return RedirectToAction("Acceso", "Home");
+        }
+        BD bd = new BD();
+        bd.ConfirmarCurso(IdCurso);
+        Cursos curso = bd.TraerCurso(IdCurso);
+        ViewBag.IdCurso = IdCurso;
+        ViewBag.Titulo = curso.Titulo;
+        return View("CursoCreado");
+    }
+
+    // ============ EMPLEADOR: descarta el borrador para generarlo de nuevo ============
+    [HttpPost]
+    public IActionResult Descartar(int IdCurso)
+    {
+        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
+        {
+            return RedirectToAction("Acceso", "Home");
+        }
+        BD bd = new BD();
+        Cursos curso = bd.TraerCurso(IdCurso);
+        if (curso != null && curso.Estado == "Borrador")
+        {
+            bd.BorrarCurso(IdCurso);
+        }
+        return RedirectToAction("Index");
+    }
+
     // ================= Métodos de ayuda =================
 
     private IActionResult MostrarError(string mensaje)

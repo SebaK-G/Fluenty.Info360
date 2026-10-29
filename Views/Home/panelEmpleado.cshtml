@@ -25,7 +25,16 @@
             <section class="tarjeta-empleado">
                 <h2>Mis cursos</h2>
                 <p>Acá vas a ver los cursos que tu empresa creó para vos.</p>
-                <p class="proximamente">Todavía no tenés cursos asignados.</p>
+                @if (ViewBag.Curso != null)
+                {
+                    <p class="proximamente">@ViewBag.Curso.Titulo</p>
+                    <p>@ViewBag.Curso.Descripcion</p>
+                    <a class="boton-empleado" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso })'>Ver mi curso</a>
+                }
+                else
+                {
+                    <p class="proximamente">Todavía no tenés cursos asignados.</p>
+                }
             </section>
 
             <section class="tarjeta-empleado">

@@ -117,3 +117,18 @@
         gap: 10px;
     }
 }
+.boton-empleado {
+    display: inline-block;
+    background-color: #0b1ca6;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 20px;
+    padding: 9px 22px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.boton-empleado:hover {
+    background-color: #075b99;
+    color: #ffffff;
+}
