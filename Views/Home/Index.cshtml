@@ -12,7 +12,7 @@
         <nav class="nav-app">
             <a href='@Url.Action("Index", "Home")' class="activo">Home</a>
             <a href='@Url.Action("Index", "Curso")'>Cursos</a>
-            <a href='@Url.Action("Landing", "Home")#calculadora'>Calculadora</a>
+            <a class="sin-link">Calculadora</a>
             <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
             <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
         </nav>
@@ -70,7 +70,7 @@
                         <h3>Calcular ahorro y rendimiento</h3>
                         <p>Calculá horas ahorradas y retorno en capacitación.</p>
                     </div>
-                    <a class="boton-home" href='@Url.Action("Landing", "Home")#calculadora'>Calcular</a>
+                    <span class="boton-home deshabilitado">Próximamente</span>
                 </div>
 
                 <div class="herramienta">

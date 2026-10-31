@@ -81,23 +81,7 @@ public class HomeController : Controller
     }
 
     public IActionResult Landing(){
-        BD bd = new BD();
-        ViewBag.PorcentajeAhorro = bd.TraerPorcentajeAhorro();
         return View();
-    }
-
-    [HttpPost]
-    public IActionResult CalcularEficiencia(int Empleados, int HorasSemana, int CostoHora){
-        BD bd = new BD();
-        int porcentajeAhorro = bd.TraerPorcentajeAhorro();
-
-        int horasMes = Empleados * HorasSemana * 4 * porcentajeAhorro / 100;
-        ViewBag.HorasMes = horasMes;
-        ViewBag.HorasAnio = horasMes * 12;
-        ViewBag.AhorroMes = horasMes * CostoHora;
-        ViewBag.AhorroAnio = horasMes * CostoHora * 12;
-        ViewBag.PorcentajeAhorro = porcentajeAhorro;
-        return View("Landing");
     }
 
       [HttpPost]
