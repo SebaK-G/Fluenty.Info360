@@ -1,107 +1,112 @@
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
 <div class="panel-principal">
 
-    <header class="main-header">
-        <div class="brand" aria-label="Fluenty">
+    <header class="encabezado-app">
+        <div class="logo-app">
             <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
             <span>Fluenty</span>
         </div>
-
-        <nav class="main-nav" aria-label="Navegación principal">
-            <a href="/Home/Index" class="nav-link active">Home</a>
-            <a href="#" class="nav-link">Buscador</a>
-            <a href="#" class="nav-link">Calculadora</a>
-            <a href="#" class="nav-link">Herramientas</a>
+        <nav class="nav-app">
+            <a href='@Url.Action("Index", "Home")' class="activo">Home</a>
+            <a href='@Url.Action("Index", "Curso")'>Cursos</a>
+            <a href='@Url.Action("Landing", "Home")#calculadora'>Calculadora</a>
+            <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
+            <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
         </nav>
     </header>
 
-    <main>
-        <h1>¡Hola, @ViewBag.Nombre!</h1>
+    <main class="home">
 
-        <div class="plan">
-            <h2>Tu empresa</h2>
-            <p>Bienvenido al panel de @ViewBag.NombreEmpresa.</p>
-            <p>Gestioná las capacitaciones y el equipo de tu empresa desde un solo lugar.</p>
-        </div>
+        <!-- Saludo + plan (Figma: Home) -->
+        <div class="fila-superior">
+            <div class="izquierda">
+                <section class="tarjeta-home saludo">
+                    <h1>¡Hola, @ViewBag.Nombre!</h1>
+                    <p>Todo lo que necesitás para capacitar, gestionar y hacer más eficiente a todo el equipo de @ViewBag.NombreEmpresa, en un solo lugar.</p>
+                </section>
 
-        <div class="estadisticas">
-            <div>
-                <h2>@ViewBag.CantidadCursos</h2>
-                <p>Cursos creados</p>
+                <div class="estadisticas">
+                    <div class="tarjeta-home">
+                        <h2>@ViewBag.CantidadCursos</h2>
+                        <p>Cursos asignados</p>
+                    </div>
+                    <div class="tarjeta-home">
+                        <h2>@ViewBag.CantidadEmpleados</h2>
+                        <p>Empleados en tu equipo</p>
+                    </div>
+                    <div class="tarjeta-home">
+                        <h2>@ViewBag.EsperandoCurso</h2>
+                        <p>Esperando su curso</p>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <h2>@ViewBag.CantidadEmpleados</h2>
-                <p>Empleados en tu equipo</p>
-            </div>
-        </div>
-
-        <div class="secciones">
-
-            <section>
-                <h2>Herramientas principales</h2>
-
-                <div>
-                    <h3>Crear curso con IA</h3>
-                    <p>Generá capacitaciones adaptadas a tu equipo.</p>
-                    <a href='@Url.Action("Index", "Curso")'>Generar</a>
-                </div>
-
-                <div>
-                    <h3>Visualizar empleados</h3>
-                    <p>Mirá tu equipo y los cursos que le asignaste.</p>
-                    <a href='@Url.Action("Index", "Empleado")'>Seguir</a>
-                </div>
-
-                <div>
-                    <h3>Buscar curso</h3>
-                    <p>Encontrá las capacitaciones disponibles.</p>
-                    <a href="">Buscar</a>
-                </div>
-            </section>
-
-
-            <section class="actividades">
+            <section class="tarjeta-home plan">
+                <p class="etiqueta-plan">✓ Tu plan</p>
                 <h2>Plan Empresarial Activo</h2>
-                <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más, con acceso simultáneo para @ViewBag.EmpleadosActivos empleados activos.</p>
+                <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más.</p>
+                <p><strong>@ViewBag.EmpleadosActivos</strong> empleados se sumaron con el link de tu empresa.</p>
             </section>
-
-
-            <div class="actividades">
-                <h2>Actividades recientes</h2>
-                <a href="">Ver todas</a>
-
-                @if (ViewBag.Actividades.Count > 0)
-                {
-                    foreach (string actividad in ViewBag.Actividades)
-                    {
-                        <p>@actividad</p>
-                    }
-                }
-                else
-                {
-                    <p>Todavía no hay actividades recientes.</p>
-                }
-            </div>
-
-
-            <section class="actividades">
-                <h2>Cursos de tu empresa</h2>
-
-                @if (ViewBag.CantidadCursos > 0)
-                {
-                    <p>Tu empresa tiene @ViewBag.CantidadCursos cursos creados.</p>
-                }
-                else
-                {
-                    <p>Todavía no hay cursos registrados.</p>
-                }
-            </section>
-
         </div>
+
+        <!-- Herramientas principales -->
+        <section class="tarjeta-home herramientas">
+            <h2>Herramientas principales</h2>
+
+            <div class="grilla-herramientas">
+                <div class="herramienta">
+                    <div>
+                        <h3>Crear curso con IA</h3>
+                        <p>Generá cursos completos con IA adaptados al rol y puesto en segundos.</p>
+                    </div>
+                    <a class="boton-home" href='@Url.Action("Index", "Curso")'>Generar</a>
+                </div>
+
+                <div class="herramienta">
+                    <div>
+                        <h3>Calcular ahorro y rendimiento</h3>
+                        <p>Calculá horas ahorradas y retorno en capacitación.</p>
+                    </div>
+                    <a class="boton-home" href='@Url.Action("Landing", "Home")#calculadora'>Calcular</a>
+                </div>
+
+                <div class="herramienta">
+                    <div>
+                        <h3>Explorar nuevos cursos</h3>
+                        <p>Encontrá capacitaciones en el catálogo de Fluenty.</p>
+                    </div>
+                    <span class="boton-home deshabilitado">Próximamente</span>
+                </div>
+
+                <div class="herramienta">
+                    <div>
+                        <h3>Visualizar empleados</h3>
+                        <p>Seguí el progreso de tu equipo y los cursos que le asignaste.</p>
+                    </div>
+                    <a class="boton-home" href='@Url.Action("Index", "Empleado")'>Seguir</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Actividades recientes -->
+        <section class="tarjeta-home">
+            <h2>Actividades recientes</h2>
+
+            @if (ViewBag.Actividades.Count > 0)
+            {
+                foreach (string actividad in ViewBag.Actividades)
+                {
+                    <p class="actividad">@actividad</p>
+                }
+            }
+            else
+            {
+                <p>Todavía no hay actividades. Cuando confirmes el curso de un empleado, va a aparecer acá.</p>
+            }
+        </section>
 
     </main>
 </div>

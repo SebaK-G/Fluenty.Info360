@@ -35,7 +35,10 @@ public class HomeController : Controller
         ViewBag.NombreEmpresa = bd.TraerNombreEmpresa(idEmpresa);
         ViewBag.CantidadCursos = bd.ContarCursosEmpresa(idEmpresa);
         ViewBag.CantidadEmpleados = bd.ContarEmpleadosEmpresa(idEmpresa);
-        ViewBag.EmpleadosActivos = ViewBag.CantidadEmpleados;
+        // Registrados = todos los que se unieron con el link; en el equipo = los que ya tienen curso confirmado
+        int registrados = bd.TraerEmpleadosConCurso(idEmpresa).Count;
+        ViewBag.EmpleadosActivos = registrados;
+        ViewBag.EsperandoCurso = registrados - ViewBag.CantidadEmpleados;
         ViewBag.MesesRestantes = bd.TraerMesesRestantesPlan();
         // Actividades recientes: los últimos 5 cursos confirmados de la empresa
         List<ActividadCurso> cursosConfirmados = bd.TraerActividadesEmpresa(idEmpresa);
@@ -67,6 +70,12 @@ public class HomeController : Controller
         }
         return View();
     }
+    // Cerrar sesión: borra todo lo guardado en Session y vuelve a la Landing
+    public IActionResult Salir(){
+        HttpContext.Session.Clear();
+        return RedirectToAction("Landing");
+    }
+
     public IActionResult Acceso(){
         return View();
     }

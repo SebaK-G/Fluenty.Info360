@@ -7,15 +7,17 @@
 
 <div class="pagina-curso">
 
-    <header class="encabezado-curso">
-        <div class="logo-curso">
+    <header class="encabezado-app">
+        <div class="logo-app">
             <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
             <span>Fluenty</span>
         </div>
-        <nav class="nav-curso">
+        <nav class="nav-app">
             <a href='@Url.Action("Index", "Home")'>Home</a>
             <a href='@Url.Action("Index", "Curso")'>Cursos</a>
+            <a href='@Url.Action("Landing", "Home")#calculadora'>Calculadora</a>
             <a href='@Url.Action("Index", "Empleado")' class="activo">Empleados</a>
+            <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
         </nav>
     </header>
 

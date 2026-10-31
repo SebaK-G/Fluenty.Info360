@@ -63,6 +63,12 @@ public class CursoController : Controller
         {
             return RedirectToAction("Acceso", "Home");
         }
+        // Si la empresa ya lo completó, no se completa de nuevo
+        BD bd = new BD();
+        if (bd.TraerFormularioEmpleadorEmpresa(int.Parse(HttpContext.Session.GetString("IdEmpresa"))) != null)
+        {
+            return RedirectToAction("Index");
+        }
         return View();
     }
 
@@ -80,7 +86,10 @@ public class CursoController : Controller
         formulario.Objetivos = Objetivos;
 
         BD bd = new BD();
-        bd.GuardarFormularioEmpleador(formulario);
+        if (bd.TraerFormularioEmpleadorEmpresa(int.Parse(HttpContext.Session.GetString("IdEmpresa"))) == null)
+        {
+            bd.GuardarFormularioEmpleador(formulario);
+        }
         return RedirectToAction("Index");
     }
 
@@ -112,7 +121,7 @@ public class CursoController : Controller
         FormulariosEmpleado formEmpleado = bd.TraerFormularioEmpleado(IdUsuario);
         FormulariosEmpleador formEmpleador = bd.TraerFormularioEmpleadorEmpresa(idEmpresa);
 
-        if (empleado == null || formEmpleado == null)
+        if (empleado == null || formEmpleado == null || empleado.IdEmpresa != idEmpresa)
         {
             return MostrarError("Ese empleado todavía no completó su formulario.");
         }
@@ -211,6 +220,12 @@ public class CursoController : Controller
             return RedirectToAction("Index", "Home");
         }
 
+        // El empleador solo ve cursos de su empresa
+        if (tipoUsuario == "Empleador" && !EsDeMiEmpresa(bd, curso))
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
         // Un empleado solo puede ver su propio curso, y solo si ya está confirmado
         if (tipoUsuario == "Empleado")
         {
@@ -236,8 +251,12 @@ public class CursoController : Controller
             return RedirectToAction("Acceso", "Home");
         }
         BD bd = new BD();
-        bd.ConfirmarCurso(IdCurso);
         Cursos curso = bd.TraerCurso(IdCurso);
+        if (curso == null || !EsDeMiEmpresa(bd, curso))
+        {
+            return RedirectToAction("Index");
+        }
+        bd.ConfirmarCurso(IdCurso);
         ViewBag.IdCurso = IdCurso;
         ViewBag.Titulo = curso.Titulo;
         return View("CursoCreado");
@@ -253,7 +272,7 @@ public class CursoController : Controller
         }
         BD bd = new BD();
         Cursos curso = bd.TraerCurso(IdCurso);
-        if (curso != null && curso.Estado == "Borrador")
+        if (curso != null && curso.Estado == "Borrador" && EsDeMiEmpresa(bd, curso))
         {
             bd.BorrarCurso(IdCurso);
         }
@@ -261,6 +280,13 @@ public class CursoController : Controller
     }
 
     // ================= Métodos de ayuda =================
+
+    // El curso es de un empleado de la empresa del que está logueado (así nadie ve cursos de otra empresa)
+    private bool EsDeMiEmpresa(BD bd, Cursos curso)
+    {
+        Usuarios dueno = bd.TraerEmpleado(curso.IdUsuario);
+        return dueno != null && dueno.IdEmpresa.ToString() == HttpContext.Session.GetString("IdEmpresa");
+    }
 
     private IActionResult MostrarError(string mensaje)
     {
