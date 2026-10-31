@@ -1,7 +1,8 @@
 namespace Fluenty.Info360.Models;
 
-// Una lección de una unidad. Estado: Bloqueada, Disponible, Completada o YaSabe.
-// NumeroUnidad viene de sp_TraerLeccionesCurso, para saber en qué unidad mostrarla.
+// Una lección de una unidad (el contenido).
+// Estado y NumeroUnidad no son columnas de Lecciones: vienen de sp_TraerLeccionesUsuario.
+// Estado sale de LeccionXUsuario (Bloqueada, Disponible, Completada o YaSabe) para esa persona.
 public class Lecciones
 {
     public int IdLeccion { get; set; }

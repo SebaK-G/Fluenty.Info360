@@ -1,3 +1,4 @@
+@using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Crea tu curso con IA";
 }
@@ -35,9 +36,14 @@
                     <textarea id="Dificultades" name="Dificultades" rows="4" maxlength="500" required placeholder="Ej.: tardamos mucho en responder mails y armar reportes"></textarea>
                 </div>
 
-                <div class="campo-curso">
-                    <label for="Herramientas">2. ¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? Si es así, ¿cuáles?</label>
-                    <textarea id="Herramientas" name="Herramientas" rows="3" maxlength="250" required placeholder="Ej.: Gmail, Excel, WhatsApp Business. No usamos IA todavía"></textarea>
+                <div class="campo-curso opciones-varias">
+                    <label>2. ¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? (podés elegir varias)</label>
+                    <div class="casillas-herramientas">
+                        @foreach (Herramientas herramienta in ViewBag.Herramientas)
+                        {
+                            <label><input type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                        }
+                    </div>
                 </div>
 
                 <div class="campo-curso">

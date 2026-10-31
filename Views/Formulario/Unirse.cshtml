@@ -1,3 +1,4 @@
+@using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Sumate a tu equipo";
 }
@@ -45,15 +46,15 @@
                 </div>
                 <div class="campo-curso">
                     <label for="Email">Correo electrónico</label>
-                    <input type="email" id="Email" name="Email" maxlength="50" required placeholder="Ingresá tu correo" />
+                    <input type="email" id="Email" name="Email" maxlength="100" required placeholder="Ingresá tu correo" />
                 </div>
                 <div class="campo-curso">
                     <label for="Dni">DNI</label>
-                    <input type="text" id="Dni" name="Dni" maxlength="50" required placeholder="Ingresá tu DNI" />
+                    <input type="text" id="Dni" name="Dni" maxlength="10" required placeholder="Ingresá tu DNI" />
                 </div>
                 <div class="campo-curso">
                     <label for="Telefono">Teléfono</label>
-                    <input type="tel" id="Telefono" name="Telefono" maxlength="50" required placeholder="Ingresá tu teléfono" />
+                    <input type="tel" id="Telefono" name="Telefono" maxlength="20" required placeholder="Ingresá tu teléfono" />
                 </div>
                 <div class="campo-curso">
                     <label for="Contrasena">Contraseña</label>
@@ -77,9 +78,14 @@
                         <option value="3">Avanzado</option>
                     </select>
                 </div>
-                <div class="campo-curso">
-                    <label for="Herramientas">Herramientas que usás</label>
-                    <input type="text" id="Herramientas" name="Herramientas" maxlength="250" required placeholder="Ej.: ChatGPT, Excel, Gmail, CRM" />
+                <div class="campo-curso opciones-varias">
+                    <label>Herramientas que usás (podés elegir varias)</label>
+                    <div class="casillas-herramientas">
+                        @foreach (Herramientas herramienta in ViewBag.Herramientas)
+                        {
+                            <label><input type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                        }
+                    </div>
                 </div>
 
                 <!-- ===== Bloque A: tu trabajo y tus objetivos ===== -->

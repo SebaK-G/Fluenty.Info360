@@ -177,7 +177,8 @@
 
 .fondo-carga {
     display: none;
-    position: absolute;
+    position: fixed;
+    z-index: 20;
     top: 0;
     left: 0;
     width: 100%;
@@ -270,6 +271,15 @@
     .fila-empleado {
         flex-direction: column;
     }
+
+    .casillas-herramientas {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .fila-rehacer {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
 
 /* ----- Formularios y link ----- */
@@ -300,6 +310,18 @@
 
 .opciones-varias label {
     font-weight: normal;
+}
+
+.para-empleado {
+    color: #44546a;
+    margin-bottom: 6px;
+}
+
+/* Casillas del catálogo de herramientas (formularios) */
+.casillas-herramientas {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px 16px;
 }
 
 .link-empresa {
@@ -435,6 +457,40 @@
 
 .unidad-sabida .encabezado-unidad {
     background-color: #8a96a6;
+}
+
+/* ----- Rehacer una unidad (solo en el borrador) ----- */
+
+.rehacer-unidad {
+    background-color: #eef4fa;
+    border: 1px dashed #9db4cc;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 10px;
+}
+
+.rehacer-unidad label {
+    display: block;
+    color: #172333;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.fila-rehacer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rehacer-unidad textarea {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #c4d0de;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    resize: vertical;
 }
 
 /* ----- El camino de lecciones ----- */

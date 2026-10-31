@@ -31,9 +31,18 @@
 
     <main class="contenido-curso">
 
+        @if (ViewBag.Error != null)
+        {
+            <p class="aviso">@ViewBag.Error</p>
+        }
+
         <!-- ===== Portada del curso ===== -->
         <div class="tarjeta-curso portada">
             <p class="modelo">@ViewBag.Curso.Modelo</p>
+            @if (ViewBag.EsEmpleador)
+            {
+                <p class="para-empleado">Curso para <strong>@ViewBag.NombreEmpleado</strong></p>
+            }
             <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
             <p>@ViewBag.Curso.Descripcion</p>
 
@@ -47,8 +56,8 @@
             <p class="objetivos">@ViewBag.Curso.Objetivos</p>
 
             <div class="nivelacion">
-                <p><strong>🎯 Nivelación: arranca en la Unidad @ViewBag.Curso.UnidadInicial</strong></p>
-                <p>@ViewBag.Curso.MotivoNivel</p>
+                <p><strong>🎯 Nivelación: arranca en la Unidad @ViewBag.Asignacion.UnidadInicial</strong></p>
+                <p>@ViewBag.Asignacion.MotivoNivel</p>
             </div>
         </div>
 
@@ -57,17 +66,17 @@
         {
             string claseUnidad = "unidad unidad-color-" + unidad.Numero;
             string etiqueta = "";
-            if (unidad.Numero < ViewBag.Curso.UnidadInicial)
+            if (unidad.Numero < ViewBag.Asignacion.UnidadInicial)
             {
                 claseUnidad = "unidad unidad-sabida";
                 etiqueta = "Ya lo sabés";
             }
-            if (unidad.Numero == ViewBag.Curso.UnidadInicial)
+            if (unidad.Numero == ViewBag.Asignacion.UnidadInicial)
             {
                 etiqueta = "Empezás acá";
             }
 
-            <section class="@claseUnidad">
+            <section class="@claseUnidad" id="unidad-@unidad.Numero">
                 <div class="encabezado-unidad">
                     <p class="numero-unidad">Unidad @unidad.Numero</p>
                     <h2>@unidad.Titulo</h2>
@@ -98,6 +107,20 @@
                         }
                     }
                 </div>
+
+                @if (ViewBag.EsEmpleador && ViewBag.Curso.Estado == "Borrador")
+                {
+                    <!-- Rehacer solo esta unidad con un pedido para la IA -->
+                    <form class="rehacer-unidad" method="post" action='@Url.Action("RehacerUnidad", "Curso")' onsubmit="mostrarCarga()">
+                        <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
+                        <input type="hidden" name="NumeroUnidad" value="@unidad.Numero" />
+                        <label for="Pedido-@unidad.Numero">¿Querés cambiar la unidad @unidad.Numero? Contale a la IA qué cambiar:</label>
+                        <div class="fila-rehacer">
+                            <textarea id="Pedido-@unidad.Numero" name="Pedido" rows="2" maxlength="300" required placeholder="Ej.: que sea más difícil, con más ejemplos de Excel"></textarea>
+                            <input class="boton-curso" type="submit" value="Rehacer unidad @unidad.Numero" />
+                        </div>
+                    </form>
+                }
             </section>
         }
 
@@ -132,3 +155,27 @@
         </div>
     </main>
 </div>
+
+@if (ViewBag.EsEmpleador && ViewBag.Curso.Estado == "Borrador")
+{
+    <!-- Pantalla de carga mientras la IA rehace la unidad (la misma que al generar el curso) -->
+    <div id="carga" class="fondo-carga">
+        <div class="tarjeta-curso caja-carga">
+            <h2>Rehaciendo la unidad</h2>
+            <p>Procesando tu pedido</p>
+            <div class="barra"><div class="barra-relleno animada"></div></div>
+            <p>La IA está armando de nuevo esta unidad. El resto del curso queda igual.</p>
+        </div>
+    </div>
+
+    <script>
+        function mostrarCarga() {
+            document.getElementById("carga").style.display = "flex";
+        }
+
+        // Si el empleador vuelve para atrás, el cartel de carga se cierra
+        window.onpageshow = function () {
+            document.getElementById("carga").style.display = "none";
+        };
+    </script>
+}

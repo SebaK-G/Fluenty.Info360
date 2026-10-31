@@ -15,12 +15,15 @@ public class FormularioController : Controller
             return View("LinkInvalido");
         }
         ViewBag.Empresa = empresa;
+        // Las casillas de herramientas salen del catálogo
+        ViewBag.Herramientas = bd.TraerHerramientas();
         return View();
     }
 
+    // Herramientas llega con el IdHerramienta de cada casilla tildada (puede venir vacío)
     [HttpPost]
     public IActionResult Unirse(string Codigo, string Nombre, string Apellido, string Email, string Dni, string Telefono, string Contrasena,
-        string Puesto, int NivelIA, string Herramientas, string DificultadPrincipal, string MejoraEmpresa,
+        string Puesto, int NivelIA, int[] Herramientas, string DificultadPrincipal, string MejoraEmpresa,
         string FortalezasDebilidades, string MejoraPersonal, string Tarea1, string Tarea2, string Tarea3,
         string Dificultades, string Objetivo1, string Objetivo2, string Objetivo3, string Objetivo4,
         string Objetivo5, string Objetivo6, string OtroObjetivo, int TiempoXDia)
@@ -35,6 +38,7 @@ public class FormularioController : Controller
         if (bd.ExisteUsuarioDuplicado(Email, Dni, Telefono))
         {
             ViewBag.Empresa = empresa;
+            ViewBag.Herramientas = bd.TraerHerramientas();
             ViewBag.Mensaje = "Ya existe un usuario con ese email, DNI o teléfono.";
             return View();
         }
@@ -66,7 +70,6 @@ public class FormularioController : Controller
         FormulariosEmpleado formulario = new FormulariosEmpleado();
         formulario.IdUsuario = idUsuario;
         formulario.NivelIA = NivelIA;
-        formulario.Herramientas = Herramientas;
         formulario.DificultadPrincipal = DificultadPrincipal;
         formulario.MejoraEmpresa = MejoraEmpresa;
         formulario.FortalezasDebilidades = FortalezasDebilidades;
@@ -76,6 +79,15 @@ public class FormularioController : Controller
         formulario.Objetivos = objetivos;
         formulario.TiempoXDia = TiempoXDia;
         bd.AgregarFormularioEmpleado(formulario);
+
+        // 3. Las herramientas que tildó, en la tabla intermedia HerramientasXUsuario
+        if (Herramientas != null)
+        {
+            foreach (int idHerramienta in Herramientas)
+            {
+                bd.AgregarHerramientaUsuario(idUsuario, idHerramienta);
+            }
+        }
 
         ViewBag.Nombre = Nombre;
         return View("Listo");

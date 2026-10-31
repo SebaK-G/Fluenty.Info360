@@ -1,6 +1,7 @@
 namespace Fluenty.Info360.Models;
 
-// Empleados y empleadores son todos usuarios: Rol dice qué es cada uno ("Empleador" o "Empleado")
+// Empleados y empleadores son todos usuarios: Rol dice qué es cada uno ("Empleador" o "Empleado").
+// Activo = false es un usuario desactivado (no se borra, pero ya no puede entrar).
 public class Usuarios
 {
     public int IdUsuario { get; set; }
@@ -13,4 +14,5 @@ public class Usuarios
     public string Contrasena { get; set; }
     public string Rol { get; set; }
     public string Puesto { get; set; }
+    public bool Activo { get; set; }
 }

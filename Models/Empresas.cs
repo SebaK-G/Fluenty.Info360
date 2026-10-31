@@ -8,4 +8,5 @@ public class Empresas
 	public int CantidadEmpleados { get; set; }
 	public string Cuit { get; set; }
 	public string Codigo { get; set; }
+	public bool Activo { get; set; }
 }
