@@ -26,7 +26,9 @@ public class FormularioController : Controller
         string Puesto, int NivelIA, int[] Herramientas, string DificultadPrincipal, string MejoraEmpresa,
         string FortalezasDebilidades, string MejoraPersonal, string Tarea1, string Tarea2, string Tarea3,
         string Dificultades, string Objetivo1, string Objetivo2, string Objetivo3, string Objetivo4,
-        string Objetivo5, string Objetivo6, string OtroObjetivo, int TiempoXDia)
+        string Objetivo5, string Objetivo6, string OtroObjetivo, int TiempoXDia,
+        string RangoEdad, string ComodidadTecnologia, string[] ComoAprende, string Hobbies, string Area,
+        string DiaTipico, string TareaConcreta, string DatosClientes, string[] PreocupacionIA)
     {
         BD bd = new BD();
         Empresas empresa = bd.TraerEmpresaPorCodigo(Codigo);
@@ -78,6 +80,16 @@ public class FormularioController : Controller
         formulario.Dificultades = Dificultades;
         formulario.Objetivos = objetivos;
         formulario.TiempoXDia = TiempoXDia;
+        // Preguntas para personalizar cómo se le explica
+        formulario.RangoEdad = RangoEdad;
+        formulario.ComodidadTecnologia = ComodidadTecnologia;
+        formulario.ComoAprende = Juntar(ComoAprende);
+        formulario.Hobbies = Hobbies;
+        formulario.Area = Area;
+        formulario.DiaTipico = DiaTipico;
+        formulario.TareaConcreta = TareaConcreta;
+        formulario.DatosClientes = DatosClientes;
+        formulario.PreocupacionIA = Juntar(PreocupacionIA);
         bd.AgregarFormularioEmpleado(formulario);
 
         // 3. Las herramientas que tildó, en la tabla intermedia HerramientasXUsuario
@@ -91,5 +103,23 @@ public class FormularioController : Controller
 
         ViewBag.Nombre = Nombre;
         return View("Listo");
+    }
+
+    // Junta las casillas tildadas en un solo texto: "Con ejemplos prácticos; Directo al grano"
+    private string Juntar(string[] opciones)
+    {
+        string texto = "";
+        if (opciones != null)
+        {
+            foreach (string opcion in opciones)
+            {
+                if (texto != "")
+                {
+                    texto = texto + "; ";
+                }
+                texto = texto + opcion;
+            }
+        }
+        return texto;
     }
 }

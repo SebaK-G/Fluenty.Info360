@@ -4,6 +4,7 @@
 }
 
 <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
 
 <div class="pagina-curso">
 
@@ -21,40 +22,69 @@
         </nav>
     </header>
 
-    <main class="contenido-curso">
-        <div class="tarjeta-curso titulo-pantalla">
-            <h1>Crea tu curso con IA</h1>
-            <p>Antes de empezar, contanos cómo querés que sean los cursos de tu equipo. La IA va a usar estas respuestas en todos los cursos que genere.</p>
-        </div>
+    <main class="formulario-empresa">
+        <section class="titulo-formulario-empresa">
+            <p class="etiqueta-formulario">Antes de empezar · 3 preguntas</p>
+            <h1>Contanos sobre tu equipo</h1>
+            <p>La IA va a usar estas respuestas en todos los cursos que genere para tu empresa. Lo completás una sola vez.</p>
+        </section>
 
-        <div class="tarjeta-curso">
-            <h2 class="centrado-texto">Formulario de Creación de Cursos</h2>
+        <form method="post" action='@Url.Action("FormularioEmpresa", "Curso")'>
 
-            <form method="post" action='@Url.Action("FormularioEmpresa", "Curso")'>
-                <div class="campo-curso">
-                    <label for="Dificultades">1. ¿Cuáles son los principales problemas o dificultades que enfrenta tu equipo en el trabajo diario? ¿Qué tareas o procesos te gustaría mejorar?</label>
+            <!-- ===== Pregunta 1 ===== -->
+            <section class="tarjeta-completar">
+                <div class="encabezado-paso">
+                    <span class="numero-paso">1</span>
+                    <div>
+                        <p class="de-pasos">Pregunta 1 de 3</p>
+                        <h2>Las dificultades de tu equipo</h2>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="Dificultades">¿Cuáles son los principales problemas o dificultades que enfrenta tu equipo en el trabajo diario? ¿Qué tareas o procesos te gustaría mejorar?</label>
                     <textarea id="Dificultades" name="Dificultades" rows="4" maxlength="500" required placeholder="Ej.: tardamos mucho en responder mails y armar reportes"></textarea>
                 </div>
+            </section>
 
-                <div class="campo-curso opciones-varias">
-                    <label>2. ¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? (podés elegir varias)</label>
-                    <div class="casillas-herramientas">
+            <!-- ===== Pregunta 2 ===== -->
+            <section class="tarjeta-completar">
+                <div class="encabezado-paso">
+                    <span class="numero-paso">2</span>
+                    <div>
+                        <p class="de-pasos">Pregunta 2 de 3</p>
+                        <h2>Las herramientas que usan</h2>
+                    </div>
+                </div>
+                <div class="campo">
+                    <p class="pregunta-campo">¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? <span>(podés elegir varias)</span></p>
+                    <div class="opciones">
                         @foreach (Herramientas herramienta in ViewBag.Herramientas)
                         {
-                            <label><input type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                            <label class="eleccion"><input type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
                         }
                     </div>
                 </div>
+            </section>
 
-                <div class="campo-curso">
-                    <label for="Objetivos">3. ¿Qué te gustaría lograr mediante la capacitación de tus empleados? ¿Qué mejoras esperás conseguir en la productividad o en la forma de trabajar?</label>
+            <!-- ===== Pregunta 3 ===== -->
+            <section class="tarjeta-completar">
+                <div class="encabezado-paso">
+                    <span class="numero-paso">3</span>
+                    <div>
+                        <p class="de-pasos">Pregunta 3 de 3</p>
+                        <h2>Lo que querés lograr</h2>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="Objetivos">¿Qué te gustaría lograr mediante la capacitación de tus empleados? ¿Qué mejoras esperás conseguir en la productividad o en la forma de trabajar?</label>
                     <textarea id="Objetivos" name="Objetivos" rows="4" maxlength="500" required placeholder="Ej.: ahorrar horas en tareas repetitivas y cometer menos errores"></textarea>
                 </div>
+            </section>
 
-                <div class="centrado">
-                    <input class="boton-curso grande" type="submit" value="Guardar y continuar" />
-                </div>
-            </form>
-        </div>
+            <div class="acciones-completar">
+                <input type="submit" value="Guardar y continuar" />
+                <p>Después vas a poder compartir el link con tu equipo.</p>
+            </div>
+        </form>
     </main>
 </div>

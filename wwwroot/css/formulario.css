@@ -1,0 +1,224 @@
+/* ===================================================
+   FORMULARIOS (los usan el del empleado y el de la empresa)
+   Tarjetas numeradas, campos y opciones para tocar.
+   Mobile first: primero celular, después compu.
+   =================================================== */
+
+/* ----- Tarjeta de cada paso ----- */
+
+.tarjeta-completar {
+    background-color: #ffffff;
+    border-radius: 18px;
+    padding: 24px 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 12px 30px #00000035;
+}
+
+.encabezado-paso {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e3eaf3;
+}
+
+.numero-paso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0b1ca6, #2f8cff);
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.de-pasos {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #0668c6;
+}
+
+.encabezado-paso h2 {
+    font-size: 22px;
+    color: #172333;
+}
+
+.ayuda-paso {
+    font-size: 14px;
+    color: #6b7a8f;
+    margin-top: 2px;
+}
+
+/* ----- Campos ----- */
+
+.grilla-campos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 18px;
+}
+
+.campo {
+    margin-bottom: 22px;
+}
+
+.campo label,
+.pregunta-campo {
+    display: block;
+    font-size: 15px;
+    font-weight: bold;
+    color: #172333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.pregunta-campo span {
+    font-weight: normal;
+    color: #6b7a8f;
+    font-size: 14px;
+}
+
+.ayuda-campo {
+    font-size: 13px;
+    color: #6b7a8f;
+    margin: -4px 0 8px 0;
+}
+
+.campo input[type="text"],
+.campo input[type="email"],
+.campo input[type="tel"],
+.campo input[type="password"],
+.campo select,
+.campo textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #c4d0de;
+    border-radius: 12px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    color: #172333;
+    background-color: #f7f9fc;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: none;
+    border-color: #0668c6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px #0668c625;
+}
+
+.campo textarea {
+    resize: vertical;
+}
+
+.grilla-tareas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.otro {
+    margin-top: 10px;
+}
+
+/* ----- Opciones para tocar (radios y casillas) ----- */
+
+.opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.opciones-columna {
+    flex-direction: column;
+}
+
+/* "label" dentro de .campo ya es negrita y en bloque: acá lo pisamos para las opciones */
+.campo .eleccion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-weight: normal;
+    font-size: 15px;
+    color: #172333;
+    background-color: #f3f7fc;
+    border: 2px solid #dce4ee;
+    border-radius: 12px;
+    padding: 11px 14px;
+    cursor: pointer;
+}
+
+.campo .eleccion:hover {
+    border-color: #2f8cff;
+}
+
+.eleccion input {
+    width: 18px;
+    height: 18px;
+    accent-color: #0668c6;
+}
+
+/* La opción elegida se pinta de azul */
+.campo .eleccion:has(input:checked) {
+    background-color: #e8f1fc;
+    border-color: #0668c6;
+    font-weight: bold;
+}
+
+/* ----- Botón final ----- */
+
+.acciones-completar {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.acciones-completar input[type="submit"] {
+    width: 100%;
+    background: linear-gradient(to right, #0668c6, #2f8cff);
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 30px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px #0668c660;
+}
+
+.acciones-completar input[type="submit"]:hover {
+    background: linear-gradient(to right, #0b1ca6, #0668c6);
+}
+
+.acciones-completar p {
+    color: #a9bad0;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+/* ----- Tablet y compu ----- */
+
+@media (min-width: 700px) {
+    .tarjeta-completar {
+        padding: 30px 34px;
+    }
+
+    .grilla-campos {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .grilla-tareas {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .acciones-completar input[type="submit"] {
+        width: auto;
+        min-width: 320px;
+    }
+}

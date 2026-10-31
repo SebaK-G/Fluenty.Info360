@@ -272,10 +272,6 @@
         flex-direction: column;
     }
 
-    .casillas-herramientas {
-        grid-template-columns: 1fr 1fr;
-    }
-
     .fila-rehacer {
         flex-direction: column;
         align-items: stretch;
@@ -315,13 +311,6 @@
 .para-empleado {
     color: #44546a;
     margin-bottom: 6px;
-}
-
-/* Casillas del catálogo de herramientas (formularios) */
-.casillas-herramientas {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px 16px;
 }
 
 .link-empresa {
@@ -585,4 +574,43 @@
         display: inline-block;
         margin-top: 10px;
     }
+}
+
+/* ----- Formulario de la empresa (las tarjetas y opciones están en formulario.css) ----- */
+
+.formulario-empresa {
+    width: 100%;
+    max-width: 820px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.titulo-formulario-empresa {
+    color: #ffffff;
+    padding: 34px 4px 22px 4px;
+    animation: aparecer 0.6s ease;
+}
+
+.etiqueta-formulario {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #8fd3ff;
+    background-color: #8fd3ff18;
+    border: 1px solid #8fd3ff40;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+}
+
+.titulo-formulario-empresa h1 {
+    font-size: 36px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+}
+
+.titulo-formulario-empresa > p {
+    color: #c4d3e6;
+    font-size: 16px;
 }

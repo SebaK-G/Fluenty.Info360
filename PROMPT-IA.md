@@ -9,7 +9,7 @@ Cuando el empleador toca **"Generar curso"** en un empleado que se sumó con el 
 | Pregunta | Dónde se guarda |
 |---|---|
 | Puesto | `Usuarios.Puesto` |
-| Nivel de IA (1 principiante, 2 intermedio, 3 avanzado) | `FormulariosEmpleado.NivelIA` |
+| Nivel de IA (1 nunca la usó, 2 la probó, 3 la usa a veces, 4 la usa seguido en el trabajo) | `FormulariosEmpleado.NivelIA` |
 | Herramientas que usa (casillas del catálogo) | `HerramientasXUsuario` → `Herramientas.Nombre` |
 | 1. Principal dificultad en su trabajo | `FormulariosEmpleado.DificultadPrincipal` |
 | 2. Qué le gustaría que la empresa mejore en su puesto | `FormulariosEmpleado.MejoraEmpresa` |
@@ -18,7 +18,18 @@ Cuando el empleador toca **"Generar curso"** en un empleado que se sumó con el 
 | 5. Las 3 tareas repetitivas | `FormulariosEmpleado.Tareas` |
 | 6. Errores o dificultades en esas tareas | `FormulariosEmpleado.Dificultades` |
 | 7. Qué quiere conseguir con el curso | `FormulariosEmpleado.Objetivos` |
-| Minutos por día para capacitarse | `FormulariosEmpleado.TiempoXDia` |
+| Minutos por día para capacitarse (5, 10, 15 o 20) | `FormulariosEmpleado.TiempoXDia` |
+| Área | `FormulariosEmpleado.Area` |
+| Cómo es un día típico | `FormulariosEmpleado.DiaTipico` |
+| Una tarea de esta semana que le llevó de más | `FormulariosEmpleado.TareaConcreta` |
+| Si maneja datos de clientes | `FormulariosEmpleado.DatosClientes` |
+| Edad (en rango) | `FormulariosEmpleado.RangoEdad` |
+| Qué tan cómodo está con la compu y el celular | `FormulariosEmpleado.ComodidadTecnologia` |
+| Cómo le gusta aprender | `FormulariosEmpleado.ComoAprende` |
+| Qué le gusta hacer fuera del trabajo | `FormulariosEmpleado.Hobbies` |
+| Qué le preocupa de la IA | `FormulariosEmpleado.PreocupacionIA` |
+
+Las últimas 9 preguntas (Bloque E del doc) sirven para que la IA sepa **cómo explicarle** a cada persona: el tono según la edad y la comodidad con la tecnología, ejemplos de su día real y comparaciones con lo que le gusta.
 
 **Formulario de la empresa** (lo completa el empleador la primera vez que entra a Cursos):
 
@@ -62,6 +73,8 @@ El curso es **estilo Duolingo**: un camino de **4 unidades × 5 lecciones** (20 
 > **Nivelación:** decidí en qué unidad arranca (1 a 4) según lo que ya sabe de IA y explicá por qué.
 >
 > **Modelo de curso:** elegí uno de los 7 del doc "Logica de los Cursos".
+>
+> **Personalización:** ejemplos de su área y su día típico; la primera lección resuelve la tarea concreta que contó; tono según su edad y su comodidad con la tecnología; aprovechar cómo le gusta aprender y sus hobbies; si maneja datos de clientes, una lección sobre cuidarlos; si algo de la IA le preocupa, una lección temprana que lo responda.
 >
 > **Reglas:** español rioplatense, claro y motivador; títulos cortos; objetivos que empiecen con un verbo; nunca pedir datos privados de clientes. Respondé SOLO con el JSON del punto 4.
 

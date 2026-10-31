@@ -575,7 +575,7 @@ public class CursoController : Controller
         texto = texto + "Usá sus tareas, herramientas, dificultades y objetivos reales en los títulos y objetivos de las lecciones.\n\n";
 
         texto = texto + "NIVELACIÓN: decidí en qué unidad arranca (unidadInicial, de 1 a 4) según lo que ya sabe de IA. ";
-        texto = texto + "Un principiante arranca en la 1. Un intermedio que ya usa ChatGPT puede arrancar en la 2. Solo un avanzado que ya lo usa en su trabajo arranca en la 3. ";
+        texto = texto + "Si nunca la usó o solo la probó, arranca en la 1. Si la usa a veces para cosas simples, puede arrancar en la 2. Solo si la usa seguido en su trabajo arranca en la 3. ";
         texto = texto + "Casi nunca se arranca en la 4. En motivoNivel explicá en una oración por qué lo ubicaste ahí.\n\n";
 
         texto = texto + "ELEGÍ UNO DE ESTOS 7 MODELOS DE CURSO según el puesto: ";
@@ -586,6 +586,14 @@ public class CursoController : Controller
         texto = texto + "Creativo y marketing (ideas, textos, imágenes; cuidado con la originalidad y los derechos de autor). ";
         texto = texto + "Técnico y datos (programadores, analistas, soporte: más avanzado, encontrar errores, comparar soluciones). ";
         texto = texto + "Primer contacto (si es principiante y casi no usa tecnología).\n\n";
+
+        texto = texto + "PERSONALIZACIÓN (muy importante): el curso tiene que sentirse hecho para esta persona.\n";
+        texto = texto + "- Usá el área y el día típico para que los ejemplos sean de su trabajo real.\n";
+        texto = texto + "- La primera lección de la unidad en la que arranca tiene que resolver la tarea concreta que contó de esta semana.\n";
+        texto = texto + "- Adaptá el tono a su edad y a qué tan cómodo está con la tecnología: si le cuesta, títulos simples, sin palabras técnicas y avanzando de a poco.\n";
+        texto = texto + "- Tené en cuenta cómo le gusta aprender y sus hobbies: aprovechalos para que el curso le resulte cercano.\n";
+        texto = texto + "- Si maneja datos de clientes, incluí una lección sobre cuidar esos datos al usar IA.\n";
+        texto = texto + "- Si algo de la IA le preocupa, incluí una lección temprana que responda esa preocupación con calma.\n\n";
 
         texto = texto + "REGLAS: español rioplatense, claro, motivador y sin relleno. Títulos de lección cortos (máximo 60 caracteres). ";
         texto = texto + "Objetivo de cada lección: una oración que empiece con un verbo (\"Aprender a...\", \"Usar...\", \"Detectar...\"). Nunca pidas datos privados de clientes.\n\n";
@@ -635,18 +643,25 @@ public class CursoController : Controller
     // Los datos de los dos formularios: el del empleado y el de la empresa
     private string ArmarDatos(BD bd, Usuarios empleado, FormulariosEmpleado formEmpleado, FormulariosEmpresa formEmpresa)
     {
-        string nivel = "principiante";
+        // NivelIA: 1 = nunca la usó, 2 = la probó alguna vez, 3 = la usa a veces, 4 = la usa seguido en el trabajo
+        string nivel = "principiante: nunca usó una IA";
         if (formEmpleado.NivelIA == 2)
         {
-            nivel = "intermedio";
+            nivel = "principiante: probó una IA alguna vez";
         }
         if (formEmpleado.NivelIA == 3)
         {
-            nivel = "avanzado";
+            nivel = "intermedio: usa la IA a veces para cosas simples";
+        }
+        if (formEmpleado.NivelIA == 4)
+        {
+            nivel = "avanzado: usa la IA seguido en su trabajo";
         }
 
         string datos = "FORMULARIO DEL EMPLEADO:\n";
         datos = datos + "Puesto: " + empleado.Puesto + "\n";
+        datos = datos + "Área: " + formEmpleado.Area + "\n";
+        datos = datos + "Cómo es un día típico de su trabajo: " + formEmpleado.DiaTipico + "\n";
         datos = datos + "Nivel con la IA: " + nivel + "\n";
         datos = datos + "Herramientas que usa: " + NombresHerramientas(bd.TraerHerramientasUsuario(empleado.IdUsuario)) + "\n";
         datos = datos + "Principal dificultad en su trabajo: " + formEmpleado.DificultadPrincipal + "\n";
@@ -656,7 +671,16 @@ public class CursoController : Controller
         datos = datos + "Sus 3 tareas repetitivas: " + formEmpleado.Tareas + "\n";
         datos = datos + "Errores o dificultades en esas tareas: " + formEmpleado.Dificultades + "\n";
         datos = datos + "Qué quiere conseguir con el curso: " + formEmpleado.Objetivos + "\n";
+        datos = datos + "Una tarea de esta semana que le llevó más de lo que debería: " + formEmpleado.TareaConcreta + "\n";
+        datos = datos + "¿Maneja datos de clientes?: " + formEmpleado.DatosClientes + "\n";
         datos = datos + "Minutos por día para capacitarse: " + formEmpleado.TiempoXDia + "\n\n";
+
+        datos = datos + "CÓMO EXPLICARLE (sobre la persona):\n";
+        datos = datos + "Edad: " + formEmpleado.RangoEdad + "\n";
+        datos = datos + "Qué tan cómodo se siente con la compu y el celular: " + formEmpleado.ComodidadTecnologia + "\n";
+        datos = datos + "Cómo le gusta aprender: " + formEmpleado.ComoAprende + "\n";
+        datos = datos + "Qué le gusta hacer fuera del trabajo: " + formEmpleado.Hobbies + "\n";
+        datos = datos + "Qué le preocupa de la IA: " + formEmpleado.PreocupacionIA + "\n\n";
 
         if (formEmpresa != null)
         {

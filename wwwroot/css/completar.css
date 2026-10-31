@@ -1,280 +1,168 @@
+/* ===================================================
+   FORMULARIO DEL EMPLEADO (llega por el link de WhatsApp)
+   Solo lo propio de esta página (fondo, encabezado, título y pasos).
+   Las tarjetas, los campos y las opciones están en formulario.css.
+   Mobile first: primero celular, después compu.
+   =================================================== */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html,
 body {
-    width: 100%;
-    min-height: 100%;
-    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(160deg, #0d1726, #13294a 50%, #0b3a6e);
+    min-height: 100vh;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    color: #080808;
-    background: linear-gradient(to bottom, #202f3e, #075b99);
-}
-
-/* Fondo de pantalla completa */
 .pagina-completar {
     width: 100%;
-    min-height: 100vh;
-    background: linear-gradient(to bottom, #202f3e, #075b99);
+    padding-bottom: 50px;
 }
 
-/* Encabezado */
+/* ----- Encabezado ----- */
+
 .encabezado-invitar {
-    width: 100%;
-    min-height: 58px;
-    background-color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 5%;
-    gap: 20px;
+    gap: 12px;
+    background-color: #ffffff;
+    padding: 12px 18px;
+    margin-top: 12px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px #00000030;
 }
 
-/* Logo */
 .logo-invitar {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 20px;
     font-weight: bold;
-    white-space: nowrap;
+    color: #172333;
 }
 
 .logo-invitar img {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
+    width: 32px;
+    height: 32px;
 }
 
-/* Navegación */
-.nav-invitar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    flex-wrap: wrap;
+.tiempo-invitar {
+    font-size: 13px;
+    color: #44546a;
+    font-weight: bold;
 }
 
-.nav-invitar a {
-    background-color: #080ba8;
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-    padding: 7px 18px;
-    font-size: 12px;
-    text-align: center;
-}
+/* ----- Contenido ----- */
 
-.nav-invitar a:hover {
-    background-color: #171bc9;
-}
-
-/* Contenido: ocupa todo el ancho disponible */
 .contenido-completar {
     width: 100%;
-    max-width: 1150px;
+    max-width: 820px;
     margin: 0 auto;
-    padding: 45px 25px 55px;
 }
 
-/* Tarjeta del saludo */
 .titulo-completar {
-    width: 100%;
-    background-color: white;
-    border-radius: 15px;
-    padding: 23px 30px;
-    text-align: center;
+    color: #ffffff;
+    padding: 34px 4px 22px 4px;
+    animation: aparecer 0.6s ease;
+}
+
+.etiqueta-completar {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #8fd3ff;
+    background-color: #8fd3ff18;
+    border: 1px solid #8fd3ff40;
+    padding: 5px 12px;
+    border-radius: 20px;
     margin-bottom: 14px;
 }
 
 .titulo-completar h1 {
-    font-size: 28px;
-    margin-bottom: 8px;
+    font-size: 34px;
+    line-height: 1.2;
+    margin-bottom: 10px;
 }
 
-.titulo-completar p {
-    font-size: 14px;
-    line-height: 1.6;
+.titulo-completar > p {
+    color: #c4d3e6;
+    font-size: 16px;
+    line-height: 1.5;
 }
 
-/* Mensajes */
-.mensaje-completar {
-    background-color: white;
-    border-left: 4px solid #087bff;
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin-bottom: 14px;
-    font-size: 14px;
-}
-
-/* Tarjeta del formulario */
-.tarjeta-completar {
-    width: 100%;
-    background-color: white;
-    border-radius: 15px;
-    padding: 35px 45px;
-}
-
-/* Formulario en dos columnas */
-.tarjeta-completar form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 22px 45px;
-}
-
-/* Títulos de sección */
-.seccion-completar {
-    grid-column: 1 / -1;
-    margin-bottom: -5px;
-}
-
-.seccion-completar h2 {
-    color: #080ba8;
-    font-size: 21px;
-    margin-bottom: 6px;
-}
-
-.descripcion-seccion {
-    font-size: 13px;
-    color: #555;
-}
-
-/* Separador visual de la cuenta */
-.seccion-cuenta {
-    border-top: 1px solid #e0e0e5;
-    padding-top: 22px;
-    margin-top: 8px;
-}
-
-/* Campos */
-.campo-completar {
+/* Los 5 pasos de arriba */
+.pasos-completar {
+    list-style-type: none;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 8px;
-    min-width: 0;
+    margin-top: 20px;
 }
 
-.campo-completar label {
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-/* Inputs, select y textarea */
-.campo-completar input,
-.campo-completar select,
-.campo-completar textarea {
-    width: 100%;
-    border: none;
-    border-radius: 10px;
-    background-color: #f2f2f4;
-    padding: 12px;
-    box-shadow: 0 2px 3px #00000030;
-    font-family: Arial, sans-serif;
-    font-size: 13px;
-    color: #202f3e;
-}
-
-.campo-completar input,
-.campo-completar select {
-    height: 43px;
-}
-
-.campo-completar textarea {
-    min-height: 95px;
-    resize: vertical;
-    line-height: 1.5;
-}
-
-.campo-completar input::placeholder,
-.campo-completar textarea::placeholder {
-    color: #929eb1;
-}
-
-/* Foco */
-.campo-completar input:focus,
-.campo-completar select:focus,
-.campo-completar textarea:focus {
-    outline: 2px solid #168cff;
-}
-
-/* Contraseña y botón */
-.campo-contrasena {
-    grid-column: 1 / -1;
-    max-width: calc(50% - 22px);
-}
-
-.acciones-completar {
-    grid-column: 1 / -1;
+.pasos-completar a {
     display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #ffffff12;
+    border: 1px solid #ffffff30;
+    border-radius: 20px;
+    padding: 5px 14px 5px 5px;
+}
+
+.pasos-completar a:hover {
+    background-color: #ffffff25;
+}
+
+.pasos-completar span {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-top: 4px;
-}
-
-.acciones-completar input {
-    min-width: 155px;
-    min-height: 42px;
-    padding: 10px 24px;
-    background-color: #080ba8;
-    color: white;
-    border: none;
-    border-radius: 22px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #2f8cff;
     font-size: 13px;
-    cursor: pointer;
 }
 
-.acciones-completar input:hover {
-    background-color: #171bc9;
+/* Mensaje de error (por ejemplo, usuario repetido) */
+.mensaje-completar {
+    background-color: #fff4e5;
+    color: #8a4b00;
+    border-left: 4px solid #e8890c;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-weight: bold;
 }
 
-/* Adaptación a celulares */
-@media (max-width: 700px) {
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ----- Tablet y compu ----- */
+
+@media (min-width: 700px) {
     .encabezado-invitar {
-        flex-direction: column;
-        padding: 15px;
-    }
-
-    .nav-invitar {
-        gap: 6px;
-    }
-
-    .nav-invitar a {
-        padding: 7px 12px;
-    }
-
-    .contenido-completar {
-        padding: 25px 12px;
-    }
-
-    .titulo-completar {
-        padding: 22px 15px;
+        padding: 12px 4%;
     }
 
     .titulo-completar h1 {
-        font-size: 23px;
-    }
-
-    .tarjeta-completar {
-        padding: 25px 20px;
-    }
-
-    .tarjeta-completar form {
-        grid-template-columns: 1fr;
-        gap: 19px;
-    }
-
-    .seccion-completar,
-    .campo-contrasena,
-    .acciones-completar {
-        grid-column: auto;
-    }
-
-    .campo-contrasena {
-        max-width: none;
+        font-size: 44px;
     }
 }

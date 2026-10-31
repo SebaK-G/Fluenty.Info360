@@ -47,7 +47,7 @@ public class BD
     public void AgregarFormularioEmpleado(FormulariosEmpleado formulario){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AgregarFormularioEmpleado";
-            connection.Execute(storedProcedure, new { IdUsuario = formulario.IdUsuario, NivelIA = formulario.NivelIA, Tareas = formulario.Tareas, Dificultades = formulario.Dificultades, Objetivos = formulario.Objetivos, TiempoXDia = formulario.TiempoXDia, DificultadPrincipal = formulario.DificultadPrincipal, MejoraEmpresa = formulario.MejoraEmpresa, FortalezasDebilidades = formulario.FortalezasDebilidades, MejoraPersonal = formulario.MejoraPersonal }, commandType: CommandType.StoredProcedure);
+            connection.Execute(storedProcedure, new { IdUsuario = formulario.IdUsuario, NivelIA = formulario.NivelIA, Tareas = formulario.Tareas, Dificultades = formulario.Dificultades, Objetivos = formulario.Objetivos, TiempoXDia = formulario.TiempoXDia, DificultadPrincipal = formulario.DificultadPrincipal, MejoraEmpresa = formulario.MejoraEmpresa, FortalezasDebilidades = formulario.FortalezasDebilidades, MejoraPersonal = formulario.MejoraPersonal, RangoEdad = formulario.RangoEdad, ComodidadTecnologia = formulario.ComodidadTecnologia, ComoAprende = formulario.ComoAprende, Hobbies = formulario.Hobbies, Area = formulario.Area, DiaTipico = formulario.DiaTipico, TareaConcreta = formulario.TareaConcreta, DatosClientes = formulario.DatosClientes, PreocupacionIA = formulario.PreocupacionIA }, commandType: CommandType.StoredProcedure);
         }
     }
         public string TraerNombreEmpresa(int idEmpresa){
