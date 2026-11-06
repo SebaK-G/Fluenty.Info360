@@ -4,7 +4,7 @@ using Fluenty.Info360.Models;
 namespace Fluenty.Info360.Controllers;
 
 // Sprint 2: las personas de los rangos que el usuario tiene abajo, con su avance, XP y racha
-public class EmpleadoController : Controller
+public class EmpleadosController : Controller
 {
     public IActionResult Index()
     {

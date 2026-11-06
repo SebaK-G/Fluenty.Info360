@@ -1,0 +1,56 @@
+@using Fluenty.Info360.Models
+@{
+    ViewData["Title"] = "Empleados";
+}
+
+<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+
+<div class="pagina-curso">
+
+    <header class="encabezado-app">
+        <div class="logo-app">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        @await Html.PartialAsync("_NavApp", "Empleados")
+    </header>
+
+    <main class="contenido-curso">
+        <div class="tarjeta-curso">
+            <h1 class="titulo-curso centrado-texto">Empleados</h1>
+
+            @if (ViewBag.Equipo.Count == 0)
+            {
+                <p class="centrado-texto">Todavía no hay nadie en tus rangos. Compartí el link de cada rango desde Equipo.</p>
+                <div class="centrado">
+                    <a class="boton-curso" href='@Url.Action("Index", "Equipo")'>Ir a Equipo</a>
+                </div>
+            }
+            else
+            {
+                @foreach (EmpleadoCurso empleado in ViewBag.Equipo)
+                {
+                    <div class="fila-empleado">
+                        <div>
+                            <p class="nombre-empleado">@empleado.Nombre @empleado.Apellido</p>
+                            <p class="puesto">@empleado.NombreRango · @empleado.Puesto</p>
+                        </div>
+                        @if (empleado.EstadoCurso == "Confirmado")
+                        {
+                            <span class="estado">@empleado.Progreso% · ⚡ @empleado.XP XP · 🔥 @empleado.Racha</span>
+                            <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso, IdUsuario = empleado.IdUsuario })'>Ver su camino</a>
+                        }
+                        else if (empleado.TieneFormulario)
+                        {
+                            <span class="estado">Esperando su curso</span>
+                        }
+                        else
+                        {
+                            <span class="estado">Sin formulario</span>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </main>
+</div>
