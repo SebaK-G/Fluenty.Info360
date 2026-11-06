@@ -34,42 +34,93 @@ public class GroqService
             throw new Exception("Falta configurar Groq:ApiKey en User Secrets.");
         }
 
-        // 1) Armamos el cuerpo del pedido
-        object cuerpo;
-        object[] mensajes = new object[]
+        try
         {
-            new { role = "system", content = instrucciones },
-            new { role = "user", content = datos }
-        };
-        if (pedirJson)
-        {
-            cuerpo = new { model = Modelo, temperature = 0.4, max_tokens = 8000, response_format = new { type = "json_object" }, messages = mensajes };
-        }
-        else
-        {
-            cuerpo = new { model = Modelo, temperature = 0.4, max_tokens = 1500, messages = mensajes };
-        }
+            // 1) Armamos el cuerpo del pedido
+            object cuerpo;
+            object[] mensajes = new object[]
+            {
+                new { role = "system", content = instrucciones },
+                new { role = "user", content = datos }
+            };
+            if (pedirJson)
+            {
+                cuerpo = new { model = Modelo, temperature = 0.4, max_tokens = 8000, response_format = new { type = "json_object" }, messages = mensajes };
+            }
+            else
+            {
+                cuerpo = new { model = Modelo, temperature = 0.4, max_tokens = 1500, messages = mensajes };
+            }
 
-        // 2) Mandamos la solicitud POST con la API key
-        HttpRequestMessage pedido = new HttpRequestMessage(HttpMethod.Post, Url);
-        pedido.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
-        pedido.Content = new StringContent(JsonSerializer.Serialize(cuerpo), Encoding.UTF8, "application/json");
+            // 2) Mandamos la solicitud POST con la API key
+            HttpRequestMessage pedido = new HttpRequestMessage(HttpMethod.Post, Url);
+            pedido.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+            pedido.Content = new StringContent(JsonSerializer.Serialize(cuerpo), Encoding.UTF8, "application/json");
 
-        HttpResponseMessage respuesta = await _httpClient.SendAsync(pedido);
-        string texto = await respuesta.Content.ReadAsStringAsync();
+            HttpResponseMessage respuesta = await _httpClient.SendAsync(pedido);
+            string texto = await respuesta.Content.ReadAsStringAsync();
 
-        // 3) Errores comunes
-        if ((int)respuesta.StatusCode == 429)
-        {
-            throw new Exception("La IA está recibiendo muchos pedidos. Esperá unos segundos y probá de nuevo.");
+            // 3) Errores comunes
+            if ((int)respuesta.StatusCode == 429)
+            {
+                throw new InvalidOperationException("La IA está recibiendo muchos pedidos. Esperá unos segundos y probá de nuevo.");
+            }
+
+            if (!respuesta.IsSuccessStatusCode)
+            {
+                throw new InvalidOperationException("Groq respondió con error " + (int)respuesta.StatusCode + ": " + texto);
+            }
+
+            // 4) Intentamos parsear la respuesta del modelo
+            JsonDocument documento;
+            try
+            {
+                documento = JsonDocument.Parse(texto);
+            }
+            catch (JsonException ex)
+            {
+                string vistaPrevia = texto.Length > 500 ? texto.Substring(0, 500) + "..." : texto;
+                throw new InvalidOperationException("No se pudo leer la respuesta de Groq porque la API devolvió un formato inválido. Respuesta recibida: " + vistaPrevia, ex);
+            }
+
+            if (!documento.RootElement.TryGetProperty("choices", out JsonElement choices) ||
+                choices.ValueKind != JsonValueKind.Array ||
+                choices.GetArrayLength() == 0)
+            {
+                throw new InvalidOperationException("Groq no devolvió una respuesta válida en el campo 'choices'.");
+            }
+
+            JsonElement primerChoice = choices[0];
+            if (!primerChoice.TryGetProperty("message", out JsonElement message) ||
+                !message.TryGetProperty("content", out JsonElement content) ||
+                content.ValueKind != JsonValueKind.String)
+            {
+                throw new InvalidOperationException("Groq devolvió una respuesta sin contenido útil para mostrar.");
+            }
+
+            string resultado = content.GetString();
+            if (string.IsNullOrWhiteSpace(resultado))
+            {
+                throw new InvalidOperationException("Groq devolvió una respuesta vacía o sin texto.");
+            }
+
+            return resultado;
         }
-        if (!respuesta.IsSuccessStatusCode)
+        catch (HttpRequestException ex)
         {
-            throw new Exception("Groq respondió con error " + (int)respuesta.StatusCode + ": " + texto);
+            throw new InvalidOperationException("No se pudo contactar con Groq. Revisá la conexión o la configuración de la API.", ex);
         }
-
-        // 4) Sacamos el texto de la IA: choices[0].message.content
-        JsonDocument documento = JsonDocument.Parse(texto);
-        return documento.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString() ?? "";
+        catch (TaskCanceledException ex)
+        {
+            throw new InvalidOperationException("La llamada a Groq tardó demasiado y se canceló. Probá de nuevo más tarde.", ex);
+        }
+        catch (InvalidOperationException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Error inesperado al consultar a Groq: " + ex.Message, ex);
+        }
     }
 }
