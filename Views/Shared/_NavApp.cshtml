@@ -1,0 +1,47 @@
+@model string
+@using Fluenty.Info360.Models
+@*
+    Menú de arriba, igual para todos los rangos (sprint 2). Model = el botón que va marcado.
+    - El dueño ve Equipo (para armar el árbol de rangos).
+    - Quien tiene rangos abajo ve Equipo, Cursos y Empleados.
+    - Quien tiene un curso confirmado ve "Mi curso".
+    - El rango más bajo ve solo Home, Mi curso y Salir.
+*@
+@{
+    bool esDueno = Context.Session.GetString("TipoUsuario") == "Empleador";
+    bool gestiona = false;
+    int idCursoPropio = 0;
+    string idEmpresaTexto = Context.Session.GetString("IdEmpresa");
+    string idRangoTexto = Context.Session.GetString("IdRango");
+    string idUsuarioTexto = Context.Session.GetString("IdUsuario");
+    if (idEmpresaTexto != null && idUsuarioTexto != null)
+    {
+        BD bd = new BD();
+        if (idRangoTexto != null && idRangoTexto != "")
+        {
+            gestiona = Arbol.TieneRangosAbajo(bd.TraerRangosEmpresa(int.Parse(idEmpresaTexto)), int.Parse(idRangoTexto));
+        }
+        Cursos propio = bd.TraerCursoPorEmpleado(int.Parse(idUsuarioTexto));
+        if (propio != null && propio.Estado == "Confirmado")
+        {
+            idCursoPropio = propio.IdCurso;
+        }
+    }
+}
+<nav class="nav-app">
+    <a href='@Url.Action("Index", "Home")' class='@(Model == "Home" ? "activo" : "")'>Home</a>
+    @if (esDueno || gestiona)
+    {
+        <a href='@Url.Action("Index", "Equipo")' class='@(Model == "Equipo" ? "activo" : "")'>Equipo</a>
+    }
+    @if (gestiona)
+    {
+        <a href='@Url.Action("Index", "Curso")' class='@(Model == "Cursos" ? "activo" : "")'>Cursos</a>
+        <a href='@Url.Action("Index", "Empleado")' class='@(Model == "Empleados" ? "activo" : "")'>Empleados</a>
+    }
+    @if (idCursoPropio != 0)
+    {
+        <a href='@Url.Action("Ver", "Curso", new { IdCurso = idCursoPropio })' class='@(Model == "MiCurso" ? "activo" : "")'>Mi curso</a>
+    }
+    <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
+</nav>

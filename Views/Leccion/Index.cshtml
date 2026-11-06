@@ -1,0 +1,410 @@
+@using Fluenty.Info360.Models
+@{
+    ViewData["Title"] = ViewBag.Leccion.Titulo;
+    List<Tarjetas> tarjetas = ViewBag.Tarjetas;
+    int inicial = ViewBag.TarjetaInicial;
+    if (inicial < 1 || inicial > tarjetas.Count)
+    {
+        inicial = 1;
+    }
+    bool esExamen = ViewBag.EsExamen;
+}
+
+<link rel="stylesheet" href="~/css/leccion.css" asp-append-version="true" />
+
+<div class="reproductor">
+
+    <!-- ===== Barra de arriba: salir, progreso, XP y pedidos a la IA que quedan hoy ===== -->
+    <header class="barra-leccion">
+        <a class="cerrar-leccion" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })' title="Salir de la lección">✕</a>
+        <div class="progreso-leccion"><span id="relleno"></span></div>
+        <span class="xp-leccion">⚡ @ViewBag.XP</span>
+        <span class="xp-leccion">🔥 @ViewBag.Racha</span>
+        <span class="xp-leccion" title="Pedidos a la IA que te quedan hoy">🤖 <span id="pedidos">@ViewBag.PedidosRestantes</span></span>
+    </header>
+
+    <p class="contexto-leccion">Unidad @ViewBag.Leccion.NumeroUnidad · @(esExamen ? "Examen de la unidad" : "Lección " + ViewBag.Leccion.Numero)</p>
+    <h1 class="titulo-leccion">@ViewBag.Leccion.Titulo</h1>
+
+    @if (esExamen)
+    {
+        <p class="aviso-leccion">🏆 Este es el examen de la unidad. Para pasar a la siguiente necesitás contestar bien a la primera al menos el 70% de las preguntas. Si no llegás, lo volvés a rendir con preguntas nuevas.</p>
+    }
+    @if (ViewBag.Mensaje != null)
+    {
+        <p class="aviso-leccion aviso-falta">@ViewBag.Mensaje</p>
+    }
+
+    <!-- ===== Las tarjetas: se ve una sola por vez ===== -->
+    @foreach (Tarjetas tarjeta in tarjetas)
+    {
+        bool esPregunta = tarjeta.EsPregunta();
+        bool resuelta = (!esPregunta && tarjeta.Tipo != "practica") || tarjeta.Resultado == "Bien";
+        string leer = tarjeta.Titulo + ". " + tarjeta.Texto;
+        <section class="tarjeta-leccion tipo-@tarjeta.Tipo" id="tarjeta-@tarjeta.Orden" data-id="@tarjeta.IdTarjeta" data-resuelta="@(resuelta ? "si" : "no")" data-leer="@leer">
+
+            @if (tarjeta.Tipo == "gancho")
+            {
+                <p class="etiqueta-tarjeta">💡 Para arrancar</p>
+                <h2 class="titulo-tarjeta">@tarjeta.Titulo</h2>
+                <p class="texto-tarjeta">@tarjeta.Texto</p>
+            }
+            else if (tarjeta.Tipo == "explicacion")
+            {
+                <p class="etiqueta-tarjeta">📘 La idea</p>
+                <h2 class="titulo-tarjeta">@tarjeta.Titulo</h2>
+                @if (tarjeta.ParaQue != "")
+                {
+                    <p class="para-que">🎯 <strong>¿Para qué te sirve?</strong> @tarjeta.ParaQue</p>
+                }
+                <p class="texto-tarjeta">@tarjeta.Texto</p>
+                @if (tarjeta.Ejemplo != "")
+                {
+                    <div class="ejemplo-pasos">
+                        <p class="titulo-ejemplo">👣 Ejemplo paso a paso</p>
+                        @foreach (string paso in tarjeta.Ejemplo.Split('\n'))
+                        {
+                            if (paso.Trim() != "")
+                            {
+                                <p class="paso-ejemplo">@paso.Trim()</p>
+                            }
+                        }
+                    </div>
+                }
+            }
+            else if (tarjeta.Tipo == "comparacion")
+            {
+                <p class="etiqueta-tarjeta">🧠 Pensalo así</p>
+                <h2 class="titulo-tarjeta">@tarjeta.Titulo</h2>
+                <blockquote class="comparacion texto-tarjeta">@tarjeta.Texto</blockquote>
+            }
+            else if (tarjeta.Tipo == "historia")
+            {
+                <p class="etiqueta-tarjeta">📖 Una historia</p>
+                <h2 class="titulo-tarjeta">@tarjeta.Titulo</h2>
+                <p class="texto-tarjeta historia">@tarjeta.Texto</p>
+            }
+            else if (tarjeta.Tipo == "chat")
+            {
+                <p class="etiqueta-tarjeta">👀 Mirá cómo se hace</p>
+                <h2 class="titulo-tarjeta">@tarjeta.Titulo</h2>
+                <p class="texto-tarjeta">@tarjeta.Texto</p>
+                <div class="chats">
+                    <div class="chat chat-malo">
+                        <p class="titulo-chat">❌ Así no</p>
+                        <p class="globo-vos">@tarjeta.PedidoMalo</p>
+                        <p class="globo-ia">@tarjeta.RespuestaMala</p>
+                    </div>
+                    <div class="chat chat-bueno">
+                        <p class="titulo-chat">✅ Así sí</p>
+                        <p class="globo-vos">@tarjeta.PedidoBueno</p>
+                        <button type="button" class="ayuda boton-copiar" data-texto="@tarjeta.PedidoBueno" onclick="copiar(this)">📋 Copiar este pedido para usarlo</button>
+                        <p class="globo-ia">@tarjeta.RespuestaBuena</p>
+                    </div>
+                </div>
+            }
+            else if (esPregunta)
+            {
+                string etiqueta = "🤔 ¿Cuál es mejor?";
+                if (tarjeta.Tipo == "verdaderofalso") { etiqueta = "✔️ ¿Verdadero o falso?"; }
+                if (tarjeta.Tipo == "completar") { etiqueta = "✏️ Completá la frase"; }
+                if (tarjeta.Tipo == "error") { etiqueta = "🔎 Cazá el error"; }
+                if (tarjeta.Tipo == "mejorrespuesta") { etiqueta = "🏅 ¿Qué respuesta sirve más?"; }
+                <p class="etiqueta-tarjeta">@etiqueta</p>
+                <h2 class="titulo-tarjeta">@tarjeta.Titulo</h2>
+                <p class="texto-tarjeta">@tarjeta.Texto</p>
+                <p class="globo-ia globo-solo contexto-pregunta" style="@(tarjeta.Contexto == "" ? "display:none" : "")">@tarjeta.Contexto</p>
+                <div class="opciones-leccion">
+                    <button type="button" class="opcion-leccion" data-letra="A" onclick="responder(this, @tarjeta.Orden)" @(resuelta ? "disabled" : "")>@tarjeta.OpcionA</button>
+                    <button type="button" class="opcion-leccion" data-letra="B" onclick="responder(this, @tarjeta.Orden)" @(resuelta ? "disabled" : "")>@tarjeta.OpcionB</button>
+                    <button type="button" class="opcion-leccion" data-letra="C" onclick="responder(this, @tarjeta.Orden)" @(resuelta ? "disabled" : "") style="@(tarjeta.OpcionC == "" ? "display:none" : "")">@tarjeta.OpcionC</button>
+                </div>
+                <div class="devolucion-opcion @(resuelta ? "visible" : "")" id="devolucion-@tarjeta.Orden">
+                    <p class="veredicto" id="veredicto-@tarjeta.Orden">@(resuelta ? "✅ Esta ya la contestaste bien." : "")</p>
+                    <p id="explicacion-@tarjeta.Orden">@(resuelta ? tarjeta.Explicacion : "")</p>
+                    <div class="reexplicacion" id="reexplicacion-@tarjeta.Orden"></div>
+                    <button type="button" class="boton-leccion boton-otra" id="otra-@tarjeta.Orden" onclick="otraPregunta(@tarjeta.Orden)">Probar con otra pregunta del mismo tema</button>
+                </div>
+            }
+            else if (tarjeta.Tipo == "practica")
+            {
+                <p class="etiqueta-tarjeta">✍️ Probalo vos</p>
+                <h2 class="titulo-tarjeta">@tarjeta.Titulo</h2>
+                <p class="texto-tarjeta">@tarjeta.Texto</p>
+                @if (tarjeta.Explicacion != "")
+                {
+                    <p class="pista">💬 Pista: @tarjeta.Explicacion</p>
+                }
+                <textarea id="respuesta-@tarjeta.Orden" rows="5" maxlength="800" placeholder="Escribí acá tu pedido a la IA..." @(resuelta ? "disabled" : "")></textarea>
+                <button type="button" class="boton-leccion" id="corregir-@tarjeta.Orden" onclick="practicar(@tarjeta.Orden)" style="@(resuelta ? "display:none" : "")">Corregir mi respuesta</button>
+                <p class="intentos-practica" id="intentos-@tarjeta.Orden">@(tarjeta.Intentos > 0 ? "Intentos: " + tarjeta.Intentos : "")</p>
+                <div class="devolucion-practica @(resuelta ? "aprobada" : "")" id="devolucion-@tarjeta.Orden" style="@(resuelta ? "" : "display:none")">
+                    <p class="veredicto" id="veredicto-@tarjeta.Orden">@(resuelta ? "✅ ¡Aprobado!" : "")</p>
+                    <p id="texto-devolucion-@tarjeta.Orden">@(resuelta ? "Este ejercicio ya lo tenías aprobado." : "")</p>
+                    <div class="ejemplo-practica" id="ejemplo-@tarjeta.Orden" style="display:none">
+                        <p class="titulo-ejemplo">👀 Así lo haría alguien que ya sabe (reescribilo con tus palabras):</p>
+                        <p class="globo-vos" id="texto-ejemplo-@tarjeta.Orden"></p>
+                    </div>
+                </div>
+            }
+            else if (tarjeta.Tipo == "cierre")
+            {
+                <p class="etiqueta-tarjeta">🚀 Mañana en el laburo</p>
+                <h2 class="titulo-tarjeta">@tarjeta.Titulo</h2>
+                <p class="accion-manana">@tarjeta.Texto</p>
+                <form method="post" action='@Url.Action("Completar", "Leccion")' onsubmit="mostrarCarga('Calculando tu nota')">
+                    <input type="hidden" name="IdLeccion" value="@ViewBag.Leccion.IdLeccion" />
+                    <input class="boton-leccion boton-terminar" type="submit" value='@(ViewBag.Leccion.Estado == "Completada" ? "Terminar (ya la habías hecho)" : (esExamen ? "Entregar examen" : "Terminar lección"))' />
+                </form>
+            }
+
+            <!-- Ayudas para entender: escuchar, más simple, otro ejemplo -->
+            <div class="ayudas-tarjeta">
+                <button type="button" class="ayuda" onclick="escuchar(@tarjeta.Orden)">🔊 Escuchar</button>
+                @if (!esExamen && (tarjeta.Tipo == "gancho" || tarjeta.Tipo == "explicacion" || tarjeta.Tipo == "comparacion" || tarjeta.Tipo == "historia"))
+                {
+                    <button type="button" class="ayuda" onclick="reexplicar(@tarjeta.Orden, 'simple')">🤷 Explicamelo más simple</button>
+                    <button type="button" class="ayuda" onclick="reexplicar(@tarjeta.Orden, 'ejemplo')">🔁 Dame otro ejemplo</button>
+                }
+            </div>
+            <p class="mensaje-ayuda" id="mensaje-@tarjeta.Orden"></p>
+        </section>
+    }
+
+    <!-- ===== Botones de abajo ===== -->
+    <footer class="navegacion-leccion">
+        <button type="button" id="atras" class="boton-secundario" onclick="mostrar(actual - 1)">Atrás</button>
+        <button type="button" id="siguiente" class="boton-leccion" onclick="mostrar(actual + 1)">Continuar</button>
+    </footer>
+    <p class="aviso-siguiente" id="aviso-siguiente">Para seguir, primero resolvé esta tarjeta 🙂</p>
+</div>
+
+<!-- Mientras la IA responde -->
+<div id="carga" class="fondo-carga">
+    <div class="caja-carga">
+        <p class="puntitos"><span></span><span></span><span></span></p>
+        <p id="texto-carga">Un segundo...</p>
+    </div>
+</div>
+
+<script>
+    // Se ve una sola tarjeta por vez. "actual" es la que se está viendo.
+    let actual = @inicial;
+    const total = @tarjetas.Count;
+    // Para cada pregunta, la próxima versión que le toca si se equivocó
+    const proximas = [];
+
+    function tarjeta(numero) {
+        return document.getElementById("tarjeta-" + numero);
+    }
+
+    function mostrar(numero) {
+        if (numero < 1 || numero > total) {
+            return;
+        }
+        // No se puede avanzar si la tarjeta actual no está resuelta (pregunta bien contestada o práctica aprobada)
+        if (numero > actual && tarjeta(actual).dataset.resuelta != "si") {
+            return;
+        }
+        for (let i = 1; i <= total; i++) {
+            tarjeta(i).classList.remove("activa");
+        }
+        tarjeta(numero).classList.add("activa");
+        actual = numero;
+        document.getElementById("relleno").style.width = (numero * 100 / total) + "%";
+        document.getElementById("atras").disabled = numero == 1;
+        actualizarSiguiente();
+        window.speechSynthesis.cancel();
+        window.scrollTo(0, 0);
+    }
+
+    function actualizarSiguiente() {
+        const siguiente = document.getElementById("siguiente");
+        const resuelta = tarjeta(actual).dataset.resuelta == "si";
+        siguiente.style.visibility = actual == total ? "hidden" : "visible";
+        siguiente.disabled = !resuelta;
+        document.getElementById("aviso-siguiente").style.display = (resuelta || actual == total) ? "none" : "block";
+    }
+
+    // Manda un pedido al servidor y devuelve el JSON
+    async function pedir(accion, datos) {
+        const formulario = new FormData();
+        for (const clave in datos) {
+            formulario.append(clave, datos[clave]);
+        }
+        const respuesta = await fetch("/Leccion/" + accion, { method: "POST", body: formulario });
+        return await respuesta.json();
+    }
+
+    // ===== Preguntas: se corrige en el servidor. Si se equivoca, le toca otra pregunta del mismo tema =====
+    async function responder(boton, numero) {
+        const caja = tarjeta(numero);
+        const botones = caja.querySelectorAll(".opcion-leccion");
+        for (let i = 0; i < botones.length; i++) {
+            botones[i].disabled = true;
+        }
+        mostrarCarga("Corrigiendo");
+        let datos;
+        try {
+            datos = await pedir("Responder", { IdTarjeta: caja.dataset.id, Letra: boton.dataset.letra });
+        } catch (e) {
+            datos = { error: "Se cortó la conexión. Probá de nuevo." };
+        }
+        ocultarCarga();
+        if (datos.error) {
+            document.getElementById("mensaje-" + numero).innerText = datos.error;
+            for (let i = 0; i < botones.length; i++) {
+                botones[i].disabled = false;
+            }
+            return;
+        }
+        for (let i = 0; i < botones.length; i++) {
+            if (botones[i].dataset.letra == datos.correcta) {
+                botones[i].classList.add("bien");
+            }
+        }
+        const veredicto = document.getElementById("veredicto-" + numero);
+        document.getElementById("explicacion-" + numero).innerText = datos.explicacion;
+        const reexplicacion = document.getElementById("reexplicacion-" + numero);
+        const otra = document.getElementById("otra-" + numero);
+        if (datos.bien) {
+            veredicto.innerText = "¡Bien ahí! 🎉";
+            reexplicacion.innerText = "";
+            otra.style.display = "none";
+            caja.dataset.resuelta = "si";
+        } else {
+            boton.classList.add("mal");
+            veredicto.innerText = "Esta vez no. Leé por qué y probá con otra pregunta del mismo tema:";
+            if (datos.reexplicacion) {
+                reexplicacion.innerText = "📘 Te lo explicamos de otra forma: " + datos.reexplicacion;
+            }
+            otra.style.display = "block";
+            proximas[numero] = datos.siguiente;
+        }
+        document.getElementById("devolucion-" + numero).classList.add("visible");
+        actualizarSiguiente();
+    }
+
+    // Cambia la pregunta por la nueva versión (mismo tema, otro caso)
+    function otraPregunta(numero) {
+        const nueva = proximas[numero];
+        if (!nueva) {
+            return;
+        }
+        const caja = tarjeta(numero);
+        caja.dataset.id = nueva.idTarjeta;
+        caja.dataset.leer = nueva.titulo + ". " + nueva.texto;
+        caja.querySelector(".titulo-tarjeta").innerText = nueva.titulo;
+        caja.querySelector(".texto-tarjeta").innerText = nueva.texto;
+        const contexto = caja.querySelector(".contexto-pregunta");
+        contexto.innerText = nueva.contexto;
+        contexto.style.display = nueva.contexto ? "block" : "none";
+        const textos = [nueva.opcionA, nueva.opcionB, nueva.opcionC];
+        const botones = caja.querySelectorAll(".opcion-leccion");
+        for (let i = 0; i < botones.length; i++) {
+            botones[i].innerText = textos[i];
+            botones[i].style.display = textos[i] ? "block" : "none";
+            botones[i].disabled = false;
+            botones[i].classList.remove("bien");
+            botones[i].classList.remove("mal");
+        }
+        document.getElementById("devolucion-" + numero).classList.remove("visible");
+        document.getElementById("reexplicacion-" + numero).innerText = "";
+        proximas[numero] = null;
+        window.scrollTo(0, 0);
+    }
+
+    // ===== "Probalo vos": la IA corrige; hay que aprobarlo para seguir =====
+    async function practicar(numero) {
+        const caja = tarjeta(numero);
+        const texto = document.getElementById("respuesta-" + numero).value;
+        mostrarCarga("Corrigiendo tu respuesta");
+        let datos;
+        try {
+            datos = await pedir("Practicar", { IdTarjeta: caja.dataset.id, Respuesta: texto });
+        } catch (e) {
+            datos = { error: "Se cortó la conexión. Probá de nuevo." };
+        }
+        ocultarCarga();
+        const devolucion = document.getElementById("devolucion-" + numero);
+        devolucion.style.display = "block";
+        if (datos.error) {
+            document.getElementById("veredicto-" + numero).innerText = "";
+            document.getElementById("texto-devolucion-" + numero).innerText = datos.error;
+            return;
+        }
+        document.getElementById("texto-devolucion-" + numero).innerText = datos.devolucion;
+        if (datos.intentos > 0) {
+            document.getElementById("intentos-" + numero).innerText = "Intentos: " + datos.intentos;
+        }
+        if (datos.ejemplo) {
+            document.getElementById("texto-ejemplo-" + numero).innerText = datos.ejemplo;
+            document.getElementById("ejemplo-" + numero).style.display = "block";
+        }
+        if (datos.aprobado) {
+            document.getElementById("veredicto-" + numero).innerText = "✅ ¡Aprobado!";
+            devolucion.classList.add("aprobada");
+            document.getElementById("corregir-" + numero).style.display = "none";
+            document.getElementById("respuesta-" + numero).disabled = true;
+            caja.dataset.resuelta = "si";
+        } else {
+            document.getElementById("veredicto-" + numero).innerText = "🧑‍🏫 Todavía no. Mejoralo con esto:";
+        }
+        actualizarSiguiente();
+    }
+
+    // ===== "Explicamelo más simple" / "Dame otro ejemplo" (usa pedidos a la IA del día) =====
+    async function reexplicar(numero, modo) {
+        const caja = tarjeta(numero);
+        const mensaje = document.getElementById("mensaje-" + numero);
+        mostrarCarga(modo == "simple" ? "Buscando otra forma de explicarlo" : "Buscando otro ejemplo");
+        let datos;
+        try {
+            datos = await pedir("Reexplicar", { IdTarjeta: caja.dataset.id, Modo: modo });
+        } catch (e) {
+            datos = { ok: false, mensaje: "Se cortó la conexión. Probá de nuevo." };
+        }
+        ocultarCarga();
+        if (!datos.ok) {
+            mensaje.innerText = datos.mensaje;
+            if (datos.sinPedidos) {
+                document.getElementById("pedidos").innerText = "0";
+            }
+            return;
+        }
+        caja.querySelector(".titulo-tarjeta").innerText = datos.titulo;
+        caja.querySelector(".texto-tarjeta").innerText = datos.texto;
+        caja.dataset.leer = datos.titulo + ". " + datos.texto;
+        document.getElementById("pedidos").innerText = datos.restantesHoy;
+        mensaje.innerText = datos.restantesTarjeta > 0 ? "Podés pedir otra explicación " + datos.restantesTarjeta + " vez/veces más en esta tarjeta." : "";
+    }
+
+    // Copia el pedido bueno para que lo pegue en ChatGPT (o la IA que use) y lo aproveche hoy mismo
+    function copiar(boton) {
+        navigator.clipboard.writeText(boton.dataset.texto);
+        boton.innerText = "✓ Copiado: pegalo en tu IA y cambiá lo que está entre [corchetes]";
+    }
+
+    // Lee la tarjeta en voz alta (sirve mucho a quien le cuesta leer en pantalla)
+    function escuchar(numero) {
+        window.speechSynthesis.cancel();
+        const voz = new SpeechSynthesisUtterance(tarjeta(numero).dataset.leer);
+        voz.lang = "es-AR";
+        voz.rate = 0.95;
+        window.speechSynthesis.speak(voz);
+    }
+
+    function mostrarCarga(texto) {
+        document.getElementById("texto-carga").innerText = texto + "...";
+        document.getElementById("carga").style.display = "flex";
+    }
+
+    function ocultarCarga() {
+        document.getElementById("carga").style.display = "none";
+    }
+
+    window.onpageshow = ocultarCarga;
+
+    // Si vuelve a una lección a medias, las tarjetas de antes de la inicial ya están resueltas: arranca donde le toca
+    mostrar(actual);
+</script>

@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "No se pudo armar la lección";
+}
+
+<link rel="stylesheet" href="~/css/leccion.css" asp-append-version="true" />
+
+<div class="reproductor festejo">
+    <div class="medalla-grande medalla-error">!</div>
+    <h1>No pudimos armar la lección</h1>
+    <p class="subtitulo-festejo">@ViewBag.Error</p>
+    <div class="botones-festejo">
+        <a class="boton-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Leccion.IdLeccion })'>Probar de nuevo</a>
+        <a class="boton-secundario" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })'>Volver a mi curso</a>
+    </div>
+</div>

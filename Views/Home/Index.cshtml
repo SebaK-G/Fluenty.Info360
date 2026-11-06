@@ -1,6 +1,9 @@
+@using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Home";
 }
+
+<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
 
 <div class="panel-principal">
 
@@ -9,104 +12,185 @@
             <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
             <span>Fluenty</span>
         </div>
-        <nav class="nav-app">
-            <a href='@Url.Action("Index", "Home")' class="activo">Home</a>
-            <a href='@Url.Action("Index", "Curso")'>Cursos</a>
-            <a class="sin-link">Calculadora</a>
-            <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
-            <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
-        </nav>
+        @await Html.PartialAsync("_NavApp", "Home")
     </header>
 
     <main class="home">
 
-        <!-- Saludo + plan (Figma: Home) -->
-        <div class="fila-superior">
-            <div class="izquierda">
-                <section class="tarjeta-home saludo">
-                    <h1>¡Hola, @ViewBag.Nombre!</h1>
-                    <p>Todo lo que necesitás para capacitar, gestionar y hacer más eficiente a todo el equipo de @ViewBag.NombreEmpresa, en un solo lugar.</p>
-                </section>
+        <section class="tarjeta-home saludo">
+            <h1>¡Hola, @ViewBag.Nombre!</h1>
+            <p>Estás en el espacio de capacitación de @ViewBag.NombreEmpresa.</p>
+        </section>
 
-                <div class="estadisticas">
-                    <div class="tarjeta-home">
-                        <h2>@ViewBag.CantidadCursos</h2>
-                        <p>Cursos asignados</p>
+        <!-- ===== Su propio curso (lo ve cualquiera que tenga uno asignado) ===== -->
+        @if (ViewBag.MiCurso != null)
+        {
+            <section class="tarjeta-home mi-curso">
+                <div class="mi-curso-texto">
+                    <p class="etiqueta-plan">📚 Tu curso</p>
+                    <h2>@ViewBag.MiCurso.Titulo</h2>
+                    <div class="barra-mi-curso"><span style="width: @(ViewBag.MiProgreso)%"></span></div>
+                    <p class="detalle-mi-curso">@ViewBag.MiProgreso% completado</p>
+                    @if (ViewBag.Proxima != null)
+                    {
+                        <p class="proxima">Siguiente: <strong>@ViewBag.Proxima.Titulo</strong></p>
+                        <a class="boton-home grande-home" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Proxima.IdLeccion })' onclick="mostrarCarga()">Seguir aprendiendo</a>
+                    }
+                    else
+                    {
+                        <a class="boton-home grande-home" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.MiCurso.IdCurso })'>Ver mi curso</a>
+                    }
+                </div>
+                <div class="medallas">
+                    <div class="medalla">
+                        <span class="icono-medalla">⚡</span>
+                        <strong>@ViewBag.XP</strong>
+                        <p>XP</p>
                     </div>
-                    <div class="tarjeta-home">
-                        <h2>@ViewBag.CantidadEmpleados</h2>
-                        <p>Empleados en tu equipo</p>
-                    </div>
-                    <div class="tarjeta-home">
-                        <h2>@ViewBag.EsperandoCurso</h2>
-                        <p>Esperando su curso</p>
+                    <div class="medalla">
+                        <span class="icono-medalla">🔥</span>
+                        <strong>@ViewBag.Racha</strong>
+                        <p>días de racha</p>
                     </div>
                 </div>
-            </div>
-
-            <section class="tarjeta-home plan">
-                <p class="etiqueta-plan">✓ Tu plan</p>
-                <h2>Plan Empresarial Activo</h2>
-                <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más.</p>
-                <p><strong>@ViewBag.EmpleadosActivos</strong> empleados se sumaron con el link de tu empresa.</p>
             </section>
-        </div>
+        }
+        else if (!ViewBag.Gestiona && !ViewBag.EsDueno)
+        {
+            <section class="tarjeta-home">
+                <h2>Tu curso</h2>
+                <p>Todavía no tenés un curso. Cuando tu responsable te lo asigne, lo vas a ver acá.</p>
+            </section>
+        }
 
-        <!-- Herramientas principales -->
-        <section class="tarjeta-home herramientas">
-            <h2>Herramientas principales</h2>
-
-            <div class="grilla-herramientas">
-                <div class="herramienta">
-                    <div>
-                        <h3>Crear curso con IA</h3>
-                        <p>Generá cursos completos con IA adaptados al rol y puesto en segundos.</p>
+        <!-- ===== Su gente (solo si tiene rangos abajo) ===== -->
+        @if (ViewBag.Gestiona)
+        {
+            <div class="fila-superior">
+                <div class="izquierda">
+                    <div class="estadisticas">
+                        <div class="tarjeta-home">
+                            <h2>@ViewBag.CantidadPersonas</h2>
+                            <p>Personas a tu cargo</p>
+                        </div>
+                        <div class="tarjeta-home">
+                            <h2>@ViewBag.EnCapacitacion</h2>
+                            <p>En capacitación</p>
+                        </div>
+                        <div class="tarjeta-home">
+                            <h2>@ViewBag.EsperandoCurso</h2>
+                            <p>Esperando su curso</p>
+                        </div>
                     </div>
-                    <a class="boton-home" href='@Url.Action("Index", "Curso")'>Generar</a>
                 </div>
 
-                <div class="herramienta">
-                    <div>
-                        <h3>Calcular ahorro y rendimiento</h3>
-                        <p>Calculá horas ahorradas y retorno en capacitación.</p>
-                    </div>
-                    <span class="boton-home deshabilitado">Próximamente</span>
-                </div>
-
-                <div class="herramienta">
-                    <div>
-                        <h3>Explorar nuevos cursos</h3>
-                        <p>Encontrá capacitaciones en el catálogo de Fluenty.</p>
-                    </div>
-                    <span class="boton-home deshabilitado">Próximamente</span>
-                </div>
-
-                <div class="herramienta">
-                    <div>
-                        <h3>Visualizar empleados</h3>
-                        <p>Seguí el progreso de tu equipo y los cursos que le asignaste.</p>
-                    </div>
-                    <a class="boton-home" href='@Url.Action("Index", "Empleado")'>Seguir</a>
-                </div>
+                <section class="tarjeta-home plan">
+                    @if (ViewBag.EsDueno)
+                    {
+                        <p class="etiqueta-plan">✓ Tu plan</p>
+                        <h2>Plan Empresarial Activo</h2>
+                        <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más.</p>
+                    }
+                    else
+                    {
+                        <p class="etiqueta-plan">👥 Tu equipo</p>
+                        <h2>@ViewBag.CantidadRangos rangos a tu cargo</h2>
+                    }
+                    <p><strong>@ViewBag.CantidadCursos</strong> cursos confirmados en tus rangos.</p>
+                </section>
             </div>
-        </section>
 
-        <!-- Actividades recientes -->
-        <section class="tarjeta-home">
-            <h2>Actividades recientes</h2>
-
-            @if (ViewBag.Actividades.Count > 0)
+            @if (ViewBag.Quietos.Count > 0)
             {
-                foreach (string actividad in ViewBag.Actividades)
+                <!-- Solo se ve si participa, nunca lo que contestó en su formulario -->
+                <section class="tarjeta-home quietos">
+                    <p class="etiqueta-plan">⏸ Para darles un empujón</p>
+                    <h2>@ViewBag.Quietos.Count @(ViewBag.Quietos.Count == 1 ? "persona no avanza" : "personas no avanzan")</h2>
+                    <ul class="lista-quietos">
+                        @foreach (string quieto in ViewBag.Quietos)
+                        {
+                            <li>@quieto</li>
+                        }
+                    </ul>
+                    <p class="ayuda-quietos">Un mensaje tuyo ayuda más que cualquier aviso: las lecciones son de 5 minutos y les ahorran trabajo.</p>
+                </section>
+            }
+
+            <section class="tarjeta-home herramientas">
+                <h2>Herramientas principales</h2>
+                <div class="grilla-herramientas">
+                    <div class="herramienta">
+                        <div>
+                            <h3>Tu equipo y sus links</h3>
+                            <p>Mirá el árbol de rangos y compartí el link de cada uno.</p>
+                        </div>
+                        <a class="boton-home" href='@Url.Action("Index", "Equipo")'>Ver equipo</a>
+                    </div>
+                    <div class="herramienta">
+                        <div>
+                            <h3>Crear cursos con IA</h3>
+                            <p>Un curso por rango, con la IA nivelando a cada persona.</p>
+                        </div>
+                        <a class="boton-home" href='@Url.Action("Index", "Curso")'>Generar</a>
+                    </div>
+                    <div class="herramienta">
+                        <div>
+                            <h3>Visualizar empleados</h3>
+                            <p>Seguí el progreso, el XP y la racha de cada persona.</p>
+                        </div>
+                        <a class="boton-home" href='@Url.Action("Index", "Empleado")'>Seguir</a>
+                    </div>
+                    <div class="herramienta">
+                        <div>
+                            <h3>Calcular ahorro y rendimiento</h3>
+                            <p>Calculá horas ahorradas y retorno en capacitación.</p>
+                        </div>
+                        <span class="boton-home deshabilitado">Próximamente</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tarjeta-home">
+                <h2>Actividades recientes</h2>
+                @if (ViewBag.Actividades.Count > 0)
                 {
-                    <p class="actividad">@actividad</p>
+                    foreach (string actividad in ViewBag.Actividades)
+                    {
+                        <p class="actividad">@actividad</p>
+                    }
                 }
-            }
-            else
-            {
-                <p>Todavía no hay actividades. Cuando confirmes el curso de un empleado, va a aparecer acá.</p>
-            }
-        </section>
+                else
+                {
+                    <p>Todavía no hay actividades. Cuando confirmes el curso de un rango, va a aparecer acá.</p>
+                }
+            </section>
+        }
+        else if (ViewBag.EsDueno)
+        {
+            <section class="tarjeta-home">
+                <h2>Empezá armando tu equipo</h2>
+                <p>Creá los rangos de tu empresa (por ejemplo Gerente, Encargado, Vendedor). Cada rango tiene su propio link para que la gente se sume.</p>
+                <a class="boton-home grande-home" href='@Url.Action("Index", "Equipo")'>Armar el equipo</a>
+            </section>
+        }
 
     </main>
 </div>
+
+<!-- Mientras la IA arma la lección (la primera vez tarda unos segundos) -->
+<div id="carga" class="fondo-carga">
+    <div class="caja-carga">
+        <h2>Preparando tu lección</h2>
+        <p>La IA está armando las explicaciones con ejemplos de tu trabajo.</p>
+        <div class="barra-carga"><span></span></div>
+    </div>
+</div>
+
+<script>
+    function mostrarCarga() {
+        document.getElementById("carga").style.display = "flex";
+    }
+    window.onpageshow = function () {
+        document.getElementById("carga").style.display = "none";
+    };
+</script>

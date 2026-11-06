@@ -5,6 +5,8 @@ using Fluenty.Services;
 
 namespace Fluenty.Info360.Controllers;
 
+// Sprint 2: los cursos son POR RANGO. Cada uno ve y crea cursos solo para los rangos que tiene abajo.
+// El curso es uno para todo el rango, pero la IA nivela a cada persona (en qué unidad arranca).
 public class CursoController : Controller
 {
     private readonly GroqService _groqService;
@@ -16,69 +18,80 @@ public class CursoController : Controller
         _groqFeatureToggle = groqFeatureToggle;
     }
 
-    // ============ EMPLEADOR: pantalla principal de cursos ============
-    // Muestra el link para compartir y los empleados que se sumaron y esperan su curso
+    // ============ Pantalla Cursos: los rangos de abajo, su gente y su curso ============
     public IActionResult Index()
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
+        if (HttpContext.Session.GetString("IdUsuario") == null)
         {
             return RedirectToAction("Acceso", "Home");
         }
         BD bd = new BD();
         int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
+        List<Rangos> deAbajo = RangosDeAbajo(bd);
+        if (deAbajo.Count == 0)
+        {
+            return RedirectToAction("Index", "Home");
+        }
 
-        // La primera vez, el empleador completa cómo quiere los cursos
+        // Antes de generar cursos, la empresa tiene que completar su formulario (lo hace el dueño)
         if (bd.TraerFormularioEmpresa(idEmpresa) == null)
         {
-            return RedirectToAction("FormularioEmpresa");
-        }
-
-        // El link de la empresa: si todavía no tiene código, se lo creamos
-        string codigo = bd.TraerCodigoEmpresa(idEmpresa);
-        if (codigo == null || codigo == "")
-        {
-            codigo = Guid.NewGuid().ToString();
-            bd.GuardarCodigoEmpresa(idEmpresa, codigo);
-        }
-        ViewBag.Link = Url.Action("Unirse", "Formulario", new { Codigo = codigo }, Request.Scheme);
-
-        // Solo los que todavía no tienen un curso confirmado (los confirmados ya están en Empleados)
-        List<EmpleadoCurso> todos = bd.TraerEmpleadosConCurso(idEmpresa);
-        List<EmpleadoCurso> solicitudes = new List<EmpleadoCurso>();
-        foreach (EmpleadoCurso empleado in todos)
-        {
-            if (empleado.EstadoCurso != "Confirmado")
+            if (EsDueno())
             {
-                solicitudes.Add(empleado);
+                return RedirectToAction("FormularioEmpresa");
             }
+            ViewBag.Mensaje = "El dueño todavía no completó el formulario de la empresa. Cuando lo complete, vas a poder generar los cursos.";
         }
-        ViewBag.Solicitudes = solicitudes;
+
+        List<EmpleadoCurso> miembros = bd.TraerMiembrosEmpresa(idEmpresa);
+        List<GrupoRango> grupos = new List<GrupoRango>();
+        foreach (Rangos rango in deAbajo)
+        {
+            GrupoRango grupo = new GrupoRango();
+            grupo.Rango = rango;
+            grupo.Curso = bd.TraerCursoPorRango(rango.IdRango);
+            foreach (EmpleadoCurso miembro in miembros)
+            {
+                if (miembro.IdRango == rango.IdRango)
+                {
+                    grupo.Miembros.Add(miembro);
+                    if (miembro.TieneFormulario)
+                    {
+                        grupo.ConFormulario++;
+                        if (grupo.Curso != null && miembro.IdCurso != grupo.Curso.IdCurso)
+                        {
+                            grupo.SinAsignar.Add(miembro);
+                        }
+                    }
+                }
+            }
+            grupos.Add(grupo);
+        }
+        ViewBag.Grupos = grupos;
+        ViewBag.PuedeGenerar = bd.TraerFormularioEmpresa(idEmpresa) != null;
         return View("Index");
     }
 
-    // ============ EMPLEADOR: formulario de cómo quiere los cursos (preguntas del doc) ============
+    // ============ DUEÑO: formulario de cómo quiere los cursos (preguntas del doc) ============
     public IActionResult FormularioEmpresa()
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
+        if (!EsDueno())
         {
             return RedirectToAction("Acceso", "Home");
         }
-        // Si la empresa ya lo completó, no se completa de nuevo
         BD bd = new BD();
         if (bd.TraerFormularioEmpresa(int.Parse(HttpContext.Session.GetString("IdEmpresa"))) != null)
         {
             return RedirectToAction("Index");
         }
-        // Las casillas de herramientas salen del catálogo
         ViewBag.Herramientas = bd.TraerHerramientas();
         return View();
     }
 
-    // Herramientas llega con el IdHerramienta de cada casilla tildada (puede venir vacío)
     [HttpPost]
     public IActionResult FormularioEmpresa(string Dificultades, int[] Herramientas, string Objetivos)
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador" || HttpContext.Session.GetString("IdUsuario") == null)
+        if (!EsDueno())
         {
             return RedirectToAction("Acceso", "Home");
         }
@@ -102,41 +115,52 @@ public class CursoController : Controller
         return RedirectToAction("Index");
     }
 
-    // ============ EMPLEADOR: la IA genera el curso (queda como borrador) ============
+    // ============ La IA genera UN curso para todo el rango (queda como borrador) ============
     [HttpPost]
-    public async Task<IActionResult> Generar(int IdUsuario)
+    public async Task<IActionResult> Generar(int IdRango)
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
+        if (HttpContext.Session.GetString("IdUsuario") == null)
         {
             return RedirectToAction("Acceso", "Home");
         }
         BD bd = new BD();
         int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
+        Rangos rango = RangoDeAbajo(bd, IdRango);
+        if (rango == null)
+        {
+            return RedirectToAction("Index");
+        }
 
-        // Si ya tiene curso (borrador o confirmado), no se genera otro
-        Cursos existente = bd.TraerCursoPorEmpleado(IdUsuario);
+        // Si el rango ya tiene curso, no se genera otro
+        Cursos existente = bd.TraerCursoPorRango(IdRango);
         if (existente != null)
         {
             return RedirectToAction("Ver", new { IdCurso = existente.IdCurso });
         }
-
         if (!_groqFeatureToggle.Enabled)
         {
             return MostrarError("La IA está deshabilitada en este momento.");
         }
 
-        // 1) Los dos formularios
-        Usuarios empleado = bd.TraerEmpleado(IdUsuario);
-        FormulariosEmpleado formEmpleado = bd.TraerFormularioEmpleado(IdUsuario);
+        // 1) La gente del rango que completó el formulario (para la IA, como mucho 8)
+        List<Usuarios> personas = new List<Usuarios>();
+        List<FormulariosEmpleado> formularios = new List<FormulariosEmpleado>();
+        foreach (EmpleadoCurso miembro in bd.TraerMiembrosEmpresa(idEmpresa))
+        {
+            if (miembro.IdRango == IdRango && miembro.TieneFormulario)
+            {
+                personas.Add(bd.TraerEmpleado(miembro.IdUsuario));
+                formularios.Add(bd.TraerFormularioEmpleado(miembro.IdUsuario));
+            }
+        }
+        if (personas.Count == 0)
+        {
+            return MostrarError("Nadie del rango " + rango.Nombre + " completó el formulario todavía.");
+        }
         FormulariosEmpresa formEmpresa = bd.TraerFormularioEmpresa(idEmpresa);
 
-        if (empleado == null || formEmpleado == null || empleado.IdEmpresa != idEmpresa)
-        {
-            return MostrarError("Ese empleado todavía no completó su formulario.");
-        }
-
         string instrucciones = ArmarInstrucciones();
-        string datos = ArmarDatos(bd, empleado, formEmpleado, formEmpresa);
+        string datos = ArmarDatosGrupo(bd, rango, personas, formularios, formEmpresa);
 
         // 2) Le pedimos el curso a la IA (si viene mal, probamos una vez más)
         CursoIA cursoIA = null;
@@ -154,45 +178,42 @@ public class CursoController : Controller
         {
             return MostrarError(ex.Message);
         }
-
         if (cursoIA == null)
         {
             return MostrarError("La IA respondió con un formato incorrecto. Probá de nuevo.");
         }
 
-        // 3) Guardamos el curso (el contenido) como borrador, y se lo asignamos al empleado en CursoXUsuario
+        // 3) Guardamos el contenido: el curso del rango, sus 4 unidades y 20 lecciones
         string objetivos = "";
         foreach (string objetivo in cursoIA.Objetivos)
         {
             objetivos = objetivos + objetivo + "\n";
         }
-
+        int nivelGrupo = 1;
+        foreach (FormulariosEmpleado form in formularios)
+        {
+            if (form.NivelIA > nivelGrupo)
+            {
+                nivelGrupo = form.NivelIA;
+            }
+        }
         Cursos curso = new Cursos();
         curso.IdEmpresa = idEmpresa;
-        curso.Titulo = Recortar(cursoIA.Titulo, 100);
-        curso.Descripcion = Recortar(cursoIA.Descripcion, 300);
-        curso.Modelo = Recortar(cursoIA.Modelo, 50);
-        curso.Nivel = formEmpleado.NivelIA;
-        curso.Objetivos = Recortar(objetivos, 600);
+        curso.IdRango = IdRango;
+        curso.Titulo = DatosIA.Recortar(cursoIA.Titulo, 100);
+        curso.Descripcion = DatosIA.Recortar(cursoIA.Descripcion, 300);
+        curso.Modelo = DatosIA.Recortar(cursoIA.Modelo, 50);
+        curso.Nivel = nivelGrupo;
+        curso.Objetivos = DatosIA.Recortar(objetivos, 600);
         int idCurso = bd.CrearCurso(curso);
 
-        // La nivelación es de la persona, no del curso: va en CursoXUsuario
-        CursoXUsuario asignacion = new CursoXUsuario();
-        asignacion.IdCurso = idCurso;
-        asignacion.IdUsuario = IdUsuario;
-        asignacion.UnidadInicial = cursoIA.UnidadInicial;
-        asignacion.MotivoNivel = Recortar(cursoIA.MotivoNivel, 300);
-        bd.AsignarCurso(asignacion);
-
-        // 4) Las 4 unidades con sus 5 lecciones (el contenido), y el estado de cada lección
-        //    para el empleado en LeccionXUsuario, según la nivelación (ver EstadoInicial)
         foreach (UnidadIA unidadIA in cursoIA.Unidades)
         {
             Unidades unidad = new Unidades();
             unidad.IdCurso = idCurso;
             unidad.Numero = unidadIA.Numero;
-            unidad.Titulo = Recortar(unidadIA.Titulo, 100);
-            unidad.Objetivo = Recortar(unidadIA.Objetivo, 300);
+            unidad.Titulo = DatosIA.Recortar(unidadIA.Titulo, 100);
+            unidad.Objetivo = DatosIA.Recortar(unidadIA.Objetivo, 300);
             int idUnidad = bd.AgregarUnidad(unidad);
 
             foreach (LeccionIA leccionIA in unidadIA.Lecciones)
@@ -200,22 +221,104 @@ public class CursoController : Controller
                 Lecciones leccion = new Lecciones();
                 leccion.IdUnidad = idUnidad;
                 leccion.Numero = leccionIA.Numero;
-                leccion.Titulo = Recortar(leccionIA.Titulo, 100);
-                leccion.Objetivo = Recortar(leccionIA.Objetivo, 300);
-                int idLeccion = bd.AgregarLeccion(leccion);
-                bd.AgregarLeccionUsuario(idLeccion, IdUsuario, EstadoInicial(unidadIA.Numero, leccionIA.Numero, cursoIA.UnidadInicial));
+                leccion.Titulo = DatosIA.Recortar(leccionIA.Titulo, 100);
+                leccion.Objetivo = DatosIA.Recortar(leccionIA.Objetivo, 300);
+                bd.AgregarLeccion(leccion);
             }
         }
 
-        // 5) El empleador revisa el plan antes de confirmarlo
+        // 4) Se lo asignamos a cada persona, con SU nivelación (si la IA no la mandó bien, se usa su nivel de IA)
+        List<Lecciones> lecciones = bd.TraerLeccionesCurso(idCurso);
+        for (int i = 0; i < personas.Count; i++)
+        {
+            int unidadInicial = DatosIA.UnidadPorNivel(formularios[i].NivelIA);
+            string motivo = "Arranca según su experiencia con la IA.";
+            foreach (NivelacionIA nivelacion in cursoIA.Nivelacion)
+            {
+                if (nivelacion.IdUsuario == personas[i].IdUsuario && nivelacion.UnidadInicial >= 1 && nivelacion.UnidadInicial <= 4)
+                {
+                    unidadInicial = nivelacion.UnidadInicial;
+                    motivo = nivelacion.Motivo;
+                }
+            }
+            Asignar(bd, idCurso, lecciones, personas[i].IdUsuario, unidadInicial, motivo);
+        }
+
+        // 5) Quien lo generó lo revisa antes de confirmarlo
         return RedirectToAction("Ver", new { IdCurso = idCurso });
     }
 
-    // ============ Ver un curso: el empleador lo revisa, el empleado ve el suyo ============
-    public IActionResult Ver(int IdCurso)
+    // ============ Sumar al curso del rango a alguien que se unió después ============
+    [HttpPost]
+    public async Task<IActionResult> Sumar(int IdCurso, int IdUsuario)
     {
-        string tipoUsuario = HttpContext.Session.GetString("TipoUsuario");
-        if (tipoUsuario == null)
+        BD bd = new BD();
+        Cursos curso = bd.TraerCurso(IdCurso);
+        if (curso == null || RangoDeAbajo(bd, curso.IdRango) == null)
+        {
+            return RedirectToAction("Index");
+        }
+        Usuarios persona = bd.TraerEmpleado(IdUsuario);
+        FormulariosEmpleado form = bd.TraerFormularioEmpleado(IdUsuario);
+        if (persona == null || form == null || persona.IdRango != curso.IdRango)
+        {
+            return RedirectToAction("Index");
+        }
+        foreach (CursoXUsuario asignacion in bd.TraerAsignacionesCurso(IdCurso))
+        {
+            if (asignacion.IdUsuario == IdUsuario)
+            {
+                return RedirectToAction("Ver", new { IdCurso = IdCurso, IdUsuario = IdUsuario });
+            }
+        }
+
+        // La IA decide en qué unidad arranca esta persona (si falla, se usa su nivel de IA)
+        int unidadInicial = DatosIA.UnidadPorNivel(form.NivelIA);
+        string motivo = "Arranca según su experiencia con la IA.";
+        if (_groqFeatureToggle.Enabled)
+        {
+            try
+            {
+                string plan = "";
+                foreach (Unidades unidad in bd.TraerUnidadesCurso(IdCurso))
+                {
+                    plan = plan + "Unidad " + unidad.Numero + ": " + unidad.Titulo + " (" + unidad.Objetivo + ")\n";
+                }
+                string instrucciones = "Sos el que nivela a las personas en los cursos de Fluenty (4 unidades: la 1 son fundamentos y la 4 es lo más avanzado). ";
+                instrucciones = instrucciones + "Decidí en qué unidad arranca esta persona según lo que ya sabe de IA: si nunca la usó o solo la probó, en la 1; si la usa a veces, puede ir a la 2; si la usa seguido en su trabajo, a la 3. Casi nunca a la 4. ";
+                instrucciones = instrucciones + "Respondé SOLO con un JSON: {\"unidadInicial\": 1, \"motivo\": \"una oración en español rioplatense\"}";
+                string datos = "PLAN DEL CURSO \"" + curso.Titulo + "\":\n" + plan + "\nLA PERSONA:\n" + DatosIA.Persona(bd, persona, form);
+                string respuesta = await _groqService.PreguntarAsync(instrucciones, datos, true);
+                JsonSerializerOptions opciones = new JsonSerializerOptions();
+                opciones.PropertyNameCaseInsensitive = true;
+                NivelacionIA nivelacion = JsonSerializer.Deserialize<NivelacionIA>(respuesta, opciones);
+                if (nivelacion != null && nivelacion.UnidadInicial >= 1 && nivelacion.UnidadInicial <= 4)
+                {
+                    unidadInicial = nivelacion.UnidadInicial;
+                    motivo = nivelacion.Motivo;
+                }
+            }
+            catch (Exception)
+            {
+                // Si la IA falla, queda la nivelación por su nivel de IA
+            }
+        }
+        Asignar(bd, IdCurso, bd.TraerLeccionesCurso(IdCurso), IdUsuario, unidadInicial, motivo);
+
+        // Si el curso ya está confirmado, se le deja preparada su primera lección
+        if (curso.Estado == "Confirmado" && _groqFeatureToggle.Enabled)
+        {
+            GeneradorLecciones.PrepararEnSegundoPlano(_groqService, IdUsuario, GeneradorLecciones.Siguientes(bd, IdCurso, IdUsuario, 0, 1));
+        }
+        return RedirectToAction("Ver", new { IdCurso = IdCurso, IdUsuario = IdUsuario });
+    }
+
+    // ============ Ver un curso ============
+    // - Como alumno: tu propio curso (confirmado), con las lecciones para hacer.
+    // - Como responsable: el curso de un rango de abajo, mirando el camino de cada persona.
+    public IActionResult Ver(int IdCurso, int IdUsuario = 0)
+    {
+        if (HttpContext.Session.GetString("IdUsuario") == null)
         {
             return RedirectToAction("Acceso", "Home");
         }
@@ -225,67 +328,78 @@ public class CursoController : Controller
         {
             return RedirectToAction("Index", "Home");
         }
-
-        // El empleador solo ve cursos de su empresa
-        if (tipoUsuario == "Empleador" && !EsDeMiEmpresa(bd, curso))
-        {
-            return RedirectToAction("Index", "Home");
-        }
-
-        // De quién es el avance que mostramos:
-        // el empleado ve el suyo (solo si el curso le fue asignado y ya está confirmado);
-        // el empleador ve el del empleado al que se lo asignó
+        int idUsuarioSesion = int.Parse(HttpContext.Session.GetString("IdUsuario"));
         List<CursoXUsuario> asignaciones = bd.TraerAsignacionesCurso(IdCurso);
+
+        CursoXUsuario propia = null;
+        foreach (CursoXUsuario item in asignaciones)
+        {
+            if (item.IdUsuario == idUsuarioSesion)
+            {
+                propia = item;
+            }
+        }
+        bool esResponsable = RangoDeAbajo(bd, curso.IdRango) != null;
+
         CursoXUsuario asignacion = null;
-        if (tipoUsuario == "Empleado")
+        bool modoAlumno = false;
+        if (IdUsuario == 0 && propia != null && curso.Estado == "Confirmado")
+        {
+            asignacion = propia;
+            modoAlumno = true;
+        }
+        else if (esResponsable)
         {
             foreach (CursoXUsuario item in asignaciones)
             {
-                if (item.IdUsuario.ToString() == HttpContext.Session.GetString("IdUsuario"))
+                if (asignacion == null && (IdUsuario == 0 || item.IdUsuario == IdUsuario))
                 {
                     asignacion = item;
                 }
             }
-            if (asignacion == null || curso.Estado != "Confirmado")
-            {
-                return RedirectToAction("PanelEmpleado", "Home");
-            }
         }
-        else if (asignaciones.Count > 0)
+        else
         {
-            asignacion = asignaciones[0];
-        }
-        if (asignacion == null)
-        {
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
-        Usuarios empleado = bd.TraerEmpleado(asignacion.IdUsuario);
+        // Las personas del curso, para elegir de quién mirar el camino
+        List<Usuarios> personas = new List<Usuarios>();
+        foreach (CursoXUsuario item in asignaciones)
+        {
+            personas.Add(bd.TraerEmpleado(item.IdUsuario));
+        }
+
         ViewBag.Curso = curso;
         ViewBag.Asignacion = asignacion;
-        ViewBag.NombreEmpleado = empleado.Nombre + " " + empleado.Apellido;
+        ViewBag.Personas = personas;
+        ViewBag.ModoAlumno = modoAlumno;
+        ViewBag.EsEmpleador = !modoAlumno;
+        ViewBag.NombreRango = NombreRango(bd, curso.IdRango);
+        ViewBag.NombreEmpleado = "";
         ViewBag.Unidades = bd.TraerUnidadesCurso(IdCurso);
-        ViewBag.Lecciones = bd.TraerLeccionesUsuario(IdCurso, asignacion.IdUsuario);
-        ViewBag.EsEmpleador = tipoUsuario == "Empleador";
+        ViewBag.Lecciones = new List<Lecciones>();
+        if (asignacion != null)
+        {
+            Usuarios persona = bd.TraerEmpleado(asignacion.IdUsuario);
+            ViewBag.NombreEmpleado = persona.Nombre + " " + persona.Apellido;
+            ViewBag.Lecciones = bd.TraerLeccionesUsuario(IdCurso, asignacion.IdUsuario);
+            ViewBag.XP = persona.XP;
+            ViewBag.Racha = persona.Racha;
+        }
         return View("Ver");
     }
 
-    // ============ EMPLEADOR: rehace UNA unidad del borrador con un pedido ("que sea más difícil") ============
+    // ============ Rehacer UNA unidad del borrador con un pedido ("que sea más difícil") ============
     [HttpPost]
     public async Task<IActionResult> RehacerUnidad(int IdCurso, int NumeroUnidad, string Pedido)
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
-        {
-            return RedirectToAction("Acceso", "Home");
-        }
         BD bd = new BD();
         Cursos curso = bd.TraerCurso(IdCurso);
-        if (curso == null || !EsDeMiEmpresa(bd, curso))
+        if (curso == null || RangoDeAbajo(bd, curso.IdRango) == null)
         {
             return RedirectToAction("Index");
         }
-
-        // Solo se cambia mientras es borrador: una vez confirmado, el empleado ya lo está haciendo
         if (curso.Estado != "Borrador")
         {
             ViewBag.Error = "Este curso ya está confirmado: solo se pueden cambiar unidades de un borrador.";
@@ -302,14 +416,9 @@ public class CursoController : Controller
             return Ver(IdCurso);
         }
 
-        // 1) La unidad que se cambia y el plan completo actual (para que la IA no repita temas de otras unidades)
         List<CursoXUsuario> asignaciones = bd.TraerAsignacionesCurso(IdCurso);
-        if (asignaciones.Count == 0)
-        {
-            return RedirectToAction("Index");
-        }
         List<Unidades> unidades = bd.TraerUnidadesCurso(IdCurso);
-        List<Lecciones> lecciones = bd.TraerLeccionesUsuario(IdCurso, asignaciones[0].IdUsuario);
+        List<Lecciones> lecciones = bd.TraerLeccionesCurso(IdCurso);
         Unidades unidadVieja = null;
         foreach (Unidades unidad in unidades)
         {
@@ -323,18 +432,21 @@ public class CursoController : Controller
             return RedirectToAction("Ver", new { IdCurso = IdCurso });
         }
 
-        // Los datos del empleado al que se le asignó el curso
-        Usuarios empleado = bd.TraerEmpleado(asignaciones[0].IdUsuario);
-        FormulariosEmpleado formEmpleado = bd.TraerFormularioEmpleado(empleado.IdUsuario);
-        FormulariosEmpresa formEmpresa = bd.TraerFormularioEmpresa(curso.IdEmpresa);
-        if (formEmpleado == null)
+        // Los datos del grupo: la gente que tiene el curso
+        List<Usuarios> personas = new List<Usuarios>();
+        List<FormulariosEmpleado> formularios = new List<FormulariosEmpleado>();
+        foreach (CursoXUsuario item in asignaciones)
         {
-            ViewBag.Error = "No encontramos el formulario del empleado para rehacer la unidad.";
-            return Ver(IdCurso);
+            FormulariosEmpleado form = bd.TraerFormularioEmpleado(item.IdUsuario);
+            if (form != null)
+            {
+                personas.Add(bd.TraerEmpleado(item.IdUsuario));
+                formularios.Add(form);
+            }
         }
-
+        Rangos rango = RangoDeAbajo(bd, curso.IdRango);
         string instrucciones = ArmarInstruccionesUnidad(NumeroUnidad);
-        string datos = ArmarDatos(bd, empleado, formEmpleado, formEmpresa);
+        string datos = ArmarDatosGrupo(bd, rango, personas, formularios, bd.TraerFormularioEmpresa(curso.IdEmpresa));
         datos = datos + "\nPLAN ACTUAL DEL CURSO \"" + curso.Titulo + "\":\n";
         foreach (Unidades unidad in unidades)
         {
@@ -348,9 +460,8 @@ public class CursoController : Controller
             }
         }
         datos = datos + "\nUNIDAD A REHACER: la " + NumeroUnidad + ".\n";
-        datos = datos + "QUÉ PIDE EL EMPLEADOR: " + Recortar(Pedido.Trim(), 300) + "\n";
+        datos = datos + "QUÉ PIDE EL RESPONSABLE: " + DatosIA.Recortar(Pedido.Trim(), 300) + "\n";
 
-        // 2) Le pedimos solo esa unidad a la IA (si viene mal, probamos una vez más)
         UnidadIA unidadIA = null;
         try
         {
@@ -373,11 +484,9 @@ public class CursoController : Controller
             return Ver(IdCurso);
         }
 
-        // 3) Reemplazamos la unidad y sus 5 lecciones; el resto del curso queda igual.
-        //    Al borrar las lecciones viejas se borra solo su estado en LeccionXUsuario (ON DELETE CASCADE),
-        //    así que cargamos el estado de las nuevas para cada persona que tiene el curso.
-        unidadVieja.Titulo = Recortar(unidadIA.Titulo, 100);
-        unidadVieja.Objetivo = Recortar(unidadIA.Objetivo, 300);
+        // Reemplazamos la unidad y sus 5 lecciones; al borrar las viejas se borra solo su estado (ON DELETE CASCADE)
+        unidadVieja.Titulo = DatosIA.Recortar(unidadIA.Titulo, 100);
+        unidadVieja.Objetivo = DatosIA.Recortar(unidadIA.Objetivo, 300);
         bd.ActualizarUnidad(unidadVieja);
         bd.BorrarLeccionesUnidad(unidadVieja.IdUnidad);
 
@@ -387,51 +496,52 @@ public class CursoController : Controller
             Lecciones leccion = new Lecciones();
             leccion.IdUnidad = unidadVieja.IdUnidad;
             leccion.Numero = numero;
-            leccion.Titulo = Recortar(leccionIA.Titulo, 100);
-            leccion.Objetivo = Recortar(leccionIA.Objetivo, 300);
+            leccion.Titulo = DatosIA.Recortar(leccionIA.Titulo, 100);
+            leccion.Objetivo = DatosIA.Recortar(leccionIA.Objetivo, 300);
             int idLeccion = bd.AgregarLeccion(leccion);
-            foreach (CursoXUsuario asignacion in asignaciones)
+            foreach (CursoXUsuario item in asignaciones)
             {
-                bd.AgregarLeccionUsuario(idLeccion, asignacion.IdUsuario, EstadoInicial(NumeroUnidad, numero, asignacion.UnidadInicial));
+                bd.AgregarLeccionUsuario(idLeccion, item.IdUsuario, EstadoInicial(NumeroUnidad, numero, item.UnidadInicial));
             }
             numero++;
         }
-
-        // Volvemos al curso, a la altura de la unidad que se cambió
         return Redirect(Url.Action("Ver", new { IdCurso = IdCurso }) + "#unidad-" + NumeroUnidad);
     }
 
-    // ============ EMPLEADOR: confirma el curso y el empleado entra al equipo ============
+    // ============ Confirmar: el curso le llega a todo el rango ============
     [HttpPost]
     public IActionResult Confirmar(int IdCurso)
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
-        {
-            return RedirectToAction("Acceso", "Home");
-        }
         BD bd = new BD();
         Cursos curso = bd.TraerCurso(IdCurso);
-        if (curso == null || !EsDeMiEmpresa(bd, curso))
+        if (curso == null || RangoDeAbajo(bd, curso.IdRango) == null)
         {
             return RedirectToAction("Index");
         }
         bd.ConfirmarCurso(IdCurso);
+
+        // Se le deja preparada a cada persona su primera lección, así no espera cuando la abre.
+        // Es una sola por persona para no gastar créditos en lecciones que capaz nadie abre;
+        // mientras hace una, se preparan las 2 siguientes.
+        if (_groqFeatureToggle.Enabled)
+        {
+            foreach (CursoXUsuario asignacion in bd.TraerAsignacionesCurso(IdCurso))
+            {
+                GeneradorLecciones.PrepararEnSegundoPlano(_groqService, asignacion.IdUsuario, GeneradorLecciones.Siguientes(bd, IdCurso, asignacion.IdUsuario, 0, 1));
+            }
+        }
         ViewBag.IdCurso = IdCurso;
         ViewBag.Titulo = curso.Titulo;
         return View("CursoCreado");
     }
 
-    // ============ EMPLEADOR: descarta el borrador para generarlo de nuevo ============
+    // ============ Descartar el borrador para generarlo de nuevo ============
     [HttpPost]
     public IActionResult Descartar(int IdCurso)
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
-        {
-            return RedirectToAction("Acceso", "Home");
-        }
         BD bd = new BD();
         Cursos curso = bd.TraerCurso(IdCurso);
-        if (curso != null && curso.Estado == "Borrador" && EsDeMiEmpresa(bd, curso))
+        if (curso != null && curso.Estado == "Borrador" && RangoDeAbajo(bd, curso.IdRango) != null)
         {
             bd.BorrarCurso(IdCurso);
         }
@@ -440,29 +550,62 @@ public class CursoController : Controller
 
     // ================= Métodos de ayuda =================
 
-    // El curso es de la empresa del que está logueado (así nadie ve cursos de otra empresa)
-    private bool EsDeMiEmpresa(BD bd, Cursos curso)
+    private bool EsDueno()
     {
-        return curso.IdEmpresa.ToString() == HttpContext.Session.GetString("IdEmpresa");
+        return HttpContext.Session.GetString("TipoUsuario") == "Empleador";
     }
 
-    // Junta los nombres de las herramientas tildadas: "ChatGPT, Excel o Google Sheets, Gmail u Outlook"
-    private string NombresHerramientas(List<Herramientas> herramientas)
+    // Los rangos que el usuario logueado tiene abajo (los únicos para los que puede crear cursos)
+    private List<Rangos> RangosDeAbajo(BD bd)
     {
-        string texto = "";
-        foreach (Herramientas herramienta in herramientas)
+        string idRangoTexto = HttpContext.Session.GetString("IdRango");
+        if (idRangoTexto == null || idRangoTexto == "")
         {
-            if (texto != "")
+            return new List<Rangos>();
+        }
+        List<Rangos> todos = bd.TraerRangosEmpresa(int.Parse(HttpContext.Session.GetString("IdEmpresa")));
+        return Arbol.Debajo(todos, int.Parse(idRangoTexto));
+    }
+
+    // Devuelve el rango si está abajo del usuario logueado; si no, null (así nadie toca rangos de arriba o de otra empresa)
+    private Rangos RangoDeAbajo(BD bd, int idRango)
+    {
+        foreach (Rangos rango in RangosDeAbajo(bd))
+        {
+            if (rango.IdRango == idRango)
             {
-                texto = texto + ", ";
+                return rango;
             }
-            texto = texto + herramienta.Nombre;
         }
-        if (texto == "")
+        return null;
+    }
+
+    private string NombreRango(BD bd, int idRango)
+    {
+        foreach (Rangos rango in bd.TraerRangosEmpresa(int.Parse(HttpContext.Session.GetString("IdEmpresa"))))
         {
-            texto = "ninguna";
+            if (rango.IdRango == idRango)
+            {
+                return rango.Nombre;
+            }
         }
-        return texto;
+        return "";
+    }
+
+    // Le asigna el curso a una persona: CursoXUsuario con su nivelación y el estado de cada lección
+    private void Asignar(BD bd, int idCurso, List<Lecciones> lecciones, int idUsuario, int unidadInicial, string motivo)
+    {
+        CursoXUsuario asignacion = new CursoXUsuario();
+        asignacion.IdCurso = idCurso;
+        asignacion.IdUsuario = idUsuario;
+        asignacion.UnidadInicial = unidadInicial;
+        asignacion.MotivoNivel = DatosIA.Recortar(motivo, 300);
+        bd.AsignarCurso(asignacion);
+        foreach (Lecciones leccion in lecciones)
+        {
+            bd.AgregarLeccionUsuario(leccion.IdLeccion, idUsuario, EstadoInicial(leccion.NumeroUnidad, leccion.Numero, unidadInicial));
+        }
+        bd.ActualizarProgreso(idCurso, idUsuario);
     }
 
     private IActionResult MostrarError(string mensaje)
@@ -471,7 +614,67 @@ public class CursoController : Controller
         return Index();
     }
 
-    // Convierte el JSON de la IA en objetos y revisa que esté completo. Si algo falta, devuelve null.
+    // Los datos de todo el rango para la IA: la empresa y cada persona
+    private string ArmarDatosGrupo(BD bd, Rangos rango, List<Usuarios> personas, List<FormulariosEmpleado> formularios, FormulariosEmpresa formEmpresa)
+    {
+        string datos = "RANGO: " + rango.Nombre + " (" + personas.Count + " personas)\n\n";
+        int cantidad = personas.Count;
+        if (cantidad > 8)
+        {
+            cantidad = 8;
+        }
+        for (int i = 0; i < cantidad; i++)
+        {
+            datos = datos + "PERSONA " + (i + 1) + ":\n" + DatosIA.Persona(bd, personas[i], formularios[i]) + "\n";
+        }
+        datos = datos + DatosIA.Empresa(bd, formEmpresa);
+        return datos;
+    }
+
+    // El prompt fijo del curso por rango (ver PROMPT-IA.md)
+    private string ArmarInstrucciones()
+    {
+        string texto = "Sos un diseñador de cursos de Fluenty, una app que enseña a usar inteligencia artificial en el trabajo con el estilo de Duolingo: ";
+        texto = texto + "un camino largo de lecciones cortas, una por día, que se van desbloqueando.\n\n";
+
+        texto = texto + "TU TAREA: armar el PLAN de UN curso de 4 semanas para TODAS las personas de un rango (el mismo puesto dentro de la empresa): ";
+        texto = texto + "4 unidades de 5 lecciones cada una (20 lecciones, una por día). Todavía no escribas el contenido de las lecciones: solo el plan. ";
+        texto = texto + "El curso es uno solo para el grupo; lo que cambia de persona a persona es en qué unidad arranca.\n\n";
+
+        texto = texto + "CÓMO ARMAR LAS UNIDADES:\n";
+        texto = texto + "Unidad 1: fundamentos de IA adaptados a este puesto (qué es, qué no es, cómo pedirle bien las cosas, cuidar los datos).\n";
+        texto = texto + "Unidad 2: aplicar la IA a la tarea repetitiva MÁS COMÚN del grupo.\n";
+        texto = texto + "Unidad 3: aplicar la IA a otras tareas repetitivas que comparten.\n";
+        texto = texto + "Unidad 4: un proyecto real del puesto, apuntando a los objetivos de la empresa.\n";
+        texto = texto + "La lección 5 de cada unidad es SIEMPRE un desafío que repasa la unidad: su título empieza con \"Desafío:\".\n";
+        texto = texto + "Las lecciones van de lo simple a lo difícil, no se repiten y cada una enseña UNA cosa concreta que se puede usar al día siguiente. ";
+        texto = texto + "Usá las tareas, herramientas, dificultades y días típicos reales del grupo. Si el grupo es de personas muy distintas, buscá lo que tienen en común.\n\n";
+
+        texto = texto + "NIVELACIÓN (para CADA persona, por su IdUsuario): decidí en qué unidad arranca (1 a 4) según lo que ya sabe de IA. ";
+        texto = texto + "Si nunca la usó o solo la probó, arranca en la 1. Si la usa a veces para cosas simples, puede arrancar en la 2. Solo si la usa seguido en su trabajo arranca en la 3. ";
+        texto = texto + "Casi nunca se arranca en la 4. En motivo explicá en una oración por qué la ubicaste ahí.\n\n";
+
+        texto = texto + "ELEGÍ UNO DE ESTOS 7 MODELOS DE CURSO según el puesto: ";
+        texto = texto + "Tareas de escritorio, Oficio y campo, Ventas y atención al cliente, Gestión y liderazgo, Creativo y marketing, Técnico y datos, Primer contacto (si casi no usan tecnología).\n\n";
+
+        texto = texto + "REGLAS: español rioplatense, claro, motivador y sin relleno. Títulos de lección cortos (máximo 60 caracteres). ";
+        texto = texto + "Objetivo de cada lección: una oración que empiece con un verbo. Si alguien maneja datos de clientes, incluí una lección sobre cuidarlos. ";
+        texto = texto + "Si a varios les preocupa algo de la IA, incluí una lección temprana que lo responda con calma. Nunca pidas datos privados de clientes.\n\n";
+
+        texto = texto + "RESPONDÉ SOLO CON UN JSON CON ESTE FORMATO EXACTO:\n";
+        texto = texto + "{\"modelo\": \"...\", \"titulo\": \"título del curso\", \"descripcion\": \"una o dos oraciones\", ";
+        texto = texto + "\"objetivos\": [\"lo que van a lograr 1\", \"2\", \"3\"], ";
+        texto = texto + "\"nivelacion\": [{\"idUsuario\": 5, \"unidadInicial\": 1, \"motivo\": \"...\"}, ...una por persona], ";
+        texto = texto + "\"unidades\": [";
+        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\", \"lecciones\": [";
+        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\"}, ";
+        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}, ";
+        texto = texto + "{\"numero\": 5, \"titulo\": \"Desafío: ...\", \"objetivo\": \"...\"}]}, ";
+        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}";
+        texto = texto + "]}";
+        return texto;
+    }
+
     private CursoIA LeerCurso(string respuesta)
     {
         CursoIA curso = null;
@@ -486,12 +689,12 @@ public class CursoController : Controller
             return null;
         }
 
-        // Tiene que venir completo: título, 3 objetivos, unidad inicial entre 1 y 4, 4 unidades de 5 lecciones
+        // Tiene que venir completo: título, objetivos y 4 unidades de 5 lecciones
         if (curso == null || curso.Titulo == null || curso.Titulo == "" || curso.Objetivos == null || curso.Unidades == null)
         {
             return null;
         }
-        if (curso.Objetivos.Count == 0 || curso.Unidades.Count != 4 || curso.UnidadInicial < 1 || curso.UnidadInicial > 4)
+        if (curso.Objetivos.Count == 0 || curso.Unidades.Count != 4)
         {
             return null;
         }
@@ -505,7 +708,6 @@ public class CursoController : Controller
         return curso;
     }
 
-    // Lo mismo que LeerCurso, pero para una sola unidad: tiene que traer título y 5 lecciones
     private UnidadIA LeerUnidad(string respuesta)
     {
         UnidadIA unidad = null;
@@ -526,9 +728,6 @@ public class CursoController : Controller
         return unidad;
     }
 
-    // Estado con el que arranca cada lección según la nivelación:
-    // las unidades anteriores a la inicial quedan "YaSabe",
-    // la primera lección de la unidad inicial queda "Disponible" y el resto "Bloqueada"
     private string EstadoInicial(int numeroUnidad, int numeroLeccion, int unidadInicial)
     {
         if (numeroUnidad < unidadInicial)
@@ -542,85 +741,13 @@ public class CursoController : Controller
         return "Bloqueada";
     }
 
-    // Corta el texto para que entre en la columna de la base
-    private string Recortar(string texto, int maximo)
-    {
-        if (texto == null)
-        {
-            return "";
-        }
-        if (texto.Length > maximo)
-        {
-            return texto.Substring(0, maximo);
-        }
-        return texto;
-    }
-
-    // El prompt fijo: cómo tiene que pensar la IA y en qué formato responder (ver PROMPT-IA.md)
-    private string ArmarInstrucciones()
-    {
-        string texto = "Sos un diseñador de cursos de Fluenty, una app que enseña a usar inteligencia artificial en el trabajo con el estilo de Duolingo: ";
-        texto = texto + "un camino largo de lecciones cortas, una por día, que se van desbloqueando.\n\n";
-
-        texto = texto + "TU TAREA: armar el PLAN de un curso de 4 semanas para este empleado: 4 unidades de 5 lecciones cada una (20 lecciones, una por día). ";
-        texto = texto + "Todavía no escribas el contenido de las lecciones: solo el plan.\n\n";
-
-        texto = texto + "CÓMO ARMAR LAS UNIDADES:\n";
-        texto = texto + "Unidad 1: fundamentos de IA adaptados a su puesto (qué es, qué no es, cómo pedirle bien las cosas, cuidar los datos).\n";
-        texto = texto + "Unidad 2: aplicar la IA a su PRIMERA tarea repetitiva.\n";
-        texto = texto + "Unidad 3: aplicar la IA a su SEGUNDA y TERCERA tarea repetitiva.\n";
-        texto = texto + "Unidad 4: llevarlo todo junto a un proyecto real de su puesto, apuntando a los objetivos de la empresa.\n";
-        texto = texto + "La lección 5 de cada unidad es SIEMPRE un desafío que repasa la unidad: su título empieza con \"Desafío:\".\n";
-        texto = texto + "Las lecciones van de lo simple a lo difícil, no se repiten y cada una enseña UNA cosa concreta que el empleado puede usar al día siguiente en su trabajo. ";
-        texto = texto + "Usá sus tareas, herramientas, dificultades y objetivos reales en los títulos y objetivos de las lecciones.\n\n";
-
-        texto = texto + "NIVELACIÓN: decidí en qué unidad arranca (unidadInicial, de 1 a 4) según lo que ya sabe de IA. ";
-        texto = texto + "Si nunca la usó o solo la probó, arranca en la 1. Si la usa a veces para cosas simples, puede arrancar en la 2. Solo si la usa seguido en su trabajo arranca en la 3. ";
-        texto = texto + "Casi nunca se arranca en la 4. En motivoNivel explicá en una oración por qué lo ubicaste ahí.\n\n";
-
-        texto = texto + "ELEGÍ UNO DE ESTOS 7 MODELOS DE CURSO según el puesto: ";
-        texto = texto + "Tareas de escritorio (administrativos, contadores, RR.HH.: textos, mails, planillas). ";
-        texto = texto + "Oficio y campo (trabajos manuales: lecciones muy cortas; la IA sirve para consultar, diagnosticar, calcular materiales o presupuestar). ";
-        texto = texto + "Ventas y atención al cliente (reclamos, propuestas, seguimiento; cuidar los datos del cliente). ";
-        texto = texto + "Gestión y liderazgo (dueños, gerentes, encargados: decisiones, delegación, reuniones, números). ";
-        texto = texto + "Creativo y marketing (ideas, textos, imágenes; cuidado con la originalidad y los derechos de autor). ";
-        texto = texto + "Técnico y datos (programadores, analistas, soporte: más avanzado, encontrar errores, comparar soluciones). ";
-        texto = texto + "Primer contacto (si es principiante y casi no usa tecnología).\n\n";
-
-        texto = texto + "PERSONALIZACIÓN (muy importante): el curso tiene que sentirse hecho para esta persona.\n";
-        texto = texto + "- Usá el área y el día típico para que los ejemplos sean de su trabajo real.\n";
-        texto = texto + "- La primera lección de la unidad en la que arranca tiene que resolver la tarea concreta que contó de esta semana.\n";
-        texto = texto + "- Adaptá el tono a su edad y a qué tan cómodo está con la tecnología: si le cuesta, títulos simples, sin palabras técnicas y avanzando de a poco.\n";
-        texto = texto + "- Tené en cuenta cómo le gusta aprender y sus hobbies: aprovechalos para que el curso le resulte cercano.\n";
-        texto = texto + "- Si maneja datos de clientes, incluí una lección sobre cuidar esos datos al usar IA.\n";
-        texto = texto + "- Si algo de la IA le preocupa, incluí una lección temprana que responda esa preocupación con calma.\n\n";
-
-        texto = texto + "REGLAS: español rioplatense, claro, motivador y sin relleno. Títulos de lección cortos (máximo 60 caracteres). ";
-        texto = texto + "Objetivo de cada lección: una oración que empiece con un verbo (\"Aprender a...\", \"Usar...\", \"Detectar...\"). Nunca pidas datos privados de clientes.\n\n";
-
-        texto = texto + "RESPONDÉ SOLO CON UN JSON CON ESTE FORMATO EXACTO:\n";
-        texto = texto + "{\"modelo\": \"nombre del modelo elegido\", \"titulo\": \"título del curso\", \"descripcion\": \"una o dos oraciones\", ";
-        texto = texto + "\"objetivos\": [\"lo que va a lograr 1\", \"lo que va a lograr 2\", \"lo que va a lograr 3\"], ";
-        texto = texto + "\"unidadInicial\": 1, \"motivoNivel\": \"por qué arranca en esa unidad\", ";
-        texto = texto + "\"unidades\": [";
-        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\", \"lecciones\": [";
-        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\"}, ";
-        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}, ";
-        texto = texto + "{\"numero\": 5, \"titulo\": \"Desafío: ...\", \"objetivo\": \"...\"}]}, ";
-        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}";
-        texto = texto + "]}";
-
-        return texto;
-    }
-
-    // El prompt para rehacer UNA unidad: mismas reglas que el curso, pero solo devuelve esa unidad
     private string ArmarInstruccionesUnidad(int numeroUnidad)
     {
         string texto = "Sos un diseñador de cursos de Fluenty, una app que enseña a usar inteligencia artificial en el trabajo con el estilo de Duolingo: ";
         texto = texto + "lecciones cortas, una por día, que se van desbloqueando.\n\n";
 
-        texto = texto + "TU TAREA: el empleador revisó el plan del curso y quiere cambiar SOLO la unidad " + numeroUnidad + ". ";
-        texto = texto + "Rehacé esa unidad (su título, su objetivo y sus 5 lecciones) siguiendo lo que pide el empleador. ";
+        texto = texto + "TU TAREA: el responsable revisó el plan del curso y quiere cambiar SOLO la unidad " + numeroUnidad + ". ";
+        texto = texto + "Rehacé esa unidad (su título, su objetivo y sus 5 lecciones) siguiendo lo que pide el responsable. ";
         texto = texto + "Las demás unidades NO se tocan: usalas solo para no repetir temas y para que la unidad nueva encaje entre la anterior y la siguiente. ";
         texto = texto + "Todavía no escribas el contenido de las lecciones: solo el plan.\n\n";
 
@@ -629,7 +756,7 @@ public class CursoController : Controller
         texto = texto + "Usá sus tareas, herramientas, dificultades y objetivos reales. ";
         texto = texto + "Español rioplatense, claro y sin relleno. Títulos de lección cortos (máximo 60 caracteres). ";
         texto = texto + "Objetivo de cada lección: una oración que empiece con un verbo. Nunca pidas datos privados de clientes. ";
-        texto = texto + "Si el pedido del empleador no tiene que ver con el curso, ignoralo y mejorá la unidad igual.\n\n";
+        texto = texto + "Si el pedido del responsable no tiene que ver con el curso, ignoralo y mejorá la unidad igual.\n\n";
 
         texto = texto + "RESPONDÉ SOLO CON UN JSON CON ESTE FORMATO EXACTO:\n";
         texto = texto + "{\"numero\": " + numeroUnidad + ", \"titulo\": \"...\", \"objetivo\": \"...\", \"lecciones\": [";
@@ -640,55 +767,4 @@ public class CursoController : Controller
         return texto;
     }
 
-    // Los datos de los dos formularios: el del empleado y el de la empresa
-    private string ArmarDatos(BD bd, Usuarios empleado, FormulariosEmpleado formEmpleado, FormulariosEmpresa formEmpresa)
-    {
-        // NivelIA: 1 = nunca la usó, 2 = la probó alguna vez, 3 = la usa a veces, 4 = la usa seguido en el trabajo
-        string nivel = "principiante: nunca usó una IA";
-        if (formEmpleado.NivelIA == 2)
-        {
-            nivel = "principiante: probó una IA alguna vez";
-        }
-        if (formEmpleado.NivelIA == 3)
-        {
-            nivel = "intermedio: usa la IA a veces para cosas simples";
-        }
-        if (formEmpleado.NivelIA == 4)
-        {
-            nivel = "avanzado: usa la IA seguido en su trabajo";
-        }
-
-        string datos = "FORMULARIO DEL EMPLEADO:\n";
-        datos = datos + "Puesto: " + empleado.Puesto + "\n";
-        datos = datos + "Área: " + formEmpleado.Area + "\n";
-        datos = datos + "Cómo es un día típico de su trabajo: " + formEmpleado.DiaTipico + "\n";
-        datos = datos + "Nivel con la IA: " + nivel + "\n";
-        datos = datos + "Herramientas que usa: " + NombresHerramientas(bd.TraerHerramientasUsuario(empleado.IdUsuario)) + "\n";
-        datos = datos + "Principal dificultad en su trabajo: " + formEmpleado.DificultadPrincipal + "\n";
-        datos = datos + "Qué le gustaría que la empresa mejore en su puesto: " + formEmpleado.MejoraEmpresa + "\n";
-        datos = datos + "Fortalezas y debilidades: " + formEmpleado.FortalezasDebilidades + "\n";
-        datos = datos + "Qué quiere mejorar personalmente: " + formEmpleado.MejoraPersonal + "\n";
-        datos = datos + "Sus 3 tareas repetitivas: " + formEmpleado.Tareas + "\n";
-        datos = datos + "Errores o dificultades en esas tareas: " + formEmpleado.Dificultades + "\n";
-        datos = datos + "Qué quiere conseguir con el curso: " + formEmpleado.Objetivos + "\n";
-        datos = datos + "Una tarea de esta semana que le llevó más de lo que debería: " + formEmpleado.TareaConcreta + "\n";
-        datos = datos + "¿Maneja datos de clientes?: " + formEmpleado.DatosClientes + "\n";
-        datos = datos + "Minutos por día para capacitarse: " + formEmpleado.TiempoXDia + "\n\n";
-
-        datos = datos + "CÓMO EXPLICARLE (sobre la persona):\n";
-        datos = datos + "Edad: " + formEmpleado.RangoEdad + "\n";
-        datos = datos + "Qué tan cómodo se siente con la compu y el celular: " + formEmpleado.ComodidadTecnologia + "\n";
-        datos = datos + "Cómo le gusta aprender: " + formEmpleado.ComoAprende + "\n";
-        datos = datos + "Qué le gusta hacer fuera del trabajo: " + formEmpleado.Hobbies + "\n";
-        datos = datos + "Qué le preocupa de la IA: " + formEmpleado.PreocupacionIA + "\n\n";
-
-        if (formEmpresa != null)
-        {
-            datos = datos + "FORMULARIO DE LA EMPRESA (cómo quiere los cursos):\n";
-            datos = datos + "Dificultades del equipo: " + formEmpresa.Dificultades + "\n";
-            datos = datos + "Herramientas digitales que usan: " + NombresHerramientas(bd.TraerHerramientasEmpresa(formEmpresa.IdEmpresa)) + "\n";
-            datos = datos + "Objetivos de la capacitación: " + formEmpresa.Objetivos + "\n";
-        }
-        return datos;
-    }
 }

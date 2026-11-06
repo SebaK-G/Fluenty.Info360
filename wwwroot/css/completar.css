@@ -166,3 +166,35 @@ body {
         font-size: 44px;
     }
 }
+
+/* ----- Sprint 2: formulario corto ----- */
+
+/* "(opcional)" al lado de la pregunta */
+.opcional {
+    font-weight: normal;
+    color: #6b7a8f;
+    font-size: 14px;
+}
+
+/* Aviso de que el jefe no ve las respuestas */
+.privacidad-completar {
+    background-color: #ffffff14;
+    border: 1px solid #ffffff30;
+    color: #e4edf8;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 6px 0 16px 0;
+    line-height: 1.5;
+}
+
+/* La pregunta de más: opciones grandes para tocar */
+.una-mas .opciones-columna .eleccion {
+    font-size: 16px;
+}
+
+.saltear {
+    display: inline-block;
+    margin-top: 12px;
+    color: #c4d3e6;
+    font-size: 14px;
+}

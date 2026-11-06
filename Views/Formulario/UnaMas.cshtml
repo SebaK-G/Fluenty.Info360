@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Una sola pregunta más";
+    List<string> opciones = ViewBag.Opciones;
+}
+
+<link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/completar.css" asp-append-version="true" />
+
+<div class="pagina-completar">
+
+    <header class="encabezado-invitar">
+        <div class="logo-invitar">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        <p class="tiempo-invitar">⏱ 10 segundos</p>
+    </header>
+
+    <main class="contenido-completar">
+
+        <section class="titulo-completar">
+            <p class="etiqueta-completar">Ya casi, @ViewBag.Nombre</p>
+            <h1>Una sola pregunta más</h1>
+            <p>Con esto tu primera lección te resuelve algo de verdad, en vez de ser un ejemplo genérico.</p>
+        </section>
+
+        <!-- Para quien dejó vacía (o con "nada") la pregunta de qué es lo que más tiempo le come -->
+        <form class="una-mas" action='@Url.Action("UnaMas", "Formulario")' method="POST">
+            <section class="tarjeta-completar">
+                <div class="campo">
+                    <p class="pregunta-campo">¿Qué es lo que más tiempo te lleva en el día?</p>
+                    <div class="opciones opciones-columna">
+                        @foreach (string opcion in opciones)
+                        {
+                            <label class="eleccion"><input type="radio" name="Opcion" value="@opcion" /> @opcion</label>
+                        }
+                    </div>
+                    <input class="otro" type="text" name="Otra" maxlength="80" placeholder="Otra cosa (opcional)" />
+                </div>
+
+                <div class="campo">
+                    <label for="Detalle">Si querés, contalo en una frase <span class="opcional">(opcional)</span></label>
+                    <input type="text" id="Detalle" name="Detalle" maxlength="200" placeholder="Ej.: paso 30 pedidos por día de WhatsApp a la planilla" />
+                </div>
+            </section>
+
+            <div class="acciones-completar">
+                <input type="submit" value="Listo, armar mi curso" />
+                <a class="saltear" href='@Url.Action("Saltear", "Formulario")'>Saltear esta pregunta</a>
+            </div>
+        </form>
+    </main>
+</div>

@@ -1,9 +1,16 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = ViewBag.Curso.Titulo;
+    int unidadInicial = 1;
+    string botonActivo = ViewBag.ModoAlumno ? "MiCurso" : "Cursos";
+    if (ViewBag.Asignacion != null)
+    {
+        unidadInicial = ViewBag.Asignacion.UnidadInicial;
+    }
 }
 
 <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
 
 <div class="pagina-curso">
 
@@ -12,21 +19,7 @@
             <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
             <span>Fluenty</span>
         </div>
-        <nav class="nav-app">
-            @if (ViewBag.EsEmpleador)
-            {
-                <a href='@Url.Action("Index", "Home")'>Home</a>
-                <a href='@Url.Action("Index", "Curso")' class="activo">Cursos</a>
-                <a class="sin-link">Calculadora</a>
-                <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
-                <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
-            }
-            else
-            {
-                <a href='@Url.Action("PanelEmpleado", "Home")' class="activo">Mi panel</a>
-                <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
-            }
-        </nav>
+        @await Html.PartialAsync("_NavApp", botonActivo)
     </header>
 
     <main class="contenido-curso">
@@ -38,42 +31,68 @@
 
         <!-- ===== Portada del curso ===== -->
         <div class="tarjeta-curso portada">
-            <p class="modelo">@ViewBag.Curso.Modelo</p>
-            @if (ViewBag.EsEmpleador)
-            {
-                <p class="para-empleado">Curso para <strong>@ViewBag.NombreEmpleado</strong></p>
-            }
+            <p class="modelo">@ViewBag.Curso.Modelo · Rango @ViewBag.NombreRango</p>
             <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
             <p>@ViewBag.Curso.Descripcion</p>
 
-            <div class="datos-curso">
-                <div><strong>4</strong><span>unidades</span></div>
-                <div><strong>20</strong><span>lecciones</span></div>
-                <div><strong>1</strong><span>lección por día</span></div>
-            </div>
+            @if (ViewBag.ModoAlumno)
+            {
+                <div class="medallas medallas-curso">
+                    <div class="medalla"><span class="icono-medalla">⚡</span><strong>@ViewBag.XP</strong><p>XP</p></div>
+                    <div class="medalla"><span class="icono-medalla">🔥</span><strong>@ViewBag.Racha</strong><p>días de racha</p></div>
+                    <div class="medalla"><span class="icono-medalla">📈</span><strong>@ViewBag.Asignacion.Progreso%</strong><p>completado</p></div>
+                </div>
+            }
+            else
+            {
+                <div class="datos-curso">
+                    <div><strong>4</strong><span>unidades</span></div>
+                    <div><strong>20</strong><span>lecciones</span></div>
+                    <div><strong>@ViewBag.Personas.Count</strong><span>personas</span></div>
+                </div>
+            }
 
             <h3>Lo que vas a lograr</h3>
             <p class="objetivos">@ViewBag.Curso.Objetivos</p>
+        </div>
 
-            <div class="nivelacion">
-                <p><strong>🎯 Nivelación: arranca en la Unidad @ViewBag.Asignacion.UnidadInicial</strong></p>
+        <!-- ===== Responsable: de quién se mira el camino ===== -->
+        @if (!ViewBag.ModoAlumno)
+        {
+            <div class="tarjeta-curso">
+                <h3>El camino de cada persona</h3>
+                <p class="ayuda-sprint2">El curso es el mismo para todo el rango; cada uno arranca donde le corresponde.</p>
+                <div class="personas-curso">
+                    @foreach (Usuarios persona in ViewBag.Personas)
+                    {
+                        bool elegida = ViewBag.Asignacion != null && persona.IdUsuario == ViewBag.Asignacion.IdUsuario;
+                        <a class="chip-persona @(elegida ? "chip-elegida" : "")" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso, IdUsuario = persona.IdUsuario })'>@persona.Nombre @persona.Apellido</a>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (ViewBag.Asignacion != null)
+        {
+            <div class="tarjeta-curso nivelacion">
+                <p><strong>🎯 @(ViewBag.ModoAlumno ? "Arrancás" : ViewBag.NombreEmpleado + " arranca") en la Unidad @unidadInicial</strong></p>
                 <p>@ViewBag.Asignacion.MotivoNivel</p>
             </div>
-        </div>
+        }
 
         <!-- ===== El camino: unidades y lecciones ===== -->
         @foreach (Unidades unidad in ViewBag.Unidades)
         {
             string claseUnidad = "unidad unidad-color-" + unidad.Numero;
             string etiqueta = "";
-            if (unidad.Numero < ViewBag.Asignacion.UnidadInicial)
+            if (unidad.Numero < unidadInicial)
             {
                 claseUnidad = "unidad unidad-sabida";
-                etiqueta = "Ya lo sabés";
+                etiqueta = "Ya lo sabe";
             }
-            if (unidad.Numero == ViewBag.Asignacion.UnidadInicial)
+            if (unidad.Numero == unidadInicial)
             {
-                etiqueta = "Empezás acá";
+                etiqueta = "Arranca acá";
             }
 
             <section class="@claseUnidad" id="unidad-@unidad.Numero">
@@ -95,20 +114,37 @@
                             string icono = "🔒";
                             if (leccion.Estado == "Disponible") { icono = "▶"; }
                             if (leccion.Estado == "Completada" || leccion.Estado == "YaSabe") { icono = "✓"; }
-                            if (leccion.Numero == 5) { icono = "🏆"; }
+                            if (leccion.Numero == 5 && leccion.Estado != "Completada") { icono = "🏆"; }
+                            bool sePuedeHacer = ViewBag.ModoAlumno && (leccion.Estado == "Disponible" || leccion.Estado == "Completada");
 
                             <div class="paso paso-@leccion.Numero">
-                                <div class="circulo circulo-@leccion.Estado">@icono</div>
+                                @if (sePuedeHacer)
+                                {
+                                    <a class="circulo circulo-@leccion.Estado circulo-link" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">@icono</a>
+                                }
+                                else
+                                {
+                                    <div class="circulo circulo-@leccion.Estado">@icono</div>
+                                }
                                 <div class="texto-paso">
                                     <p class="titulo-paso">@leccion.Titulo</p>
                                     <p class="objetivo-paso">@leccion.Objetivo</p>
+                                    @if (leccion.Nota != null)
+                                    {
+                                        <!-- Nota = preguntas bien a la primera; intentos = cuántas veces la terminó (o rindió) -->
+                                        <p class="nota-paso @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "nota-baja" : "")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</p>
+                                    }
+                                    @if (sePuedeHacer && leccion.Estado == "Disponible")
+                                    {
+                                        <a class="empezar-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">Empezar lección →</a>
+                                    }
                                 </div>
                             </div>
                         }
                     }
                 </div>
 
-                @if (ViewBag.EsEmpleador && ViewBag.Curso.Estado == "Borrador")
+                @if (!ViewBag.ModoAlumno && ViewBag.Curso.Estado == "Borrador")
                 {
                     <!-- Rehacer solo esta unidad con un pedido para la IA -->
                     <form class="rehacer-unidad" method="post" action='@Url.Action("RehacerUnidad", "Curso")' onsubmit="mostrarCarga()">
@@ -124,15 +160,10 @@
             </section>
         }
 
-        @if (!ViewBag.EsEmpleador)
-        {
-            <p class="aviso centrado-texto">Muy pronto vas a poder hacer las lecciones desde acá, una por día. 🚀</p>
-        }
-
         <div class="centrado">
-            @if (ViewBag.EsEmpleador && ViewBag.Curso.Estado == "Borrador")
+            @if (!ViewBag.ModoAlumno && ViewBag.Curso.Estado == "Borrador")
             {
-                <p class="aviso">Este curso es un borrador: el empleado todavía no lo ve. Revisalo y confirmalo para sumarlo a tu equipo.</p>
+                <p class="aviso">Este curso es un borrador: el rango todavía no lo ve. Revisalo y confirmalo para que les llegue a todos.</p>
                 <div class="botones">
                     <form method="post" action='@Url.Action("Descartar", "Curso")'>
                         <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
@@ -144,38 +175,33 @@
                     </form>
                 </div>
             }
-            else if (ViewBag.EsEmpleador)
+            else if (!ViewBag.ModoAlumno)
             {
-                <a class="boton-curso" href='@Url.Action("Index", "Empleado")'>Volver a empleados</a>
+                <a class="boton-curso" href='@Url.Action("Index", "Curso")'>Volver a cursos</a>
             }
             else
             {
-                <a class="boton-curso" href='@Url.Action("PanelEmpleado", "Home")'>Volver a mi panel</a>
+                <a class="boton-curso" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
             }
         </div>
     </main>
 </div>
 
-@if (ViewBag.EsEmpleador && ViewBag.Curso.Estado == "Borrador")
-{
-    <!-- Pantalla de carga mientras la IA rehace la unidad (la misma que al generar el curso) -->
-    <div id="carga" class="fondo-carga">
-        <div class="tarjeta-curso caja-carga">
-            <h2>Rehaciendo la unidad</h2>
-            <p>Procesando tu pedido</p>
-            <div class="barra"><div class="barra-relleno animada"></div></div>
-            <p>La IA está armando de nuevo esta unidad. El resto del curso queda igual.</p>
-        </div>
+<!-- Pantalla de carga: mientras la IA rehace una unidad o arma una lección -->
+<div id="carga" class="fondo-carga">
+    <div class="tarjeta-curso caja-carga">
+        <h2>@(ViewBag.ModoAlumno ? "Preparando tu lección" : "Rehaciendo la unidad")</h2>
+        <div class="barra"><div class="barra-relleno animada"></div></div>
+        <p>@(ViewBag.ModoAlumno ? "La IA está armando las explicaciones con ejemplos de tu trabajo." : "La IA está armando de nuevo esta unidad. El resto del curso queda igual.")</p>
     </div>
+</div>
 
-    <script>
-        function mostrarCarga() {
-            document.getElementById("carga").style.display = "flex";
-        }
-
-        // Si el empleador vuelve para atrás, el cartel de carga se cierra
-        window.onpageshow = function () {
-            document.getElementById("carga").style.display = "none";
-        };
-    </script>
-}
+<script>
+    function mostrarCarga() {
+        document.getElementById("carga").style.display = "flex";
+    }
+    // Si vuelve para atrás, el cartel de carga se cierra
+    window.onpageshow = function () {
+        document.getElementById("carga").style.display = "none";
+    };
+</script>

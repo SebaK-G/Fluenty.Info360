@@ -4,6 +4,7 @@
 }
 
 <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
 
 <div class="pagina-curso">
 
@@ -12,74 +13,110 @@
             <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
             <span>Fluenty</span>
         </div>
-        <nav class="nav-app">
-            <a href='@Url.Action("Index", "Home")'>Home</a>
-            <a href='@Url.Action("Index", "Curso")' class="activo">Cursos</a>
-            <a class="sin-link">Calculadora</a>
-            <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
-            <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
-        </nav>
+        @await Html.PartialAsync("_NavApp", "Cursos")
     </header>
 
     <main class="contenido-curso">
 
-        <!-- Compartir el link para que los empleados se unan solos -->
-        <div class="tarjeta-curso titulo-pantalla">
-            <h1>Sumá a tu equipo</h1>
-            <p>Compartí este link con tus empleados. Cada uno se registra y completa su formulario; después le generás el curso desde acá.</p>
-            <input class="link-empresa" type="text" value="@ViewBag.Link" readonly />
-            <div class="botones">
-                <a class="boton-curso grande" href="https://wa.me/?text=Sumate%20a%20nuestro%20equipo%20en%20Fluenty%20y%20complet%C3%A1%20tu%20formulario:%20@(ViewBag.Link)">Compartir por WhatsApp</a>
-            </div>
-        </div>
+        <section class="titulo-sprint2">
+            <p class="etiqueta-sprint2">Cursos por rango</p>
+            <h1>Un curso para cada rango</h1>
+            <p>La IA arma un curso para todo el rango con lo que contó cada persona, y nivela a cada uno: cada persona arranca en la unidad que le corresponde.</p>
+        </section>
 
         @if (ViewBag.Mensaje != null)
         {
             <p class="aviso">@ViewBag.Mensaje</p>
         }
 
-        <div class="tarjeta-curso">
-            <h2 class="centrado-texto">Empleados que completaron el formulario</h2>
+        @foreach (GrupoRango grupo in ViewBag.Grupos)
+        {
+            <section class="tarjeta-curso grupo-rango">
+                <div class="encabezado-grupo">
+                    <div>
+                        <h2>@grupo.Rango.Nombre</h2>
+                        <p class="personas-rango">@grupo.Miembros.Count personas · @grupo.ConFormulario completaron el formulario</p>
+                    </div>
 
-            @if (ViewBag.Solicitudes.Count == 0)
-            {
-                <p class="centrado-texto">Todavía no se sumó nadie. Cuando un empleado complete el formulario del link, va a aparecer acá.</p>
-            }
-            else
-            {
-                @foreach (EmpleadoCurso empleado in ViewBag.Solicitudes)
-                {
-                    <div class="fila-empleado">
-                        <div>
-                            <p class="nombre-empleado">@empleado.Nombre @empleado.Apellido</p>
-                            <p class="puesto"><strong>@empleado.Puesto</strong> · Tareas: @empleado.Tareas</p>
-                        </div>
-
-                        @if (empleado.IdCurso != null)
+                    @if (grupo.Curso == null)
+                    {
+                        @if (grupo.ConFormulario > 0 && ViewBag.PuedeGenerar)
                         {
-                            <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso })'>Revisar curso</a>
+                            <form method="post" action='@Url.Action("Generar", "Curso")' onsubmit="mostrarCarga()">
+                                <input type="hidden" name="IdRango" value="@grupo.Rango.IdRango" />
+                                <input class="boton-curso grande" type="submit" value="Generar curso del rango" />
+                            </form>
                         }
                         else
                         {
-                            <form method="post" action='@Url.Action("Generar", "Curso")' onsubmit="mostrarCarga()">
-                                <input type="hidden" name="IdUsuario" value="@empleado.IdUsuario" />
-                                <input class="boton-curso" type="submit" value="Generar curso" />
-                            </form>
+                            <span class="estado-grupo">Esperando que se sumen</span>
+                        }
+                    }
+                    else
+                    {
+                        <div class="curso-grupo">
+                            <span class="estado-grupo @(grupo.Curso.Estado == "Confirmado" ? "estado-ok" : "estado-borrador")">@(grupo.Curso.Estado == "Confirmado" ? "✓ Confirmado" : "Borrador")</span>
+                            <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = grupo.Curso.IdCurso })'>@(grupo.Curso.Estado == "Confirmado" ? "Ver curso" : "Revisar curso")</a>
+                        </div>
+                    }
+                </div>
+
+                @if (grupo.Curso != null)
+                {
+                    <p class="titulo-curso-grupo">📚 @grupo.Curso.Titulo</p>
+                }
+
+                @if (grupo.Miembros.Count > 0)
+                {
+                    <div class="miembros-grupo">
+                        @foreach (EmpleadoCurso miembro in grupo.Miembros)
+                        {
+                            <div class="miembro">
+                                <div>
+                                    <p class="nombre-empleado">@miembro.Nombre @miembro.Apellido</p>
+                                    <p class="puesto">@miembro.Puesto</p>
+                                </div>
+                                @if (!miembro.TieneFormulario)
+                                {
+                                    <span class="estado-grupo">Sin formulario</span>
+                                }
+                                else if (grupo.SinAsignar.Contains(miembro))
+                                {
+                                    <form method="post" action='@Url.Action("Sumar", "Curso")' onsubmit="mostrarCarga()">
+                                        <input type="hidden" name="IdCurso" value="@grupo.Curso.IdCurso" />
+                                        <input type="hidden" name="IdUsuario" value="@miembro.IdUsuario" />
+                                        <input class="boton-curso" type="submit" value="Sumarlo al curso" />
+                                    </form>
+                                }
+                                else if (miembro.Progreso != null)
+                                {
+                                    string actividad = miembro.Actividad();
+                                    <span class="estado-grupo">@miembro.Progreso% · ⚡ @miembro.XP XP</span>
+                                    @if (actividad != "")
+                                    {
+                                        <span class="estado-grupo estado-quieto">⏸ @actividad</span>
+                                    }
+                                }
+                            </div>
                         }
                     </div>
                 }
-            }
-        </div>
+                else
+                {
+                    <p class="ayuda-sprint2">Todavía no hay nadie en este rango. Compartí su link desde <a href='@Url.Action("Index", "Equipo")'>Equipo</a>.</p>
+                }
+            </section>
+        }
     </main>
 </div>
 
-<!-- Pantalla "Carga de datos" del Figma: se muestra mientras la IA arma el curso -->
+<!-- Mientras la IA arma el curso -->
 <div id="carga" class="fondo-carga">
     <div class="tarjeta-curso caja-carga">
-        <h2>Cargando datos a los cursos IA</h2>
+        <h2>Armando el curso del rango</h2>
         <p>Procesando información</p>
         <div class="barra"><div class="barra-relleno animada"></div></div>
-        <p>Nuestra IA está utilizando los datos ingresados para armar el curso. Puede tardar unos segundos.</p>
+        <p>La IA está leyendo lo que contó cada persona para armar el curso y nivelar a cada uno. Puede tardar unos segundos.</p>
     </div>
 </div>
 
@@ -87,8 +124,6 @@
     function mostrarCarga() {
         document.getElementById("carga").style.display = "flex";
     }
-
-    // Si el empleador vuelve para atrás, el cartel de carga se cierra
     window.onpageshow = function () {
         document.getElementById("carga").style.display = "none";
     };

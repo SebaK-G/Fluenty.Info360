@@ -1,0 +1,106 @@
+@using Fluenty.Info360.Models
+@{
+    ViewData["Title"] = "Equipo";
+}
+
+<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+
+<div class="pagina-curso">
+
+    <header class="encabezado-app">
+        <div class="logo-app">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        @await Html.PartialAsync("_NavApp", "Equipo")
+    </header>
+
+    <main class="contenido-curso">
+
+        <section class="titulo-sprint2">
+            <p class="etiqueta-sprint2">Tu equipo</p>
+            <h1>El árbol de tu empresa</h1>
+            <p>Cada rango tiene su propio link: quien entra por ese link queda en ese rango. Cada rango ve y les crea cursos solo a los rangos que tiene abajo.</p>
+        </section>
+
+        <!-- ===== El árbol ===== -->
+        <section class="tarjeta-curso">
+            <ul class="arbol">
+                @foreach (Rangos rango in ViewBag.Arbol)
+                {
+                    string link = ViewBag.LinkBase + rango.Codigo;
+                    bool esPropio = rango.IdRango.ToString() == ViewBag.IdRangoPropio;
+                    <li class="nodo" style="margin-left: @(rango.Profundidad * 34)px">
+                        @if (rango.Profundidad > 0)
+                        {
+                            <span class="rama">└</span>
+                        }
+                        <div class="caja-rango @(esPropio ? "caja-propia" : "")">
+                            <div class="datos-rango">
+                                <p class="nombre-rango">@rango.Nombre @(esPropio ? "(vos)" : "")</p>
+                                <p class="personas-rango">@ViewBag.PersonasPorRango[rango.IdRango] personas</p>
+                                @if (rango.IdRangoPadre != null && !ViewBag.EsDueno && rango.Tareas != "")
+                                {
+                                    <p class="tareas-rango">@rango.Tareas</p>
+                                }
+                            </div>
+                            @if (rango.IdRangoPadre != null)
+                            {
+                                <div class="link-rango">
+                                    <input type="text" value="@link" readonly />
+                                    <a class="boton-curso" href="https://wa.me/?text=@Uri.EscapeDataString("Sumate a nuestro equipo en Fluenty como " + rango.Nombre + ": " + link)">WhatsApp</a>
+                                </div>
+                            }
+                            @if (rango.IdRangoPadre != null && ViewBag.EsDueno)
+                            {
+                                <!-- Qué hace la gente de este rango: si alguien llena mal su formulario, la IA usa esto -->
+                                <form class="tareas-form" method="post" action='@Url.Action("GuardarTareas", "Equipo")'>
+                                    <input type="hidden" name="IdRango" value="@rango.IdRango" />
+                                    <label for="Tareas-@rango.IdRango">¿Qué hace la gente de este rango?</label>
+                                    <div class="fila-tareas">
+                                        <input type="text" id="Tareas-@rango.IdRango" name="Tareas" maxlength="300" value="@rango.Tareas" placeholder="Ej.: atienden clientes por WhatsApp, arman presupuestos y cargan las ventas" />
+                                        <input class="boton-curso" type="submit" value="Guardar" />
+                                    </div>
+                                    @if (rango.Tareas == "")
+                                    {
+                                        <p class="falta-tareas">⚠️ Completalo: si alguien de este rango llena mal su formulario, la IA arma el curso con esto.</p>
+                                    }
+                                </form>
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
+        </section>
+
+        <!-- ===== Crear un rango (solo el dueño) ===== -->
+        @if (ViewBag.EsDueno)
+        {
+            <section class="tarjeta-curso">
+                <h2>Agregar un rango</h2>
+                <p class="ayuda-sprint2">Por ejemplo: "Gerente" abajo de Dueño, y "Vendedor" abajo de Gerente.</p>
+                <form class="form-rango" method="post" action='@Url.Action("Crear", "Equipo")'>
+                    <div class="campo-curso">
+                        <label for="Nombre">Nombre del rango</label>
+                        <input type="text" id="Nombre" name="Nombre" maxlength="50" required placeholder="Ej.: Vendedor" />
+                    </div>
+                    <div class="campo-curso">
+                        <label for="Tareas">¿Qué hace la gente de este rango?</label>
+                        <input type="text" id="Tareas" name="Tareas" maxlength="300" placeholder="Ej.: atienden clientes y arman presupuestos" />
+                    </div>
+                    <div class="campo-curso">
+                        <label for="IdRangoPadre">Va abajo de</label>
+                        <select id="IdRangoPadre" name="IdRangoPadre">
+                            @foreach (Rangos rango in ViewBag.Arbol)
+                            {
+                                <option value="@rango.IdRango">@(new string('—', rango.Profundidad)) @rango.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <input class="boton-curso grande" type="submit" value="Agregar rango" />
+                </form>
+            </section>
+        }
+    </main>
+</div>

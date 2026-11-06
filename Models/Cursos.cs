@@ -1,11 +1,12 @@
 namespace Fluenty.Info360.Models;
 
-// El contenido del curso que arma la IA. Es de una empresa;
+// El contenido del curso que arma la IA. Es para un rango (un grupo de personas);
 // a quién está asignado y cómo va cada persona está en CursoXUsuario.
 public class Cursos
 {
     public int IdCurso { get; set; }
     public int IdEmpresa { get; set; }
+    public int IdRango { get; set; }
     public string Titulo { get; set; }
     public string Descripcion { get; set; }
     public string Modelo { get; set; }

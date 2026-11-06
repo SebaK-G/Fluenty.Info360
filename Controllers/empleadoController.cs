@@ -3,25 +3,34 @@ using Fluenty.Info360.Models;
 
 namespace Fluenty.Info360.Controllers;
 
+// Sprint 2: las personas de los rangos que el usuario tiene abajo, con su avance, XP y racha
 public class EmpleadoController : Controller
 {
-    // Empleados del equipo: los que ya tienen su curso confirmado (Figma: "Empleados").
-    // El empleador ya no carga empleados a mano: se suman solos con el link de la pantalla Cursos.
     public IActionResult Index()
     {
-        if (HttpContext.Session.GetString("TipoUsuario") != "Empleador")
+        string idRangoTexto = HttpContext.Session.GetString("IdRango");
+        if (HttpContext.Session.GetString("IdUsuario") == null || idRangoTexto == null || idRangoTexto == "")
         {
             return RedirectToAction("Acceso", "Home");
         }
         BD bd = new BD();
         int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
-        List<EmpleadoCurso> todos = bd.TraerEmpleadosConCurso(idEmpresa);
-        List<EmpleadoCurso> equipo = new List<EmpleadoCurso>();
-        foreach (EmpleadoCurso empleado in todos)
+        List<int> idsDeAbajo = new List<int>();
+        foreach (Rangos rango in Arbol.Debajo(bd.TraerRangosEmpresa(idEmpresa), int.Parse(idRangoTexto)))
         {
-            if (empleado.EstadoCurso == "Confirmado")
+            idsDeAbajo.Add(rango.IdRango);
+        }
+        if (idsDeAbajo.Count == 0)
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        List<EmpleadoCurso> equipo = new List<EmpleadoCurso>();
+        foreach (EmpleadoCurso miembro in bd.TraerMiembrosEmpresa(idEmpresa))
+        {
+            if (miembro.IdRango != null && idsDeAbajo.Contains(miembro.IdRango.Value))
             {
-                equipo.Add(empleado);
+                equipo.Add(miembro);
             }
         }
         ViewBag.Equipo = equipo;

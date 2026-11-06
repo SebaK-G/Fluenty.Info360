@@ -1,0 +1,470 @@
+/* ===================================================
+   SPRINT 2 · Home con "Mi curso", árbol de rangos y cursos por rango
+   =================================================== */
+
+/* ----- Títulos de pantalla ----- */
+
+.titulo-sprint2 {
+    color: #ffffff;
+    padding: 26px 4px 18px 4px;
+}
+
+.etiqueta-sprint2 {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #8fd3ff;
+    background-color: #8fd3ff18;
+    border: 1px solid #8fd3ff40;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+
+.titulo-sprint2 h1 {
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.titulo-sprint2 > p {
+    color: #c4d3e6;
+    font-size: 16px;
+    max-width: 760px;
+}
+
+.ayuda-sprint2 {
+    color: #6b7a8f;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+/* ----- Home: Mi curso ----- */
+
+.mi-curso {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    background: linear-gradient(150deg, #0b1ca6, #0668c6);
+    color: #ffffff;
+}
+
+.mi-curso h2 {
+    color: #ffffff;
+    margin: 6px 0 12px 0;
+}
+
+.mi-curso .etiqueta-plan {
+    color: #8fd3ff;
+    font-weight: bold;
+}
+
+.mi-curso-texto {
+    flex: 1;
+    min-width: 260px;
+}
+
+.barra-mi-curso {
+    height: 14px;
+    background-color: #ffffff30;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.barra-mi-curso span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(to right, #1fae5b, #4cd787);
+    border-radius: 10px;
+}
+
+.detalle-mi-curso {
+    font-size: 14px;
+    color: #c4d3e6;
+    margin: 6px 0 12px 0;
+}
+
+.proxima {
+    margin-bottom: 12px;
+}
+
+.grande-home {
+    padding: 11px 24px;
+    font-size: 15px;
+    margin-top: 6px;
+    display: inline-block;
+}
+
+.medallas {
+    display: flex;
+    gap: 12px;
+}
+
+.medalla {
+    background-color: #ffffff;
+    color: #172333;
+    border-radius: 16px;
+    padding: 14px 20px;
+    text-align: center;
+    min-width: 110px;
+}
+
+.medalla strong {
+    display: block;
+    font-size: 26px;
+}
+
+.medalla p {
+    color: #6b7a8f;
+    font-size: 13px;
+    margin: 0;
+}
+
+.icono-medalla {
+    font-size: 26px;
+}
+
+.medallas-curso {
+    margin: 16px 0;
+}
+
+.medallas-curso .medalla {
+    background-color: #f3f7fc;
+    border: 1px solid #dce4ee;
+}
+
+/* ----- Equipo: el árbol ----- */
+
+.arbol {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nodo {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.rama {
+    color: #9db4cc;
+    font-size: 22px;
+    line-height: 1;
+    padding-top: 14px;
+}
+
+.caja-rango {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background-color: #f3f7fc;
+    border: 2px solid #dce4ee;
+    border-radius: 14px;
+    padding: 12px 16px;
+}
+
+.caja-propia {
+    border-color: #0668c6;
+    background-color: #e8f1fc;
+}
+
+.nombre-rango {
+    font-weight: bold;
+    font-size: 17px;
+    color: #172333;
+    margin: 0;
+}
+
+.personas-rango {
+    color: #6b7a8f;
+    font-size: 14px;
+    margin: 0;
+}
+
+.link-rango {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 240px;
+    max-width: 520px;
+}
+
+.link-rango input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #c4d0de;
+    border-radius: 10px;
+    font-size: 13px;
+    background-color: #ffffff;
+    color: #44546a;
+}
+
+.form-rango {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.form-rango .campo-curso {
+    flex: 1;
+    min-width: 220px;
+    margin-bottom: 0;
+}
+
+/* ----- Cursos por rango ----- */
+
+.grupo-rango {
+    margin-bottom: 18px;
+}
+
+.encabezado-grupo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.encabezado-grupo h2 {
+    margin: 0;
+    color: #172333;
+}
+
+.curso-grupo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.estado-grupo {
+    font-size: 13px;
+    font-weight: bold;
+    color: #44546a;
+    background-color: #eef2f7;
+    border-radius: 20px;
+    padding: 6px 12px;
+}
+
+.estado-ok {
+    color: #1e8e3e;
+    background-color: #e3f6e8;
+}
+
+.estado-borrador {
+    color: #8a4b00;
+    background-color: #fff4e5;
+}
+
+.titulo-curso-grupo {
+    font-weight: bold;
+    color: #0668c6;
+    margin: 12px 0 0 0;
+}
+
+.miembros-grupo {
+    margin-top: 14px;
+    border-top: 1px solid #e3eaf3;
+}
+
+.miembro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.miembro p {
+    margin: 0;
+}
+
+/* ----- Ver curso: personas y lecciones para hacer ----- */
+
+.personas-curso {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip-persona {
+    text-decoration: none;
+    color: #172333;
+    background-color: #f3f7fc;
+    border: 2px solid #dce4ee;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.chip-persona:hover {
+    border-color: #2f8cff;
+}
+
+.chip-elegida {
+    background-color: #0668c6;
+    border-color: #0668c6;
+    color: #ffffff;
+}
+
+.circulo-link {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.circulo-link:hover {
+    transform: scale(1.08);
+}
+
+.empezar-leccion {
+    display: inline-block;
+    margin-top: 6px;
+    font-weight: bold;
+    color: #1fae5b;
+    text-decoration: none;
+}
+
+/* ----- Cargando (Home) ----- */
+
+.fondo-carga {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background-color: #172333dd;
+    align-items: center;
+    justify-content: center;
+}
+
+.caja-carga {
+    background-color: #ffffff;
+    border-radius: 18px;
+    padding: 26px 30px;
+    text-align: center;
+    max-width: 420px;
+}
+
+.barra-carga {
+    height: 12px;
+    background-color: #dce7f2;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 14px;
+}
+
+.barra-carga span {
+    display: block;
+    height: 100%;
+    width: 30%;
+    background-color: #0668c6;
+    border-radius: 10px;
+    animation: ir-y-venir 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes ir-y-venir {
+    from { margin-left: 0%; }
+    to { margin-left: 70%; }
+}
+
+@media (max-width: 700px) {
+    .medallas {
+        width: 100%;
+    }
+
+    .medalla {
+        flex: 1;
+    }
+
+    .titulo-sprint2 h1 {
+        font-size: 28px;
+    }
+}
+
+/* Nota y cantidad de intentos de cada lección (la ven el alumno y su responsable) */
+.nota-paso {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    color: #146c3a;
+    background-color: #e9f8ef;
+    border-radius: 20px;
+    padding: 3px 10px;
+    margin-top: 6px;
+}
+
+.nota-paso.nota-baja {
+    color: #8a4b00;
+    background-color: #fff4e5;
+}
+
+/* Qué hace la gente de cada rango (lo completa el dueño en Equipo) */
+.tareas-form {
+    width: 100%;
+}
+
+.tareas-form label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    color: #44546a;
+    margin-bottom: 6px;
+}
+
+.fila-tareas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.fila-tareas input[type="text"] {
+    flex: 1;
+    min-width: 220px;
+    padding: 8px 10px;
+    border: 1px solid #c4d0de;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.falta-tareas {
+    font-size: 13px;
+    color: #8a4b00;
+    margin-top: 6px;
+}
+
+.tareas-rango {
+    font-size: 13px;
+    color: #44546a;
+    margin-top: 4px;
+}
+
+/* Aviso de que alguien no avanza (lo ve su responsable) */
+.estado-quieto {
+    background-color: #fff4e5;
+    color: #8a4b00;
+}
+
+/* Home del responsable: quiénes no avanzan */
+.quietos {
+    border-left: 6px solid #e8890c;
+}
+
+.lista-quietos {
+    margin: 10px 0 10px 20px;
+    line-height: 1.7;
+}
+
+.ayuda-quietos {
+    font-size: 14px;
+    color: #44546a;
+}

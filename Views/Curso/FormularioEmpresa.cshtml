@@ -13,13 +13,7 @@
             <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
             <span>Fluenty</span>
         </div>
-        <nav class="nav-app">
-            <a href='@Url.Action("Index", "Home")'>Home</a>
-            <a href='@Url.Action("Index", "Curso")' class="activo">Cursos</a>
-            <a class="sin-link">Calculadora</a>
-            <a href='@Url.Action("Index", "Empleado")'>Empleados</a>
-            <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
-        </nav>
+        @await Html.PartialAsync("_NavApp", "Cursos")
     </header>
 
     <main class="formulario-empresa">

@@ -1,0 +1,108 @@
+@{
+    bool aprobo = ViewBag.Aprobo;
+    bool esExamen = ViewBag.EsExamen;
+    ViewData["Title"] = aprobo ? (esExamen ? "¡Examen aprobado!" : "¡Lección terminada!") : "Examen no aprobado";
+}
+
+<link rel="stylesheet" href="~/css/leccion.css" asp-append-version="true" />
+
+<div class="reproductor festejo">
+    @if (aprobo)
+    {
+        <div class="medalla-grande">@(esExamen ? "🏆" : "✓")</div>
+        <h1>@(esExamen ? "¡Aprobaste el examen!" : "¡Lección terminada!")</h1>
+    }
+    else
+    {
+        <div class="medalla-grande medalla-error">↻</div>
+        <h1>Esta vez no llegaste</h1>
+    }
+    <p class="subtitulo-festejo">@ViewBag.Leccion.Titulo</p>
+
+    <!-- La nota: preguntas bien contestadas a la primera -->
+    <p class="nota-final">@ViewBag.Nota%</p>
+    <p class="detalle-nota">
+        Contestaste bien a la primera @ViewBag.AciertosPrimera de @ViewBag.Preguntas @(ViewBag.Preguntas == 1 ? "pregunta" : "preguntas").
+        @if (esExamen)
+        {
+            <span>Para aprobar hace falta @ViewBag.NotaMinima%.</span>
+        }
+    </p>
+
+    @if (aprobo)
+    {
+        <div class="premios">
+            <div class="premio">
+                <span>⚡</span>
+                <strong>@(ViewBag.XPGanado > 0 ? "+" + ViewBag.XPGanado : "0") XP</strong>
+                <p>Ahora tenés @ViewBag.XP</p>
+            </div>
+            <div class="premio @(ViewBag.RachaSubio ? "premio-racha" : "")">
+                <span>🔥</span>
+                <strong>@ViewBag.Racha @(ViewBag.Racha == 1 ? "día" : "días")</strong>
+                <p>@(ViewBag.RachaSubio ? "¡Tu racha creció!" : "Racha de hoy cumplida")</p>
+            </div>
+        </div>
+
+        @if (ViewBag.XPGanado == 0)
+        {
+            <p class="aviso-festejo">Esta lección ya la habías hecho, así que no suma de nuevo. ¡Pero repasar siempre suma!</p>
+        }
+        else
+        {
+            <p class="aviso-festejo">El XP sale de cómo te fue: 10 por cada pregunta bien a la primera y 4 por cada una que aprendiste después de equivocarte@(esExamen ? ", más 20 por aprobar el examen" : "").</p>
+        }
+
+        @if (ViewBag.Ofrecer == "saltar")
+        {
+            <!-- Nivelar por lo que hace: le salió perfecta la primera lección -->
+            <div class="oferta-nivel">
+                <p><strong>🚀 ¡Todas bien a la primera!</strong> Se nota que esto ya lo manejás. Si querés, salteá las lecciones 2 a 4 de esta unidad y andá directo al examen. Si lo aprobás, pasás a la unidad siguiente.</p>
+                <form method="post" action='@Url.Action("Saltar", "Leccion")'>
+                    <input type="hidden" name="IdLeccion" value="@ViewBag.Leccion.IdLeccion" />
+                    <input class="boton-leccion" type="submit" value="Ir directo al examen" />
+                </form>
+            </div>
+        }
+        else if (ViewBag.Ofrecer == "bajar")
+        {
+            <!-- Nivelar por lo que hace: la primera lección le costó mucho -->
+            <div class="oferta-nivel">
+                <p><strong>🤝 Esta lección te costó un poco.</strong> No pasa nada: capaz te conviene arrancar una unidad antes, con lo básico, y después volver acá con todo más claro.</p>
+                <form method="post" action='@Url.Action("Bajar", "Leccion")'>
+                    <input type="hidden" name="IdLeccion" value="@ViewBag.Leccion.IdLeccion" />
+                    <input class="boton-leccion" type="submit" value="Arrancar por lo básico" />
+                </form>
+            </div>
+        }
+
+        <div class="botones-festejo">
+            @if (ViewBag.Proxima != null)
+            {
+                <a class="boton-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Proxima.IdLeccion })' onclick="document.getElementById('carga').style.display='flex'">Seguir con: @ViewBag.Proxima.Titulo</a>
+            }
+            <a class="boton-secundario" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })'>Volver a mi curso</a>
+        </div>
+        <p class="consejo-festejo">Consejo: hacé una lección por día para que la racha no se corte.</p>
+    }
+    else
+    {
+        <p class="aviso-festejo">No pasa nada: repasá las lecciones de la unidad y volvé a rendirlo. Te armamos un examen nuevo, con otras preguntas, así no se puede pasar de memoria.</p>
+        <div class="botones-festejo">
+            <a class="boton-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Leccion.IdLeccion })' onclick="document.getElementById('carga').style.display='flex'">Volver a rendir</a>
+            <a class="boton-secundario" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })'>Repasar la unidad</a>
+        </div>
+    }
+</div>
+
+<div id="carga" class="fondo-carga">
+    <div class="caja-carga">
+        <p class="puntitos"><span></span><span></span><span></span></p>
+        <p>Preparando la próxima lección...</p>
+    </div>
+</div>
+<script>
+    window.onpageshow = function () {
+        document.getElementById("carga").style.display = "none";
+    };
+</script>

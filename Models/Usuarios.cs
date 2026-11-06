@@ -15,4 +15,10 @@ public class Usuarios
     public string Rol { get; set; }
     public string Puesto { get; set; }
     public bool Activo { get; set; }
+    public int? IdRango { get; set; }
+    public int XP { get; set; }
+    public int Racha { get; set; }
+    public DateTime? UltimoDiaActivo { get; set; }
+    public int PedidosIAHoy { get; set; }
+    public DateTime? FechaPedidosIA { get; set; }
 }

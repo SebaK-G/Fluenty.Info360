@@ -13,23 +13,21 @@
             <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
             <span>Fluenty</span>
         </div>
-        <p class="tiempo-invitar">⏱ Te lleva unos 5 minutos</p>
+        <p class="tiempo-invitar">⏱ Te lleva 2 minutos</p>
     </header>
 
     <main class="contenido-completar">
 
         <section class="titulo-completar">
-            <p class="etiqueta-completar">Invitación de @ViewBag.Empresa.Nombre</p>
-            <h1>Sumate a tu equipo</h1>
-            <p>Contanos de vos y de tu trabajo. Con tus respuestas, la IA arma un curso hecho a tu medida: con ejemplos de tu trabajo y explicado como a vos te sirve.</p>
+            <p class="etiqueta-completar">Invitación de @ViewBag.Rango.NombreEmpresa</p>
+            <h1>Sumate como @ViewBag.Rango.Nombre</h1>
+            <p>No es un curso para volverte experto en IA: es para que <strong>tardes menos en lo que más te aburre de tu trabajo</strong>. Lecciones de 5 minutos, con ejemplos de lo que hacés vos.</p>
 
-            <!-- Los 5 pasos: cada uno lleva a su parte del formulario -->
+            <!-- Los 3 pasos: cada uno lleva a su parte del formulario -->
             <ol class="pasos-completar">
                 <li><a href="#paso-1"><span>1</span> Tu cuenta</a></li>
-                <li><a href="#paso-2"><span>2</span> Sobre vos</a></li>
-                <li><a href="#paso-3"><span>3</span> Tu trabajo</a></li>
-                <li><a href="#paso-4"><span>4</span> Tus tareas</a></li>
-                <li><a href="#paso-5"><span>5</span> Vos y la IA</a></li>
+                <li><a href="#paso-2"><span>2</span> Tu trabajo</a></li>
+                <li><a href="#paso-3"><span>3</span> Vos y la IA</a></li>
             </ol>
         </section>
 
@@ -39,14 +37,14 @@
         }
 
         <form action='@Url.Action("Unirse", "Formulario")' method="POST">
-            <input type="hidden" name="Codigo" value="@ViewBag.Empresa.Codigo" />
+            <input type="hidden" name="Codigo" value="@ViewBag.Rango.Codigo" />
 
             <!-- ===================== PASO 1: TU CUENTA ===================== -->
             <section class="tarjeta-completar" id="paso-1">
                 <div class="encabezado-paso">
                     <span class="numero-paso">1</span>
                     <div>
-                        <p class="de-pasos">Paso 1 de 5</p>
+                        <p class="de-pasos">Paso 1 de 3</p>
                         <h2>Tu cuenta</h2>
                     </div>
                 </div>
@@ -79,69 +77,21 @@
                 </div>
             </section>
 
-            <!-- ===================== PASO 2: SOBRE VOS ===================== -->
+            <!-- ===================== PASO 2: TU TRABAJO ===================== -->
             <section class="tarjeta-completar" id="paso-2">
                 <div class="encabezado-paso">
                     <span class="numero-paso">2</span>
                     <div>
-                        <p class="de-pasos">Paso 2 de 5</p>
-                        <h2>Sobre vos</h2>
-                        <p class="ayuda-paso">Así sabemos cómo explicarte las cosas.</p>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Cuántos años tenés?</p>
-                    <div class="opciones">
-                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Menos de 25 años" required /> Menos de 25</label>
-                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Entre 25 y 40 años" /> 25 a 40</label>
-                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Entre 40 y 55 años" /> 40 a 55</label>
-                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Más de 55 años" /> Más de 55</label>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Qué tan cómodo te sentís usando la compu y el celular?</p>
-                    <div class="opciones opciones-columna">
-                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me cuesta bastante, uso lo justo" required /> Me cuesta bastante, uso lo justo</label>
-                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me defiendo con lo básico" /> Me defiendo con lo básico</label>
-                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me manejo bien" /> Me manejo bien</label>
-                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me encanta la tecnología" /> Me encanta la tecnología</label>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Cómo te gusta aprender? <span>(podés elegir varias)</span></p>
-                    <div class="opciones">
-                        <label class="eleccion"><input type="checkbox" name="ComoAprende" value="Con ejemplos prácticos" /> Con ejemplos prácticos</label>
-                        <label class="eleccion"><input type="checkbox" name="ComoAprende" value="Paso a paso, sin apuro" /> Paso a paso, sin apuro</label>
-                        <label class="eleccion"><input type="checkbox" name="ComoAprende" value="Con comparaciones de la vida diaria" /> Con comparaciones de la vida diaria</label>
-                        <label class="eleccion"><input type="checkbox" name="ComoAprende" value="Directo al grano" /> Directo al grano</label>
-                        <label class="eleccion"><input type="checkbox" name="ComoAprende" value="Probando yo mismo" /> Probando yo mismo</label>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <label for="Hobbies">¿Qué te gusta hacer fuera del trabajo?</label>
-                    <p class="ayuda-campo">Lo usamos para explicarte con ejemplos que te resulten familiares.</p>
-                    <input type="text" id="Hobbies" name="Hobbies" maxlength="200" required placeholder="Ej.: cocinar, el fútbol, la jardinería, los videojuegos" />
-                </div>
-            </section>
-
-            <!-- ===================== PASO 3: TU TRABAJO ===================== -->
-            <section class="tarjeta-completar" id="paso-3">
-                <div class="encabezado-paso">
-                    <span class="numero-paso">3</span>
-                    <div>
-                        <p class="de-pasos">Paso 3 de 5</p>
+                        <p class="de-pasos">Paso 2 de 3</p>
                         <h2>Tu trabajo</h2>
+                        <p class="ayuda-paso">De acá salen los ejemplos de tu curso. Casi todo es tocar opciones.</p>
                     </div>
                 </div>
 
                 <div class="grilla-campos">
                     <div class="campo">
                         <label for="Puesto">¿Cuál es tu puesto?</label>
-                        <input type="text" id="Puesto" name="Puesto" maxlength="50" required placeholder="Ej.: administrativo, vendedor, recruiter" />
+                        <input type="text" id="Puesto" name="Puesto" maxlength="50" required placeholder="Ej.: vendedor, administrativa, cajero" />
                     </div>
                     <div class="campo">
                         <label for="Area">¿En qué área trabajás?</label>
@@ -162,35 +112,34 @@
                 </div>
 
                 <div class="campo">
-                    <label for="DiaTipico">Contanos cómo es un día típico en tu trabajo</label>
-                    <textarea id="DiaTipico" name="DiaTipico" rows="3" maxlength="500" required placeholder="Ej.: arranco respondiendo mails, después cargo pedidos en el sistema y a la tarde armo el reporte de ventas"></textarea>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Cuál es la principal dificultad que tenés hoy en tu trabajo?</p>
-                    <div class="opciones opciones-columna">
-                        <label class="eleccion"><input type="radio" name="DificultadPrincipal" value="Ahorrar tiempo en las tareas diarias" required /> Ahorrar tiempo en las tareas diarias</label>
-                        <label class="eleccion"><input type="radio" name="DificultadPrincipal" value="Reducir errores humanos" /> Reducir errores humanos</label>
-                        <label class="eleccion"><input type="radio" name="DificultadPrincipal" value="Mejorar la atención al cliente" /> Mejorar la atención al cliente</label>
-                        <label class="eleccion"><input type="radio" name="DificultadPrincipal" value="Acelerar las ventas o los cierres comerciales" /> Acelerar las ventas o los cierres comerciales</label>
-                        <label class="eleccion"><input type="radio" name="DificultadPrincipal" value="Organizar mejor la información y las tareas" /> Organizar mejor la información y las tareas</label>
-                        <label class="eleccion"><input type="radio" name="DificultadPrincipal" value="Otra" /> Otra</label>
+                    <p class="pregunta-campo">¿Qué cosas te llevan más tiempo en la semana? <span>(tocá las que hagas)</span></p>
+                    <div class="opciones">
+                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Responder mensajes o mails" /> Responder mensajes o mails</label>
+                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Armar presupuestos o cotizaciones" /> Armar presupuestos</label>
+                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Pasar o cargar datos a planillas" /> Pasar datos a planillas</label>
+                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Armar reportes o resúmenes" /> Armar reportes o resúmenes</label>
+                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Atender y responder dudas de clientes" /> Atender clientes</label>
+                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Escribir textos, avisos o publicaciones" /> Escribir textos o publicaciones</label>
+                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Organizar la agenda, turnos o pedidos" /> Organizar agenda, turnos o pedidos</label>
+                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Buscar información" /> Buscar información</label>
                     </div>
+                    <input class="otro" type="text" name="OtraTarea" maxlength="80" placeholder="Otra (opcional)" />
                 </div>
 
                 <div class="campo">
-                    <label for="MejoraEmpresa">¿Qué te gustaría que tu empresa mejorara en tu puesto?</label>
-                    <textarea id="MejoraEmpresa" name="MejoraEmpresa" rows="2" maxlength="500" required placeholder="Ej.: reducir el tiempo de elaboración de reportes"></textarea>
+                    <label for="TareaConcreta">¿Qué es lo que más te aburre o más tiempo te come? <span class="opcional">(opcional)</span></label>
+                    <p class="ayuda-campo">Es lo que más mejora tu curso: tu primera lección arranca resolviendo esto.</p>
+                    <textarea id="TareaConcreta" name="TareaConcreta" rows="2" maxlength="500" placeholder="Ej.: pasar los pedidos de WhatsApp a una planilla, me lleva toda la mañana"></textarea>
                 </div>
 
                 <div class="campo">
-                    <label for="FortalezasDebilidades">¿Cuáles son tus fortalezas y tus debilidades en el trabajo?</label>
-                    <textarea id="FortalezasDebilidades" name="FortalezasDebilidades" rows="2" maxlength="500" required placeholder="Ej.: buena comunicación con los clientes, pero me cuesta usar Excel"></textarea>
-                </div>
-
-                <div class="campo">
-                    <label for="MejoraPersonal">¿Qué te gustaría mejorar vos en tu forma de trabajar?</label>
-                    <textarea id="MejoraPersonal" name="MejoraPersonal" rows="2" maxlength="500" required placeholder="Ej.: redactar mejores correos u organizarme mejor"></textarea>
+                    <p class="pregunta-campo">¿Qué herramientas usás en tu trabajo? <span>(podés elegir varias)</span></p>
+                    <div class="opciones">
+                        @foreach (Herramientas herramienta in ViewBag.Herramientas)
+                        {
+                            <label class="eleccion"><input type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                        }
+                    </div>
                 </div>
 
                 <div class="campo">
@@ -203,56 +152,14 @@
                 </div>
             </section>
 
-            <!-- ===================== PASO 4: TUS TAREAS ===================== -->
-            <section class="tarjeta-completar" id="paso-4">
+            <!-- ===================== PASO 3: VOS Y LA IA ===================== -->
+            <section class="tarjeta-completar" id="paso-3">
                 <div class="encabezado-paso">
-                    <span class="numero-paso">4</span>
+                    <span class="numero-paso">3</span>
                     <div>
-                        <p class="de-pasos">Paso 4 de 5</p>
-                        <h2>Tus tareas</h2>
-                        <p class="ayuda-paso">De acá salen los ejemplos y ejercicios de tu curso.</p>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <label for="Tarea1">¿Cuáles son las 3 tareas que más tiempo te llevan en la semana y te parecen repetitivas?</label>
-                    <div class="grilla-tareas">
-                        <input type="text" id="Tarea1" name="Tarea1" maxlength="80" required placeholder="1. Ej.: responder correos" />
-                        <input type="text" id="Tarea2" name="Tarea2" maxlength="80" required placeholder="2. Ej.: cargar datos a mano" />
-                        <input type="text" id="Tarea3" name="Tarea3" maxlength="80" required placeholder="3. Ej.: armar reportes" />
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <label for="Dificultades">¿Qué errores o dificultades te aparecen en esas tareas?</label>
-                    <textarea id="Dificultades" name="Dificultades" rows="2" maxlength="500" required placeholder="Ej.: errores de escritura, fórmulas incorrectas, demoras"></textarea>
-                </div>
-
-                <div class="campo">
-                    <label for="TareaConcreta">Contanos una tarea de esta semana que te llevó más tiempo del que debería</label>
-                    <p class="ayuda-campo">Con esto arrancamos tu primera lección.</p>
-                    <textarea id="TareaConcreta" name="TareaConcreta" rows="2" maxlength="500" required placeholder="Ej.: tuve que pasar 50 pedidos de WhatsApp a una planilla y tardé toda la mañana"></textarea>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Qué herramientas usás en tu trabajo? <span>(podés elegir varias)</span></p>
-                    <div class="opciones">
-                        @foreach (Herramientas herramienta in ViewBag.Herramientas)
-                        {
-                            <label class="eleccion"><input type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
-                        }
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===================== PASO 5: VOS Y LA IA ===================== -->
-            <section class="tarjeta-completar" id="paso-5">
-                <div class="encabezado-paso">
-                    <span class="numero-paso">5</span>
-                    <div>
-                        <p class="de-pasos">Paso 5 de 5</p>
+                        <p class="de-pasos">Paso 3 de 3</p>
                         <h2>Vos y la IA</h2>
-                        <p class="ayuda-paso">No hay respuestas malas: así sabemos desde dónde arrancar.</p>
+                        <p class="ayuda-paso">No hay respuestas malas: así sabemos desde dónde arrancar y cómo explicarte.</p>
                     </div>
                 </div>
 
@@ -267,44 +174,56 @@
                 </div>
 
                 <div class="campo">
+                    <p class="pregunta-campo">¿Qué tan cómodo te sentís usando la compu y el celular?</p>
+                    <div class="opciones opciones-columna">
+                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me cuesta bastante, uso lo justo" required /> Me cuesta bastante, uso lo justo</label>
+                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me defiendo con lo básico" /> Me defiendo con lo básico</label>
+                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me manejo bien" /> Me manejo bien</label>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <p class="pregunta-campo">¿Cuántos años tenés?</p>
+                    <div class="opciones">
+                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Menos de 25 años" required /> Menos de 25</label>
+                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Entre 25 y 40 años" /> 25 a 40</label>
+                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Entre 40 y 55 años" /> 40 a 55</label>
+                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Más de 55 años" /> Más de 55</label>
+                    </div>
+                </div>
+
+                <div class="campo">
                     <p class="pregunta-campo">¿Algo de la IA te preocupa? <span>(podés elegir varias)</span></p>
                     <div class="opciones">
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Que me reemplace en el trabajo" /> Que me reemplace en el trabajo</label>
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Equivocarme o romper algo" /> Equivocarme o romper algo</label>
+                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Que me reemplace en el trabajo" /> Que me reemplace</label>
                         <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="No entenderla" /> No entenderla</label>
                         <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="La privacidad de los datos" /> La privacidad de los datos</label>
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Que me dé información equivocada" /> Que me dé información equivocada</label>
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Nada, tengo ganas de aprender" /> Nada, tengo ganas</label>
+                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Que me dé información equivocada" /> Que se equivoque</label>
+                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Que sea una pérdida de tiempo" /> Que sea una pérdida de tiempo</label>
                     </div>
                 </div>
 
                 <div class="campo">
-                    <p class="pregunta-campo">¿Qué te gustaría conseguir al terminar el curso? <span>(podés elegir varias)</span></p>
-                    <div class="opciones">
-                        <label class="eleccion"><input type="checkbox" name="Objetivo1" value="Reducir el tiempo dedicado a tareas repetitivas" /> Tardar menos en lo repetitivo</label>
-                        <label class="eleccion"><input type="checkbox" name="Objetivo2" value="Cometer menos errores" /> Cometer menos errores</label>
-                        <label class="eleccion"><input type="checkbox" name="Objetivo3" value="Aprender a utilizar herramientas de IA" /> Aprender a usar la IA</label>
-                        <label class="eleccion"><input type="checkbox" name="Objetivo4" value="Mejorar la calidad del trabajo" /> Mejorar la calidad de mi trabajo</label>
-                        <label class="eleccion"><input type="checkbox" name="Objetivo5" value="Organizar mejor las tareas" /> Organizarme mejor</label>
-                        <label class="eleccion"><input type="checkbox" name="Objetivo6" value="Desarrollar habilidades útiles para mi carrera profesional" /> Crecer en mi carrera</label>
-                    </div>
-                    <input class="otro" type="text" name="OtroObjetivo" maxlength="100" placeholder="Otro (opcional)" />
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Cuánto tiempo por día podés dedicarle al curso?</p>
+                    <p class="pregunta-campo">¿Cuánto tiempo por día podés dedicarle?</p>
                     <div class="opciones">
                         <label class="eleccion"><input type="radio" name="TiempoXDia" value="5" required /> 5 minutos</label>
                         <label class="eleccion"><input type="radio" name="TiempoXDia" value="10" /> 10 minutos</label>
-                        <label class="eleccion"><input type="radio" name="TiempoXDia" value="15" /> 15 minutos</label>
-                        <label class="eleccion"><input type="radio" name="TiempoXDia" value="20" /> 20 minutos o más</label>
+                        <label class="eleccion"><input type="radio" name="TiempoXDia" value="15" /> 15 minutos o más</label>
                     </div>
+                </div>
+
+                <div class="campo">
+                    <label for="Hobbies">¿Qué te gusta hacer fuera del trabajo? <span class="opcional">(opcional)</span></label>
+                    <p class="ayuda-campo">Lo usamos para explicarte con comparaciones que te resulten familiares.</p>
+                    <input type="text" id="Hobbies" name="Hobbies" maxlength="200" placeholder="Ej.: cocinar, el fútbol, los videojuegos" />
                 </div>
             </section>
 
+            <p class="privacidad-completar">🔒 Tus respuestas solo las usa la IA para armar tu curso. Tu jefe <strong>no las ve</strong>: solo ve si vas avanzando.</p>
+
             <div class="acciones-completar">
                 <input type="submit" value="Unirme al equipo" />
-                <p>Al unirte, tu empresa va a poder armarte tu curso de IA.</p>
+                <p>Al unirte, tu empresa va a poder armarte tu curso.</p>
             </div>
         </form>
     </main>

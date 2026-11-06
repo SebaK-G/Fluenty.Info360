@@ -4,6 +4,7 @@ namespace Fluenty.Info360.Models;
 public class ActividadCurso
 {
     public int IdCurso { get; set; }
+    public int IdRango { get; set; }
     public string Titulo { get; set; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
