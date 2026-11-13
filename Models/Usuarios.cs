@@ -7,6 +7,7 @@ public class Usuarios
     public int IdUsuario { get; set; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
+    // No es columna de Usuarios: la trae la consulta desde el rango (Usuarios -> Rangos -> Empresas)
     public int IdEmpresa { get; set; }
     public string Email { get; set; }
     public string Dni { get; set; }

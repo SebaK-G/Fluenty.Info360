@@ -4,6 +4,7 @@ namespace Fluenty.Info360.Models;
 public class CursoXUsuario
 {
     public int IdCursoXUsuario { get; set; }
+    // No es columna de CursoXUsuario: el curso se sabe por sus lecciones (LeccionXUsuario)
     public int IdCurso { get; set; }
     public int IdUsuario { get; set; }
     public int Progreso { get; set; }

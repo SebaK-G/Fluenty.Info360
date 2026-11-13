@@ -59,7 +59,6 @@ public class FormularioController : Controller
         usuario.Nombre = Nombre;
         usuario.Apellido = Apellido;
         usuario.Email = Email;
-        usuario.IdEmpresa = rango.IdEmpresa;
         usuario.IdRango = rango.IdRango;
         usuario.Dni = Dni;
         usuario.Telefono = Telefono;

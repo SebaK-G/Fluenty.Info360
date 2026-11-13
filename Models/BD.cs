@@ -10,8 +10,9 @@ public class BD
     public Usuarios Login(string email, string contrasena){
         Usuarios usuario = null;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            // Solo entran usuarios activos de empresas activas (borrado lógico)
-            string query = "SELECT Usuarios.* FROM Usuarios INNER JOIN Empresas ON Empresas.IdEmpresa = Usuarios.IdEmpresa WHERE Usuarios.Email = @pEmail AND Usuarios.Contrasena = @pContrasena AND Usuarios.Activo = 1 AND Empresas.Activo = 1";
+            // Solo entran usuarios activos de empresas activas (borrado lógico).
+            // La empresa del usuario es la de su rango (Usuarios -> Rangos -> Empresas)
+            string query = "SELECT Usuarios.*, Rangos.IdEmpresa FROM Usuarios INNER JOIN Rangos ON Rangos.IdRango = Usuarios.IdRango INNER JOIN Empresas ON Empresas.IdEmpresa = Rangos.IdEmpresa WHERE Usuarios.Email = @pEmail AND Usuarios.Contrasena = @pContrasena AND Usuarios.Activo = 1 AND Empresas.Activo = 1";
             usuario = connection.QueryFirstOrDefault<Usuarios>(query, new { pEmail = email, pContrasena = contrasena });
         }
         return usuario;
@@ -28,9 +29,9 @@ public class BD
     // Crea el usuario y devuelve su IdUsuario (hoy lo usa el link para unirse; después, el alta desde la Landing)
     public int Signup(Usuarios usuario){
         int idUsuario = 0;
-        string query = "INSERT INTO Usuarios (Nombre, Apellido, IdEmpresa, Email, Dni, Telefono, Contrasena, Rol, Puesto, IdRango) VALUES (@pNombre, @pApellido, @pIdEmpresa, @pEmail, @pDni, @pTelefono, @pContrasena, @pRol, @pPuesto, @pIdRango); SELECT CAST(SCOPE_IDENTITY() as int)";
+        string query = "INSERT INTO Usuarios (Nombre, Apellido, Email, Dni, Telefono, Contrasena, Rol, Puesto, IdRango) VALUES (@pNombre, @pApellido, @pEmail, @pDni, @pTelefono, @pContrasena, @pRol, @pPuesto, @pIdRango); SELECT CAST(SCOPE_IDENTITY() as int)";
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            idUsuario = connection.QuerySingle<int>(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pIdEmpresa = usuario.IdEmpresa, pEmail = usuario.Email, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena, pRol = usuario.Rol, pPuesto = usuario.Puesto, pIdRango = usuario.IdRango });
+            idUsuario = connection.QuerySingle<int>(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pEmail = usuario.Email, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena, pRol = usuario.Rol, pPuesto = usuario.Puesto, pIdRango = usuario.IdRango });
         }
         return idUsuario;
     }
@@ -120,25 +121,25 @@ public class BD
         int idCurso = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_CrearCurso";
-            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdEmpresa = curso.IdEmpresa, IdRango = curso.IdRango, Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel, Objetivos = curso.Objetivos }, commandType: CommandType.StoredProcedure);
+            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel, Objetivos = curso.Objetivos }, commandType: CommandType.StoredProcedure);
         }
         return idCurso;
     }
 
-    // ===================== CURSOS ASIGNADOS A CADA PERSONA (CursoXUsuario) =====================
+    // ===================== CURSOS ASIGNADOS A CADA PERSONA (Inscripciones) =====================
 
-    public void AsignarCurso(CursoXUsuario asignacion){
+    public void AsignarCurso(Inscripciones asignacion){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AsignarCurso";
-            connection.Execute(storedProcedure, new { IdCurso = asignacion.IdCurso, IdUsuario = asignacion.IdUsuario, UnidadInicial = asignacion.UnidadInicial, MotivoNivel = asignacion.MotivoNivel }, commandType: CommandType.StoredProcedure);
+            connection.Execute(storedProcedure, new { IdUsuario = asignacion.IdUsuario, UnidadInicial = asignacion.UnidadInicial, MotivoNivel = asignacion.MotivoNivel }, commandType: CommandType.StoredProcedure);
         }
     }
 
-    public List<CursoXUsuario> TraerAsignacionesCurso(int idCurso){
-        List<CursoXUsuario> asignaciones = new List<CursoXUsuario>();
+    public List<Inscripciones> TraerAsignacionesCurso(int idCurso){
+        List<Inscripciones> asignaciones = new List<Inscripciones>();
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_TraerAsignacionesCurso";
-            asignaciones = connection.Query<CursoXUsuario>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
+            asignaciones = connection.Query<Inscripciones>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
         }
         return asignaciones;
     }

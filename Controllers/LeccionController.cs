@@ -515,7 +515,7 @@ public class LeccionController : Controller
             return "";
         }
         int unidadInicial = 0;
-        foreach (CursoXUsuario asignacion in bd.TraerAsignacionesCurso(leccion.IdCurso))
+        foreach (Inscripciones asignacion in bd.TraerAsignacionesCurso(leccion.IdCurso))
         {
             if (asignacion.IdUsuario == idUsuario)
             {

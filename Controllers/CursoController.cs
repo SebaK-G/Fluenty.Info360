@@ -197,9 +197,8 @@ public class CursoController : Controller
                 nivelGrupo = form.NivelIA;
             }
         }
+        // El curso no guarda su rango ni su empresa: se saben por las personas a las que se les asigna (abajo)
         Cursos curso = new Cursos();
-        curso.IdEmpresa = idEmpresa;
-        curso.IdRango = IdRango;
         curso.Titulo = DatosIA.Recortar(cursoIA.Titulo, 100);
         curso.Descripcion = DatosIA.Recortar(cursoIA.Descripcion, 300);
         curso.Modelo = DatosIA.Recortar(cursoIA.Modelo, 50);
@@ -264,7 +263,7 @@ public class CursoController : Controller
         {
             return RedirectToAction("Index");
         }
-        foreach (CursoXUsuario asignacion in bd.TraerAsignacionesCurso(IdCurso))
+        foreach (Inscripciones asignacion in bd.TraerAsignacionesCurso(IdCurso))
         {
             if (asignacion.IdUsuario == IdUsuario)
             {
@@ -329,10 +328,10 @@ public class CursoController : Controller
             return RedirectToAction("Index", "Home");
         }
         int idUsuarioSesion = int.Parse(HttpContext.Session.GetString("IdUsuario"));
-        List<CursoXUsuario> asignaciones = bd.TraerAsignacionesCurso(IdCurso);
+        List<Inscripciones> asignaciones = bd.TraerAsignacionesCurso(IdCurso);
 
-        CursoXUsuario propia = null;
-        foreach (CursoXUsuario item in asignaciones)
+        Inscripciones propia = null;
+        foreach (Inscripciones item in asignaciones)
         {
             if (item.IdUsuario == idUsuarioSesion)
             {
@@ -341,7 +340,7 @@ public class CursoController : Controller
         }
         bool esResponsable = RangoDeAbajo(bd, curso.IdRango) != null;
 
-        CursoXUsuario asignacion = null;
+        Inscripciones asignacion = null;
         bool modoAlumno = false;
         if (IdUsuario == 0 && propia != null && curso.Estado == "Confirmado")
         {
@@ -350,7 +349,7 @@ public class CursoController : Controller
         }
         else if (esResponsable)
         {
-            foreach (CursoXUsuario item in asignaciones)
+            foreach (Inscripciones item in asignaciones)
             {
                 if (asignacion == null && (IdUsuario == 0 || item.IdUsuario == IdUsuario))
                 {
@@ -365,7 +364,7 @@ public class CursoController : Controller
 
         // Las personas del curso, para elegir de quién mirar el camino
         List<Usuarios> personas = new List<Usuarios>();
-        foreach (CursoXUsuario item in asignaciones)
+        foreach (Inscripciones item in asignaciones)
         {
             personas.Add(bd.TraerEmpleado(item.IdUsuario));
         }
@@ -416,7 +415,7 @@ public class CursoController : Controller
             return Ver(IdCurso);
         }
 
-        List<CursoXUsuario> asignaciones = bd.TraerAsignacionesCurso(IdCurso);
+        List<Inscripciones> asignaciones = bd.TraerAsignacionesCurso(IdCurso);
         List<Unidades> unidades = bd.TraerUnidadesCurso(IdCurso);
         List<Lecciones> lecciones = bd.TraerLeccionesCurso(IdCurso);
         Unidades unidadVieja = null;
@@ -435,7 +434,7 @@ public class CursoController : Controller
         // Los datos del grupo: la gente que tiene el curso
         List<Usuarios> personas = new List<Usuarios>();
         List<FormulariosEmpleado> formularios = new List<FormulariosEmpleado>();
-        foreach (CursoXUsuario item in asignaciones)
+        foreach (Inscripciones item in asignaciones)
         {
             FormulariosEmpleado form = bd.TraerFormularioEmpleado(item.IdUsuario);
             if (form != null)
@@ -499,7 +498,7 @@ public class CursoController : Controller
             leccion.Titulo = DatosIA.Recortar(leccionIA.Titulo, 100);
             leccion.Objetivo = DatosIA.Recortar(leccionIA.Objetivo, 300);
             int idLeccion = bd.AgregarLeccion(leccion);
-            foreach (CursoXUsuario item in asignaciones)
+            foreach (Inscripciones item in asignaciones)
             {
                 bd.AgregarLeccionUsuario(idLeccion, item.IdUsuario, EstadoInicial(NumeroUnidad, numero, item.UnidadInicial));
             }
@@ -525,7 +524,7 @@ public class CursoController : Controller
         // mientras hace una, se preparan las 2 siguientes.
         if (_groqFeatureToggle.Enabled)
         {
-            foreach (CursoXUsuario asignacion in bd.TraerAsignacionesCurso(IdCurso))
+            foreach (Inscripciones asignacion in bd.TraerAsignacionesCurso(IdCurso))
             {
                 GeneradorLecciones.PrepararEnSegundoPlano(_groqService, asignacion.IdUsuario, GeneradorLecciones.Siguientes(bd, IdCurso, asignacion.IdUsuario, 0, 1));
             }
@@ -592,10 +591,10 @@ public class CursoController : Controller
         return "";
     }
 
-    // Le asigna el curso a una persona: CursoXUsuario con su nivelación y el estado de cada lección
+    // Le asigna el curso a una persona: Inscripciones con su nivelación y el estado de cada lección
     private void Asignar(BD bd, int idCurso, List<Lecciones> lecciones, int idUsuario, int unidadInicial, string motivo)
     {
-        CursoXUsuario asignacion = new CursoXUsuario();
+        Inscripciones asignacion = new Inscripciones();
         asignacion.IdCurso = idCurso;
         asignacion.IdUsuario = idUsuario;
         asignacion.UnidadInicial = unidadInicial;

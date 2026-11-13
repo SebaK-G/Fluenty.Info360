@@ -80,7 +80,7 @@ public class GeneradorLecciones
 
         // ¿Es la primera lección que hace? (la lección 1 de la unidad donde arranca)
         bool esPrimera = false;
-        foreach (CursoXUsuario asignacion in bd.TraerAsignacionesCurso(leccion.IdCurso))
+        foreach (Inscripciones asignacion in bd.TraerAsignacionesCurso(leccion.IdCurso))
         {
             if (asignacion.IdUsuario == leccion.IdUsuario && asignacion.UnidadInicial == leccion.NumeroUnidad && leccion.Numero == 1)
             {

@@ -93,7 +93,7 @@ public class HomeController : Controller
         if (miCurso != null && miCurso.Estado == "Confirmado"){
             ViewBag.MiCurso = miCurso;
             ViewBag.MiProgreso = 0;
-            foreach (CursoXUsuario asignacion in bd.TraerAsignacionesCurso(miCurso.IdCurso)){
+            foreach (Inscripciones asignacion in bd.TraerAsignacionesCurso(miCurso.IdCurso)){
                 if (asignacion.IdUsuario == idUsuario){
                     ViewBag.MiProgreso = asignacion.Progreso;
                 }
