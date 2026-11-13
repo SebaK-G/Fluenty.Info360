@@ -33,8 +33,8 @@
                     <p class="detalle-mi-curso">@ViewBag.MiProgreso% completado</p>
                     @if (ViewBag.Proxima != null)
                     {
-                        <p class="proxima">Siguiente: <strong>@ViewBag.Proxima.Titulo</strong></p>
-                        <a class="boton-home grande-home" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Proxima.IdLeccion })' onclick="mostrarCarga()">Seguir aprendiendo</a>
+                        <p class="proxima">@(ViewBag.MiProgreso == 0 ? "Primera lección" : "Siguiente"): <strong>@ViewBag.Proxima.Titulo</strong></p>
+                        <a class="boton-home grande-home" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Proxima.IdLeccion })' onclick="mostrarCarga()">@(ViewBag.MiProgreso == 0 ? "Empezar el curso" : "Seguir aprendiendo")</a>
                     }
                     else
                     {
