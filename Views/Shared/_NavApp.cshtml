@@ -4,13 +4,14 @@
     Menú de arriba, igual para todos los rangos (sprint 2). Model = el botón que va marcado.
     - El dueño ve Equipo (para armar el árbol de rangos).
     - Quien tiene rangos abajo ve Equipo, Cursos y Empleados.
-    - Quien tiene un curso confirmado ve "Mi curso".
+    - Quien tiene un curso confirmado ve "Mi curso" (o "Mis cursos" si tiene varios).
     - El rango más bajo ve solo Home, Mi curso y Salir.
 *@
 @{
     bool esDueno = Context.Session.GetString("TipoUsuario") == "Empleador";
     bool gestiona = false;
     int idCursoPropio = 0;
+    int cantidadCursos = 0;
     string idEmpresaTexto = Context.Session.GetString("IdEmpresa");
     string idRangoTexto = Context.Session.GetString("IdRango");
     string idUsuarioTexto = Context.Session.GetString("IdUsuario");
@@ -21,10 +22,12 @@
         {
             gestiona = Arbol.TieneRangosAbajo(bd.TraerRangosEmpresa(int.Parse(idEmpresaTexto)), int.Parse(idRangoTexto));
         }
-        Cursos propio = bd.TraerCursoPorEmpleado(int.Parse(idUsuarioTexto));
-        if (propio != null && propio.Estado == "Confirmado")
+        // "Mis cursos": si tiene uno solo va directo a ese curso; si tiene varios, a la lista del Home
+        List<CursoInscripto> misCursos = bd.TraerCursosUsuario(int.Parse(idUsuarioTexto));
+        cantidadCursos = misCursos.Count;
+        if (cantidadCursos == 1)
         {
-            idCursoPropio = propio.IdCurso;
+            idCursoPropio = misCursos[0].IdCurso;
         }
     }
 }
@@ -39,9 +42,13 @@
         <a href='@Url.Action("Index", "Curso")' class='@(Model == "Cursos" ? "activo" : "")'>Cursos</a>
         <a href='@Url.Action("Index", "Empleados")' class='@(Model == "Empleados" ? "activo" : "")'>Empleados</a>
     }
-    @if (idCursoPropio != 0)
+    @if (cantidadCursos == 1)
     {
         <a href='@Url.Action("Ver", "Curso", new { IdCurso = idCursoPropio })' class='@(Model == "MiCurso" ? "activo" : "")'>Mi curso</a>
+    }
+    else if (cantidadCursos > 1)
+    {
+        <a href='@Url.Action("Index", "Home")#mis-cursos' class='@(Model == "MiCurso" ? "activo" : "")'>Mis cursos</a>
     }
     <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
 </nav>

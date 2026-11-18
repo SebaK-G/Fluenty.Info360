@@ -22,36 +22,49 @@
             <p>Estás en el espacio de capacitación de @ViewBag.NombreEmpresa.</p>
         </section>
 
-        <!-- ===== Su propio curso (lo ve cualquiera que tenga uno asignado) ===== -->
-        @if (ViewBag.MiCurso != null)
+        <!-- ===== Mis cursos (lo ve cualquiera que tenga al menos uno) ===== -->
+        @if (ViewBag.MisCursos.Count > 0)
         {
-            <section class="tarjeta-home mi-curso">
-                <div class="mi-curso-texto">
-                    <p class="etiqueta-plan">📚 Tu curso</p>
-                    <h2>@ViewBag.MiCurso.Titulo</h2>
-                    <div class="barra-mi-curso"><span style="width: @(ViewBag.MiProgreso)%"></span></div>
-                    <p class="detalle-mi-curso">@ViewBag.MiProgreso% completado</p>
-                    @if (ViewBag.Proxima != null)
-                    {
-                        <p class="proxima">@(ViewBag.MiProgreso == 0 ? "Primera lección" : "Siguiente"): <strong>@ViewBag.Proxima.Titulo</strong></p>
-                        <a class="boton-home grande-home" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Proxima.IdLeccion })' onclick="mostrarCarga()">@(ViewBag.MiProgreso == 0 ? "Empezar el curso" : "Seguir aprendiendo")</a>
-                    }
-                    else
-                    {
-                        <a class="boton-home grande-home" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.MiCurso.IdCurso })'>Ver mi curso</a>
-                    }
+            <section class="tarjeta-home mis-cursos" id="mis-cursos">
+                <div class="encabezado-mis-cursos">
+                    <div>
+                        <p class="etiqueta-plan">📚 @(ViewBag.MisCursos.Count == 1 ? "Tu curso" : "Tus cursos")</p>
+                        <h2>Mis cursos</h2>
+                    </div>
+                    <div class="medallas">
+                        <div class="medalla">
+                            <span class="icono-medalla">⚡</span>
+                            <strong>@ViewBag.XP</strong>
+                            <p>XP</p>
+                        </div>
+                        <div class="medalla">
+                            <span class="icono-medalla">🔥</span>
+                            <strong>@ViewBag.Racha</strong>
+                            <p>días de racha</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="medallas">
-                    <div class="medalla">
-                        <span class="icono-medalla">⚡</span>
-                        <strong>@ViewBag.XP</strong>
-                        <p>XP</p>
-                    </div>
-                    <div class="medalla">
-                        <span class="icono-medalla">🔥</span>
-                        <strong>@ViewBag.Racha</strong>
-                        <p>días de racha</p>
-                    </div>
+
+                <div class="lista-mis-cursos">
+                    @foreach (CursoInscripto curso in ViewBag.MisCursos)
+                    {
+                        <div class="mi-curso">
+                            <div class="mi-curso-texto">
+                                <h2>@curso.Titulo</h2>
+                                <div class="barra-mi-curso"><span style="width: @(curso.Progreso)%"></span></div>
+                                <p class="detalle-mi-curso">@curso.Progreso% completado</p>
+                                @if (curso.Proxima != null)
+                                {
+                                    <p class="proxima">@(curso.Progreso == 0 ? "Primera lección" : "Siguiente"): <strong>@curso.Proxima.Titulo</strong></p>
+                                    <a class="boton-home grande-home" href='@Url.Action("Index", "Leccion", new { IdLeccion = curso.Proxima.IdLeccion })' onclick="mostrarCarga()">@(curso.Progreso == 0 ? "Empezar el curso" : "Seguir aprendiendo")</a>
+                                }
+                                else
+                                {
+                                    <a class="boton-home grande-home" href='@Url.Action("Ver", "Curso", new { IdCurso = curso.IdCurso })'>Ver el curso</a>
+                                }
+                            </div>
+                        </div>
+                    }
                 </div>
             </section>
         }

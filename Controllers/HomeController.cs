@@ -84,28 +84,21 @@ public class HomeController : Controller
         }
         ViewBag.Actividades = actividades;
 
-        // ----- Su propio curso (si su rango de arriba le asignó uno) -----
+        // ----- Sus cursos (el que le asignó su rango de arriba y los que sume después) -----
         Usuarios yo = bd.TraerEmpleado(idUsuario);
         ViewBag.XP = yo.XP;
         ViewBag.Racha = yo.Racha;
-        ViewBag.MiCurso = null;
-        Cursos miCurso = bd.TraerCursoPorEmpleado(idUsuario);
-        if (miCurso != null && miCurso.Estado == "Confirmado"){
-            ViewBag.MiCurso = miCurso;
-            ViewBag.MiProgreso = 0;
-            foreach (Inscripciones asignacion in bd.TraerAsignacionesCurso(miCurso.IdCurso)){
-                if (asignacion.IdUsuario == idUsuario){
-                    ViewBag.MiProgreso = asignacion.Progreso;
-                }
-            }
-            // La próxima lección para hacer
-            ViewBag.Proxima = null;
-            foreach (Lecciones leccion in bd.TraerLeccionesUsuario(miCurso.IdCurso, idUsuario)){
-                if (leccion.Estado == "Disponible" && ViewBag.Proxima == null){
-                    ViewBag.Proxima = leccion;
+        List<CursoInscripto> misCursos = bd.TraerCursosUsuario(idUsuario);
+        foreach (CursoInscripto curso in misCursos){
+            // La próxima lección para hacer en cada curso (null si ya lo terminó)
+            curso.Proxima = null;
+            foreach (Lecciones leccion in bd.TraerLeccionesUsuario(curso.IdCurso, idUsuario)){
+                if (leccion.Estado == "Disponible" && curso.Proxima == null){
+                    curso.Proxima = leccion;
                 }
             }
         }
+        ViewBag.MisCursos = misCursos;
 
         return View();
     }
