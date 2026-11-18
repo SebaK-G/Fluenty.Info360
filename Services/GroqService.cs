@@ -32,7 +32,7 @@ public class GroqService
     public GroqService(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
-        _httpClient.Timeout = TimeSpan.FromSeconds(90);
+        _httpClient.Timeout = TimeSpan.FromSeconds(120);
 
         // 1) La clave de siempre (User Secrets: "Groq:ApiKey")
         AgregarClave("Groq principal", configuration["Groq:ApiKey"], null, null);
@@ -108,18 +108,21 @@ public class GroqService
             // se pasa a la siguiente clave y se reintenta el mismo pedido
             if (estado == 429 || estado == 401 || estado == 402 || estado == 403)
             {
+                // Se ve en la terminal de dotnet watch: sirve para saber qué clave falló
+                Console.WriteLine("[IA] La clave '" + clave.Nombre + "' respondió " + estado + ". Pruebo con la siguiente.");
                 _claveActual = indice + 1;
                 continue;
             }
 
             if (estado < 200 || estado > 299)
             {
-                throw new InvalidOperationException("La IA respondió con error " + estado + ": " + texto);
+                Console.WriteLine("[IA] La clave '" + clave.Nombre + "' respondió error " + estado + ": " + Recortar(texto));
+                throw new InvalidOperationException("La IA respondió con error " + estado + ": " + Recortar(texto));
             }
 
             // Anduvo: queda como la clave a usar en los próximos pedidos
             _claveActual = indice;
-            return LeerContenido(texto);
+            return LeerContenido(texto, clave);
         }
 
         // Ninguna clave pudo responder
@@ -129,14 +132,25 @@ public class GroqService
     // Arma y manda la solicitud POST con la key de esa clave
     private async Task<HttpResponseMessage> Enviar(ClaveIA clave, object[] mensajes, bool pedirJson)
     {
-        object cuerpo;
+        // El cuerpo se arma con un Dictionary para poder agregar campos solo cuando hacen falta
+        Dictionary<string, object> cuerpo = new Dictionary<string, object>();
+        cuerpo["model"] = clave.Modelo;
+        cuerpo["temperature"] = 0.4;
+        cuerpo["messages"] = mensajes;
         if (pedirJson)
         {
-            cuerpo = new { model = clave.Modelo, temperature = 0.4, max_tokens = 8000, response_format = new { type = "json_object" }, messages = mensajes };
+            cuerpo["max_tokens"] = 8000;
+            cuerpo["response_format"] = new { type = "json_object" };
         }
         else
         {
-            cuerpo = new { model = clave.Modelo, temperature = 0.4, max_tokens = 1500, messages = mensajes };
+            cuerpo["max_tokens"] = 1500;
+        }
+        // Los modelos gpt-oss "piensan" antes de responder y eso gasta del máximo de tokens.
+        // Con razonamiento bajo la respuesta no queda cortada y sale más rápido.
+        if (clave.Modelo.Contains("gpt-oss"))
+        {
+            cuerpo["reasoning_effort"] = "low";
         }
 
         HttpRequestMessage pedido = new HttpRequestMessage(HttpMethod.Post, clave.Url);
@@ -146,7 +160,7 @@ public class GroqService
     }
 
     // Saca el texto de la respuesta (choices[0].message.content)
-    private string LeerContenido(string texto)
+    private string LeerContenido(string texto, ClaveIA clave)
     {
         JsonDocument documento;
         try
@@ -155,8 +169,7 @@ public class GroqService
         }
         catch (JsonException ex)
         {
-            string vistaPrevia = texto.Length > 500 ? texto.Substring(0, 500) + "..." : texto;
-            throw new InvalidOperationException("No se pudo leer la respuesta de la IA porque la API devolvió un formato inválido. Respuesta recibida: " + vistaPrevia, ex);
+            throw new InvalidOperationException("No se pudo leer la respuesta de la IA porque la API devolvió un formato inválido. Respuesta recibida: " + Recortar(texto), ex);
         }
 
         if (!documento.RootElement.TryGetProperty("choices", out JsonElement choices) ||
@@ -167,6 +180,15 @@ public class GroqService
         }
 
         JsonElement primerChoice = choices[0];
+
+        // Si se quedó sin tokens, la respuesta vino cortada (el JSON no cierra)
+        if (primerChoice.TryGetProperty("finish_reason", out JsonElement motivo) &&
+            motivo.ValueKind == JsonValueKind.String && motivo.GetString() == "length")
+        {
+            Console.WriteLine("[IA] La respuesta de '" + clave.Nombre + "' quedó cortada (se quedó sin tokens).");
+            throw new InvalidOperationException("La respuesta de la IA quedó cortada porque era muy larga. Probá de nuevo.");
+        }
+
         if (!primerChoice.TryGetProperty("message", out JsonElement message) ||
             !message.TryGetProperty("content", out JsonElement content) ||
             content.ValueKind != JsonValueKind.String)
@@ -181,5 +203,14 @@ public class GroqService
         }
 
         return resultado;
+    }
+
+    private string Recortar(string texto)
+    {
+        if (texto == null)
+        {
+            return "";
+        }
+        return texto.Length > 500 ? texto.Substring(0, 500) + "..." : texto;
     }
 }
