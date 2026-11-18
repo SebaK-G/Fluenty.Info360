@@ -5,8 +5,8 @@
     - El dueño ve Equipo (para armar el árbol de rangos).
     - Quien tiene rangos abajo ve Equipo, Cursos y Empleados.
     - Quien tiene un curso confirmado ve "Mi curso" (o "Mis cursos" si tiene varios).
-    - Todos ven Explorar (el buscador de cursos públicos, sprint 3).
-    - El rango más bajo ve Home, Mi curso, Explorar y Salir.
+    - Todos ven Explorar (el buscador de cursos públicos) y Asistente (el chat con la IA), sprint 3.
+    - El rango más bajo ve Home, Mi curso, Explorar, Asistente y Salir.
 *@
 @{
     bool esDueno = Context.Session.GetString("TipoUsuario") == "Empleador";
@@ -52,5 +52,6 @@
         <a href='@Url.Action("Index", "Home")#mis-cursos' class='@(Model == "MiCurso" ? "activo" : "")'>Mis cursos</a>
     }
     <a href='@Url.Action("Buscar", "CursoPublico")' class='@(Model == "Explorar" ? "activo" : "")'>Explorar</a>
+    <a href='@Url.Action("Index", "Asistente")' class='@(Model == "Asistente" ? "activo" : "")'>Asistente</a>
     <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
 </nav>

@@ -584,4 +584,66 @@ public class BD
             connection.Execute(storedProcedure, new { IdCurso = idCurso, IdUsuario = idUsuario, NumeroUnidad = numeroUnidad }, commandType: CommandType.StoredProcedure);
         }
     }
+
+    // ===================== SPRINT 3: ASISTENTE DE IA (CHATS) =====================
+
+    public int CrearChat(int idUsuario, string titulo){
+        int idChat = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_CrearChat";
+            idChat = connection.QuerySingle<int>(storedProcedure, new { IdUsuario = idUsuario, Titulo = titulo }, commandType: CommandType.StoredProcedure);
+        }
+        return idChat;
+    }
+
+    public List<Chats> TraerChatsUsuario(int idUsuario){
+        List<Chats> chats = new List<Chats>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerChatsUsuario";
+            chats = connection.Query<Chats>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return chats;
+    }
+
+    public Chats TraerChat(int idChat){
+        Chats chat = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerChat";
+            chat = connection.QueryFirstOrDefault<Chats>(storedProcedure, new { IdChat = idChat }, commandType: CommandType.StoredProcedure);
+        }
+        return chat;
+    }
+
+    public List<MensajesChat> TraerMensajesChat(int idChat){
+        List<MensajesChat> mensajes = new List<MensajesChat>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerMensajesChat";
+            mensajes = connection.Query<MensajesChat>(storedProcedure, new { IdChat = idChat }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return mensajes;
+    }
+
+    public void AgregarMensajeChat(int idChat, string rol, string texto){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_AgregarMensajeChat";
+            connection.Execute(storedProcedure, new { IdChat = idChat, Rol = rol, Texto = texto }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public void BorrarChat(int idChat){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_BorrarChat";
+            connection.Execute(storedProcedure, new { IdChat = idChat }, commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    // Cuántas preguntas le hizo hoy al asistente (para el tope por día)
+    public int TraerMensajesChatHoy(int idUsuario){
+        int cantidad = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerMensajesChatHoy";
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+        }
+        return cantidad;
+    }
 }

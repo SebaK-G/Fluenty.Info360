@@ -1,0 +1,160 @@
+@using Fluenty.Info360.Models
+@{
+    ViewData["Title"] = "Asistente";
+    List<Chats> chats = ViewBag.Chats;
+    List<MensajesChat> mensajes = ViewBag.Mensajes;
+    int idChat = ViewBag.Chat == null ? 0 : ViewBag.Chat.IdChat;
+}
+
+<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/asistente.css" asp-append-version="true" />
+
+<div class="pagina-asistente">
+
+    <header class="encabezado-app">
+        <div class="logo-app">
+            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <span>Fluenty</span>
+        </div>
+        @await Html.PartialAsync("_NavApp", "Asistente")
+    </header>
+
+    <main class="asistente">
+
+        <!-- ===== Izquierda: los chats de la persona ===== -->
+        <aside class="lista-chats">
+            <a class="boton-home nuevo-chat" href='@Url.Action("Index", "Asistente", new { IdChat = 0 })'>+ Nuevo chat</a>
+            @if (chats.Count == 0)
+            {
+                <p class="sin-chats">Tus conversaciones van a aparecer acá.</p>
+            }
+            @foreach (Chats item in chats)
+            {
+                <a class="item-chat @(item.IdChat == idChat ? "chat-abierto" : "")" href='@Url.Action("Index", "Asistente", new { IdChat = item.IdChat })'>
+                    <span class="titulo-chat">@item.Titulo</span>
+                    <small>@item.FechaUltimo.ToString("dd/MM HH:mm")</small>
+                </a>
+            }
+        </aside>
+
+        <!-- ===== Derecha: el chat abierto ===== -->
+        <section class="chat">
+
+            <div class="cabecera-chat">
+                <h1>@(ViewBag.Chat == null ? "Nuevo chat" : ViewBag.Chat.Titulo)</h1>
+                @if (ViewBag.Chat != null)
+                {
+                    <form method="post" action='@Url.Action("Borrar", "Asistente")' onsubmit="return confirm('¿Borrar este chat y todos sus mensajes?');">
+                        <input type="hidden" name="IdChat" value="@idChat" />
+                        <input class="boton-borrar-chat" type="submit" value="Borrar chat" />
+                    </form>
+                }
+            </div>
+
+            <div class="mensajes" id="mensajes">
+                @if (mensajes.Count == 0)
+                {
+                    <!-- Chat nuevo: saludo y preguntas para arrancar -->
+                    <div class="bienvenida-chat">
+                        <div class="avatar-ia grande">✦</div>
+                        <h2>¡Hola, @ViewBag.Nombre! ¿En qué te ayudo?</h2>
+                        <p>Preguntame cómo usar la IA en tu trabajo. Conozco tus tareas y tus cursos, así que te respondo con ejemplos tuyos.</p>
+                        <div class="sugerencias">
+                            @foreach (string sugerencia in ViewBag.Sugerencias)
+                            {
+                                <button type="button" class="sugerencia" onclick="usarSugerencia(this)">@sugerencia</button>
+                            }
+                        </div>
+                    </div>
+                }
+                @foreach (MensajesChat mensaje in mensajes)
+                {
+                    if (mensaje.Rol == "IA")
+                    {
+                        <div class="fila-mensaje de-ia">
+                            <div class="avatar-ia">✦</div>
+                            <div class="burbuja">@mensaje.Texto</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="fila-mensaje de-persona">
+                            <div class="burbuja">@mensaje.Texto</div>
+                        </div>
+                    }
+                }
+
+                <!-- Se muestran al mandar, mientras la IA responde -->
+                <div class="fila-mensaje de-persona oculto" id="mi-pregunta">
+                    <div class="burbuja" id="texto-mi-pregunta"></div>
+                </div>
+                <div class="fila-mensaje de-ia oculto" id="escribiendo">
+                    <div class="avatar-ia">✦</div>
+                    <div class="burbuja"><p class="puntitos"><span></span><span></span><span></span></p></div>
+                </div>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <p class="error-chat">@ViewBag.Error</p>
+            }
+
+            <form class="escribir" id="form-chat" method="post" action='@Url.Action("Enviar", "Asistente")' onsubmit="return enviar();">
+                <input type="hidden" name="IdChat" value="@idChat" />
+                <label for="texto" class="oculto-lector">Tu pregunta</label>
+                <textarea id="texto" name="Texto" rows="1" maxlength="2000" placeholder="Escribí tu pregunta..." onkeydown="teclaEnter(event)" oninput="ajustarAlto()">@ViewBag.Borrador</textarea>
+                <input class="boton-home" id="boton-enviar" type="submit" value="Enviar" />
+            </form>
+            <p class="restantes-chat">Te quedan @(ViewBag.Restantes > 0 ? ViewBag.Restantes : 0) preguntas por hoy · La IA puede equivocarse: revisá lo importante.</p>
+
+        </section>
+    </main>
+</div>
+
+<script>
+    // Que se vea el último mensaje
+    var caja = document.getElementById("mensajes");
+    caja.scrollTop = caja.scrollHeight;
+
+    // Al mandar: se muestra la pregunta y los puntitos hasta que llegue la respuesta
+    function enviar() {
+        var texto = document.getElementById("texto").value.trim();
+        if (texto == "") {
+            return false;
+        }
+        var bienvenida = document.querySelector(".bienvenida-chat");
+        if (bienvenida != null) {
+            bienvenida.style.display = "none";
+        }
+        document.getElementById("texto-mi-pregunta").textContent = texto;
+        document.getElementById("mi-pregunta").classList.remove("oculto");
+        document.getElementById("escribiendo").classList.remove("oculto");
+        document.getElementById("boton-enviar").disabled = true;
+        caja.scrollTop = caja.scrollHeight;
+        return true;
+    }
+
+    // Enter manda, Shift + Enter hace un salto de línea
+    function teclaEnter(evento) {
+        if (evento.key == "Enter" && !evento.shiftKey) {
+            evento.preventDefault();
+            if (enviar()) {
+                document.getElementById("form-chat").submit();
+            }
+        }
+    }
+
+    // El cuadro de texto crece mientras se escribe (hasta un máximo)
+    function ajustarAlto() {
+        var texto = document.getElementById("texto");
+        texto.style.height = "auto";
+        texto.style.height = Math.min(texto.scrollHeight, 160) + "px";
+    }
+
+    function usarSugerencia(boton) {
+        var texto = document.getElementById("texto");
+        texto.value = boton.textContent;
+        ajustarAlto();
+        texto.focus();
+    }
+</script>

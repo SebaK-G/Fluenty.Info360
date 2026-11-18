@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Fluenty.Info360.Models;
 
 namespace Fluenty.Services;
 
@@ -79,7 +80,34 @@ public class GroqService
             new { role = "system", content = instrucciones },
             new { role = "user", content = datos }
         };
+        return await PedirConRotacion(mensajes, pedirJson);
+    }
 
+    // Sprint 3 · Asistente: manda la conversación entera (lo que dijo la persona y lo que respondió la IA),
+    // así la IA se acuerda de lo que se habló antes en ese chat.
+    public async Task<string> ConversarAsync(string instrucciones, List<MensajesChat> historial)
+    {
+        if (_claves.Count == 0)
+        {
+            throw new Exception("Falta configurar Groq:ApiKey en User Secrets.");
+        }
+        List<object> lista = new List<object>();
+        lista.Add(new { role = "system", content = instrucciones });
+        foreach (MensajesChat mensaje in historial)
+        {
+            string rol = "user";
+            if (mensaje.Rol == "IA")
+            {
+                rol = "assistant";
+            }
+            lista.Add(new { role = rol, content = mensaje.Texto });
+        }
+        return await PedirConRotacion(lista.ToArray(), false);
+    }
+
+    // Manda los mensajes probando las claves en orden hasta que una responda
+    private async Task<string> PedirConRotacion(object[] mensajes, bool pedirJson)
+    {
         // Se prueba cada clave como mucho una vez, empezando por la última que anduvo
         int inicio = _claveActual % _claves.Count;
         for (int intento = 0; intento < _claves.Count; intento++)
