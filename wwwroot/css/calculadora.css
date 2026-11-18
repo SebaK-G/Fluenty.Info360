@@ -1,0 +1,294 @@
+/* ===================================================
+   SPRINT 3 · Calculadora de eficiencia
+   =================================================== */
+
+.pagina-calculadora {
+    width: 100%;
+    color: #172333;
+}
+
+.calculadora {
+    width: 90%;
+    max-width: 1100px;
+    margin: 28px auto 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.titulo-calculadora {
+    color: #ffffff;
+}
+
+.titulo-calculadora h1 {
+    font-size: 30px;
+    margin: 8px 0 6px 0;
+}
+
+.titulo-calculadora p {
+    color: #c4d3e6;
+    max-width: 680px;
+}
+
+.etiqueta-calculadora {
+    display: inline-block;
+    background-color: #8fd3ff;
+    color: #172333;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.fila-calculadora {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 22px;
+    align-items: start;
+}
+
+.tarjeta-calculadora {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 14px #00000030;
+}
+
+.tarjeta-calculadora h2 {
+    font-size: 20px;
+    margin: 0 0 14px 0;
+}
+
+/* ----- Formulario ----- */
+
+.tarjeta-calculadora label {
+    display: block;
+    font-weight: bold;
+    margin: 16px 0 6px 0;
+}
+
+.tarjeta-calculadora label:first-of-type {
+    margin-top: 0;
+}
+
+.opcional {
+    font-weight: normal;
+    color: #6b7a8f;
+}
+
+.tarjeta-calculadora select,
+.tarjeta-calculadora input[type=number],
+.tarjeta-calculadora input[type=text] {
+    width: 100%;
+    border: 1px solid #c4d0de;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+    color: #172333;
+    background-color: #ffffff;
+}
+
+.tarjeta-calculadora select:focus,
+.tarjeta-calculadora input:focus {
+    outline: 2px solid #8fd3ff;
+    border-color: #0668c6;
+}
+
+.campo-plata {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.campo-plata span {
+    font-weight: bold;
+    color: #44546a;
+}
+
+.ayuda-calculadora {
+    font-size: 13px;
+    color: #6b7a8f;
+    margin: 6px 0 0 0;
+}
+
+.error-calculadora {
+    background-color: #fff4e5;
+    color: #8a4b00;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-top: 16px;
+}
+
+.boton-calcular {
+    display: block;
+    width: 100%;
+    border: none;
+    margin-top: 22px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* ----- Resultado ----- */
+
+.resultado {
+    background: linear-gradient(160deg, #0b1ca6, #0668c6);
+    color: #ffffff;
+}
+
+.resultado .ayuda-calculadora {
+    color: #c4d3e6;
+}
+
+.resultado a {
+    color: #8fd3ff;
+}
+
+.etiqueta-resultado {
+    font-size: 13px;
+    font-weight: bold;
+    color: #8fd3ff;
+    margin: 0;
+}
+
+.numero-grande {
+    font-size: 56px;
+    font-weight: bold;
+    line-height: 1.1;
+    margin: 6px 0 10px 0;
+}
+
+.numero-grande span {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.detalle-resultado {
+    color: #e6eef8;
+}
+
+.cajas-resultado {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.cajas-resultado div {
+    background-color: #ffffff1f;
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.cajas-resultado strong {
+    display: block;
+    font-size: 22px;
+}
+
+.cajas-resultado span {
+    font-size: 13px;
+    color: #c4d3e6;
+}
+
+.avance-resultado {
+    border-top: 1px solid #ffffff30;
+    margin-top: 16px;
+    padding-top: 14px;
+}
+
+.barra-avance {
+    height: 10px;
+    background-color: #ffffff30;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 8px 0;
+}
+
+.barra-avance span {
+    display: block;
+    height: 100%;
+    background-color: #8fd3ff;
+    border-radius: 10px;
+}
+
+.cuenta-resultado {
+    font-size: 12px;
+    color: #c4d3e6;
+    margin: 16px 0 0 0;
+}
+
+.resultado.vacio {
+    background: #ffffff18;
+    border: 1px dashed #ffffff60;
+    box-shadow: none;
+}
+
+/* ----- Cálculos guardados ----- */
+
+.tabla-calculos {
+    overflow-x: auto;
+}
+
+.tabla-calculos table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.tabla-calculos th {
+    text-align: left;
+    color: #6b7a8f;
+    font-weight: bold;
+    padding: 8px 10px;
+    border-bottom: 2px solid #eef4fa;
+    white-space: nowrap;
+}
+
+.tabla-calculos td {
+    padding: 10px;
+    border-bottom: 1px solid #eef4fa;
+}
+
+.tabla-calculos a {
+    color: #0b1ca6;
+    font-weight: bold;
+}
+
+.fila-elegida {
+    background-color: #eef4fa;
+}
+
+.plata-tabla {
+    color: #11823b;
+}
+
+.boton-borrar-calculo {
+    background: none;
+    border: 1px solid #e3c4c4;
+    color: #a12b2b;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.boton-borrar-calculo:hover {
+    background-color: #fdf0f0;
+}
+
+/* ----- Celular ----- */
+
+@media (max-width: 800px) {
+    .calculadora {
+        width: 94%;
+    }
+
+    .fila-calculadora {
+        grid-template-columns: 1fr;
+    }
+
+    .numero-grande {
+        font-size: 44px;
+    }
+}

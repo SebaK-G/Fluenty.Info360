@@ -646,4 +646,41 @@ public class BD
         }
         return cantidad;
     }
+
+    // ===================== SPRINT 3: CALCULADORA DE EFICIENCIA =====================
+
+    public List<TiposTarea> TraerTiposTarea(){
+        List<TiposTarea> tipos = new List<TiposTarea>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerTiposTarea";
+            tipos = connection.Query<TiposTarea>(storedProcedure, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return tipos;
+    }
+
+    public int GuardarCalculo(Calculos calculo){
+        int idCalculo = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_GuardarCalculo";
+            idCalculo = connection.QuerySingle<int>(storedProcedure, new { IdUsuario = calculo.IdUsuario, IdTipoTarea = calculo.IdTipoTarea, Personas = calculo.Personas, HorasSemana = calculo.HorasSemana, ValorHora = calculo.ValorHora, PorcentajeAhorro = calculo.PorcentajeAhorro, HorasAhorradasMes = calculo.HorasAhorradasMes, PlataAhorradaMes = calculo.PlataAhorradaMes }, commandType: CommandType.StoredProcedure);
+        }
+        return idCalculo;
+    }
+
+    public List<Calculos> TraerCalculosUsuario(int idUsuario){
+        List<Calculos> calculos = new List<Calculos>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerCalculosUsuario";
+            calculos = connection.Query<Calculos>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return calculos;
+    }
+
+    // Solo borra si el cálculo es de esa persona
+    public void BorrarCalculo(int idCalculo, int idUsuario){
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_BorrarCalculo";
+            connection.Execute(storedProcedure, new { IdCalculo = idCalculo, IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+        }
+    }
 }

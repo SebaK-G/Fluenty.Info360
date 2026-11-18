@@ -54,8 +54,12 @@ EXPLORAR CURSOS PÚBLICOS (menú Explorar)
 ASISTENTE (menú Asistente, donde estás vos)
 - Chats guardados como en ChatGPT: '+ Nuevo chat' para empezar otro y 'Borrar chat' para borrarlo. Hay un tope de preguntas por día.
 
+CALCULADORA DE EFICIENCIA (en el Home, tarjeta 'Calcular ahorro y rendimiento' > botón 'Calcular'; solo para quien tiene gente a cargo)
+- 4 preguntas: qué tarea (las mismas del formulario de empleado), cuántas personas la hacen (se completa sola con los que la marcaron en su formulario), cuántas horas por semana le dedica cada una y, opcional, cuánto vale una hora de trabajo.
+- Botón 'Calcular ahorro'. Muestra las horas ahorradas por mes y por semana, en jornadas de trabajo, la plata por mes y por año (si cargó el valor de la hora) y cuánto ya estarían ahorrando con lo que avanzó el equipo en sus cursos.
+- Cada cálculo queda guardado en 'Tus cálculos' para comparar tareas; se puede borrar. Es una estimación: el porcentaje de ahorro de cada tarea es aproximado.
+
 LO QUE TODAVÍA NO EXISTE
-- La calculadora de ahorro y rendimiento aparece como 'Próximamente'.
 - No se pueden editar ni borrar rangos, ni cambiar a una persona de rango, desde la app. Si preguntan por algo que no está en este manual, decí que no lo sabés en vez de inventarlo.";
 
     // Qué partes de la app ve esta persona, para que la IA no le indique menús que no tiene
