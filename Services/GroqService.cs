@@ -4,19 +4,59 @@ using System.Text.Json;
 
 namespace Fluenty.Services;
 
-// Habla con Groq mandando solicitudes HTTP (sin Semantic Kernel).
+// Una clave para llamar a la IA: la key, a qué dirección se manda y qué modelo usa.
+// Así una clave de respaldo puede ser de Groq o de otro proveedor con el mismo formato de pedido.
+public class ClaveIA
+{
+    public string Nombre { get; set; }
+    public string ApiKey { get; set; }
+    public string Url { get; set; }
+    public string Modelo { get; set; }
+}
+
+// Habla con la IA mandando solicitudes HTTP (sin Semantic Kernel).
+// Tiene una lista de claves: si una llega al límite (429) o deja de andar (401/402/403),
+// el mismo pedido se reintenta con la siguiente.
 public class GroqService
 {
+    private const string UrlGroq = "https://api.groq.com/openai/v1/chat/completions";
+    private const string ModeloGroq = "openai/gpt-oss-120b";
+
+    // La última clave que anduvo. Es static para que la recuerden todos los pedidos,
+    // así no se empieza siempre por una clave que ya está agotada.
+    private static int _claveActual = 0;
+
     private readonly HttpClient _httpClient;
-    private readonly string _apiKey;
-    private const string Url = "https://api.groq.com/openai/v1/chat/completions";
-    private const string Modelo = "openai/gpt-oss-120b";
+    private readonly List<ClaveIA> _claves = new List<ClaveIA>();
 
     public GroqService(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
         _httpClient.Timeout = TimeSpan.FromSeconds(90);
-        _apiKey = configuration["Groq:ApiKey"] ?? "";
+
+        // 1) La clave de siempre (User Secrets: "Groq:ApiKey")
+        AgregarClave("Groq principal", configuration["Groq:ApiKey"], null, null);
+
+        // 2) Claves de respaldo: "IA:Claves:0:ApiKey", "IA:Claves:1:ApiKey", ...
+        //    Url y Modelo son opcionales (si no están, se usa Groq).
+        foreach (IConfigurationSection seccion in configuration.GetSection("IA:Claves").GetChildren())
+        {
+            AgregarClave("Respaldo " + seccion.Key, seccion["ApiKey"], seccion["Url"], seccion["Modelo"]);
+        }
+    }
+
+    private void AgregarClave(string nombre, string apiKey, string url, string modelo)
+    {
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            return;
+        }
+        ClaveIA clave = new ClaveIA();
+        clave.Nombre = nombre;
+        clave.ApiKey = apiKey.Trim();
+        clave.Url = string.IsNullOrWhiteSpace(url) ? UrlGroq : url.Trim();
+        clave.Modelo = string.IsNullOrWhiteSpace(modelo) ? ModeloGroq : modelo.Trim();
+        _claves.Add(clave);
     }
 
     // Para la página de prueba: una pregunta y una respuesta en texto
@@ -26,101 +66,120 @@ public class GroqService
     }
 
     // instrucciones = el prompt fijo, datos = la información del empleado.
-    // Si pedirJson es true, Groq está obligado a devolver un JSON válido.
+    // Si pedirJson es true, la IA está obligada a devolver un JSON válido.
     public async Task<string> PreguntarAsync(string instrucciones, string datos, bool pedirJson)
     {
-        if (_apiKey == "")
+        if (_claves.Count == 0)
         {
             throw new Exception("Falta configurar Groq:ApiKey en User Secrets.");
         }
 
-        try
+        object[] mensajes = new object[]
         {
-            // 1) Armamos el cuerpo del pedido
-            object cuerpo;
-            object[] mensajes = new object[]
-            {
-                new { role = "system", content = instrucciones },
-                new { role = "user", content = datos }
-            };
-            if (pedirJson)
-            {
-                cuerpo = new { model = Modelo, temperature = 0.4, max_tokens = 8000, response_format = new { type = "json_object" }, messages = mensajes };
-            }
-            else
-            {
-                cuerpo = new { model = Modelo, temperature = 0.4, max_tokens = 1500, messages = mensajes };
-            }
+            new { role = "system", content = instrucciones },
+            new { role = "user", content = datos }
+        };
 
-            // 2) Mandamos la solicitud POST con la API key
-            HttpRequestMessage pedido = new HttpRequestMessage(HttpMethod.Post, Url);
-            pedido.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
-            pedido.Content = new StringContent(JsonSerializer.Serialize(cuerpo), Encoding.UTF8, "application/json");
+        // Se prueba cada clave como mucho una vez, empezando por la última que anduvo
+        int inicio = _claveActual % _claves.Count;
+        for (int intento = 0; intento < _claves.Count; intento++)
+        {
+            int indice = (inicio + intento) % _claves.Count;
+            ClaveIA clave = _claves[indice];
 
-            HttpResponseMessage respuesta = await _httpClient.SendAsync(pedido);
-            string texto = await respuesta.Content.ReadAsStringAsync();
-
-            // 3) Errores comunes
-            if ((int)respuesta.StatusCode == 429)
-            {
-                throw new InvalidOperationException("La IA está recibiendo muchos pedidos. Esperá unos segundos y probá de nuevo.");
-            }
-
-            if (!respuesta.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException("Groq respondió con error " + (int)respuesta.StatusCode + ": " + texto);
-            }
-
-            // 4) Intentamos parsear la respuesta del modelo
-            JsonDocument documento;
+            int estado;
+            string texto;
             try
             {
-                documento = JsonDocument.Parse(texto);
+                HttpResponseMessage respuesta = await Enviar(clave, mensajes, pedirJson);
+                estado = (int)respuesta.StatusCode;
+                texto = await respuesta.Content.ReadAsStringAsync();
             }
-            catch (JsonException ex)
+            catch (HttpRequestException ex)
             {
-                string vistaPrevia = texto.Length > 500 ? texto.Substring(0, 500) + "..." : texto;
-                throw new InvalidOperationException("No se pudo leer la respuesta de Groq porque la API devolvió un formato inválido. Respuesta recibida: " + vistaPrevia, ex);
+                throw new InvalidOperationException("No se pudo contactar con la IA. Revisá la conexión o la configuración de la API.", ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new InvalidOperationException("La llamada a la IA tardó demasiado y se canceló. Probá de nuevo más tarde.", ex);
             }
 
-            if (!documento.RootElement.TryGetProperty("choices", out JsonElement choices) ||
-                choices.ValueKind != JsonValueKind.Array ||
-                choices.GetArrayLength() == 0)
+            // Límite alcanzado (429) o clave que no sirve (401 inválida, 402 sin créditos, 403 sin permiso):
+            // se pasa a la siguiente clave y se reintenta el mismo pedido
+            if (estado == 429 || estado == 401 || estado == 402 || estado == 403)
             {
-                throw new InvalidOperationException("Groq no devolvió una respuesta válida en el campo 'choices'.");
+                _claveActual = indice + 1;
+                continue;
             }
 
-            JsonElement primerChoice = choices[0];
-            if (!primerChoice.TryGetProperty("message", out JsonElement message) ||
-                !message.TryGetProperty("content", out JsonElement content) ||
-                content.ValueKind != JsonValueKind.String)
+            if (estado < 200 || estado > 299)
             {
-                throw new InvalidOperationException("Groq devolvió una respuesta sin contenido útil para mostrar.");
+                throw new InvalidOperationException("La IA respondió con error " + estado + ": " + texto);
             }
 
-            string resultado = content.GetString();
-            if (string.IsNullOrWhiteSpace(resultado))
-            {
-                throw new InvalidOperationException("Groq devolvió una respuesta vacía o sin texto.");
-            }
+            // Anduvo: queda como la clave a usar en los próximos pedidos
+            _claveActual = indice;
+            return LeerContenido(texto);
+        }
 
-            return resultado;
-        }
-        catch (HttpRequestException ex)
+        // Ninguna clave pudo responder
+        throw new InvalidOperationException("La IA está recibiendo muchos pedidos. Esperá unos minutos y probá de nuevo.");
+    }
+
+    // Arma y manda la solicitud POST con la key de esa clave
+    private async Task<HttpResponseMessage> Enviar(ClaveIA clave, object[] mensajes, bool pedirJson)
+    {
+        object cuerpo;
+        if (pedirJson)
         {
-            throw new InvalidOperationException("No se pudo contactar con Groq. Revisá la conexión o la configuración de la API.", ex);
+            cuerpo = new { model = clave.Modelo, temperature = 0.4, max_tokens = 8000, response_format = new { type = "json_object" }, messages = mensajes };
         }
-        catch (TaskCanceledException ex)
+        else
         {
-            throw new InvalidOperationException("La llamada a Groq tardó demasiado y se canceló. Probá de nuevo más tarde.", ex);
+            cuerpo = new { model = clave.Modelo, temperature = 0.4, max_tokens = 1500, messages = mensajes };
         }
-        catch (InvalidOperationException)
+
+        HttpRequestMessage pedido = new HttpRequestMessage(HttpMethod.Post, clave.Url);
+        pedido.Headers.Authorization = new AuthenticationHeaderValue("Bearer", clave.ApiKey);
+        pedido.Content = new StringContent(JsonSerializer.Serialize(cuerpo), Encoding.UTF8, "application/json");
+        return await _httpClient.SendAsync(pedido);
+    }
+
+    // Saca el texto de la respuesta (choices[0].message.content)
+    private string LeerContenido(string texto)
+    {
+        JsonDocument documento;
+        try
         {
-            throw;
+            documento = JsonDocument.Parse(texto);
         }
-        catch (Exception ex)
+        catch (JsonException ex)
         {
-            throw new InvalidOperationException("Error inesperado al consultar a Groq: " + ex.Message, ex);
+            string vistaPrevia = texto.Length > 500 ? texto.Substring(0, 500) + "..." : texto;
+            throw new InvalidOperationException("No se pudo leer la respuesta de la IA porque la API devolvió un formato inválido. Respuesta recibida: " + vistaPrevia, ex);
         }
+
+        if (!documento.RootElement.TryGetProperty("choices", out JsonElement choices) ||
+            choices.ValueKind != JsonValueKind.Array ||
+            choices.GetArrayLength() == 0)
+        {
+            throw new InvalidOperationException("La IA no devolvió una respuesta válida en el campo 'choices'.");
+        }
+
+        JsonElement primerChoice = choices[0];
+        if (!primerChoice.TryGetProperty("message", out JsonElement message) ||
+            !message.TryGetProperty("content", out JsonElement content) ||
+            content.ValueKind != JsonValueKind.String)
+        {
+            throw new InvalidOperationException("La IA devolvió una respuesta sin contenido útil para mostrar.");
+        }
+
+        string resultado = content.GetString();
+        if (string.IsNullOrWhiteSpace(resultado))
+        {
+            throw new InvalidOperationException("La IA devolvió una respuesta vacía o sin texto.");
+        }
+
+        return resultado;
     }
 }

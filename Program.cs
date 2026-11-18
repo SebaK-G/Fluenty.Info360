@@ -3,6 +3,8 @@ var groqHabilitado = true;
 
 // IA: GroqService habla con Groq por solicitudes HTTP (sin Semantic Kernel).
 // La API key va en User Secrets: dotnet user-secrets set "Groq:ApiKey" "TU_KEY"
+// Claves de respaldo (opcionales): dotnet user-secrets set "IA:Claves:0:ApiKey" "OTRA_KEY"
+// Para otro proveedor también: "IA:Claves:0:Url" y "IA:Claves:0:Modelo"
 builder.Services.AddHttpClient<Fluenty.Services.GroqService>();
 builder.Services.AddSingleton(new Fluenty.Services.GroqFeatureToggle { Enabled = groqHabilitado });
 
