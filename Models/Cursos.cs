@@ -1,7 +1,7 @@
 namespace Fluenty.Info360.Models;
 
-// El contenido del curso que arma la IA. Es para un rango (un grupo de personas);
-// a quién está asignado y cómo va cada persona está en Inscripciones.
+// El contenido del curso que arma la IA. Lo genera un rango para su gente (Origen = 'Equipo' en Inscripciones);
+// si es público, además aparece en el buscador y cualquiera se puede inscribir (Origen = 'Publico').
 public class Cursos
 {
     public int IdCurso { get; set; }
@@ -14,4 +14,13 @@ public class Cursos
     public int Nivel { get; set; }
     public string Objetivos { get; set; }
     public string Estado { get; set; }
+
+    // Sprint 3: cursos públicos (aparecen en el buscador para usuarios de todas las empresas)
+    public bool Publico { get; set; }
+    public string Categoria { get; set; }
+    public int DuracionHoras { get; set; }
+    public string Herramientas { get; set; }
+
+    // Las categorías posibles (los chips del buscador)
+    public static readonly string[] Categorias = { "Automatización", "Productividad", "Personalización", "Atención al cliente", "Datos y reportes", "Marketing y contenido" };
 }

@@ -472,3 +472,100 @@
 .contenido-curso > .tarjeta-curso + .tarjeta-curso {
     margin-top: 22px;
 }
+
+/* ----- Home: Mis cursos (una persona puede tener varios) ----- */
+
+.mis-cursos {
+    background: linear-gradient(150deg, #0b1ca6, #0668c6);
+    color: #ffffff;
+}
+
+.mis-cursos h2 {
+    color: #ffffff;
+}
+
+.mis-cursos .etiqueta-plan {
+    color: #8fd3ff;
+    font-weight: bold;
+}
+
+.encabezado-mis-cursos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.lista-mis-cursos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+/* Cada curso adentro de "Mis cursos": tarjeta más clara sobre el fondo azul */
+.lista-mis-cursos .mi-curso {
+    background: #ffffff18;
+    border: 1px solid #ffffff30;
+    border-radius: 16px;
+    padding: 18px;
+}
+
+.lista-mis-cursos .mi-curso h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+/* ----- Generar curso: solo el equipo o público ----- */
+
+.form-generar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.para-quien {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.para-quien label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.datos-publico {
+    display: none;
+    background-color: #f3f7fc;
+    border: 1px solid #dce4ee;
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.datos-publico label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    color: #44546a;
+    margin: 8px 0 4px 0;
+}
+
+.datos-publico input[type="text"],
+.datos-publico select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #c4d0de;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.estado-publico {
+    background-color: #e6f0ff;
+    color: #0b1ca6;
+}

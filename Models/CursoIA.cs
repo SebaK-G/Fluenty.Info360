@@ -14,6 +14,10 @@ public class CursoIA
     public List<UnidadIA> Unidades { get; set; } = new List<UnidadIA>();
     // Sprint 2: en qué unidad arranca cada persona del rango
     public List<NivelacionIA> Nivelacion { get; set; } = new List<NivelacionIA>();
+    // Sprint 3: datos para el buscador de cursos públicos
+    public string Categoria { get; set; } = "";
+    public int DuracionHoras { get; set; }
+    public List<string> Herramientas { get; set; } = new List<string>();
 }
 
 public class UnidadIA

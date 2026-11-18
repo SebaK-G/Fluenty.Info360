@@ -42,8 +42,25 @@
                     {
                         @if (grupo.ConFormulario > 0 && ViewBag.PuedeGenerar)
                         {
-                            <form method="post" action='@Url.Action("Generar", "Curso")' onsubmit="mostrarCarga()">
+                            <form class="form-generar" method="post" action='@Url.Action("Generar", "Curso")' onsubmit="mostrarCarga()">
                                 <input type="hidden" name="IdRango" value="@grupo.Rango.IdRango" />
+                                <!-- Para quién es el curso: solo el equipo, o también público en el buscador -->
+                                <div class="para-quien">
+                                    <label><input type="radio" name="Publico" value="false" checked onchange="mostrarPublico(@grupo.Rango.IdRango, false)" /> Solo mi equipo</label>
+                                    <label><input type="radio" name="Publico" value="true" onchange="mostrarPublico(@grupo.Rango.IdRango, true)" /> Público 🌎</label>
+                                </div>
+                                <div class="datos-publico" id="publico-@grupo.Rango.IdRango">
+                                    <p class="ayuda-sprint2">Un curso público aparece en el buscador para todas las empresas. La IA lo arma solo con el tema: no usa datos de tu empresa ni de tu equipo.</p>
+                                    <label for="Tema-@grupo.Rango.IdRango">¿De qué trata?</label>
+                                    <input type="text" id="Tema-@grupo.Rango.IdRango" name="Tema" maxlength="300" placeholder="Ej.: automatizar tareas cotidianas con IA" />
+                                    <label for="Categoria-@grupo.Rango.IdRango">Categoría</label>
+                                    <select id="Categoria-@grupo.Rango.IdRango" name="Categoria">
+                                        @foreach (string categoria in Cursos.Categorias)
+                                        {
+                                            <option value="@categoria">@categoria</option>
+                                        }
+                                    </select>
+                                </div>
                                 <input class="boton-curso grande" type="submit" value="Generar curso del rango" />
                             </form>
                         }
@@ -56,6 +73,10 @@
                     {
                         <div class="curso-grupo">
                             <span class="estado-grupo @(grupo.Curso.Estado == "Confirmado" ? "estado-ok" : "estado-borrador")">@(grupo.Curso.Estado == "Confirmado" ? "✓ Confirmado" : "Borrador")</span>
+                            @if (grupo.Curso.Publico)
+                            {
+                                <span class="estado-grupo estado-publico">🌎 Público</span>
+                            }
                             <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = grupo.Curso.IdCurso })'>@(grupo.Curso.Estado == "Confirmado" ? "Ver curso" : "Revisar curso")</a>
                         </div>
                     }
@@ -127,4 +148,10 @@
     window.onpageshow = function () {
         document.getElementById("carga").style.display = "none";
     };
+    // Muestra u oculta el tema y la categoría según si el curso es público
+    function mostrarPublico(idRango, publico) {
+        const caja = document.getElementById("publico-" + idRango);
+        caja.style.display = publico ? "block" : "none";
+        document.getElementById("Tema-" + idRango).required = publico;
+    }
 </script>

@@ -116,8 +116,10 @@ public class CursoController : Controller
     }
 
     // ============ La IA genera UN curso para todo el rango (queda como borrador) ============
+    // Publico = true: además aparece en el buscador para todas las empresas. En ese caso la IA arma
+    // el temario solo con el Tema y la Categoria, SIN datos de la empresa ni de las personas.
     [HttpPost]
-    public async Task<IActionResult> Generar(int IdRango)
+    public async Task<IActionResult> Generar(int IdRango, bool Publico = false, string Tema = "", string Categoria = "")
     {
         if (HttpContext.Session.GetString("IdUsuario") == null)
         {
@@ -159,8 +161,25 @@ public class CursoController : Controller
         }
         FormulariosEmpresa formEmpresa = bd.TraerFormularioEmpresa(idEmpresa);
 
-        string instrucciones = ArmarInstrucciones();
-        string datos = ArmarDatosGrupo(bd, rango, personas, formularios, formEmpresa);
+        if (Tema == null)
+        {
+            Tema = "";
+        }
+        if (Publico && (Tema.Trim().Length < 5 || Array.IndexOf(Cursos.Categorias, Categoria) < 0))
+        {
+            return MostrarError("Para un curso público contá de qué trata (el tema) y elegí una categoría.");
+        }
+
+        string instrucciones = ArmarInstrucciones(Publico);
+        string datos;
+        if (Publico)
+        {
+            datos = ArmarDatosPublico(Tema.Trim(), Categoria, personas, formularios);
+        }
+        else
+        {
+            datos = ArmarDatosGrupo(bd, rango, personas, formularios, formEmpresa);
+        }
 
         // 2) Le pedimos el curso a la IA (si viene mal, probamos una vez más)
         CursoIA cursoIA = null;
@@ -204,6 +223,10 @@ public class CursoController : Controller
         curso.Modelo = DatosIA.Recortar(cursoIA.Modelo, 50);
         curso.Nivel = nivelGrupo;
         curso.Objetivos = DatosIA.Recortar(objetivos, 600);
+        curso.Publico = Publico;
+        curso.Categoria = Publico ? Categoria : DatosIA.Recortar(cursoIA.Categoria, 50);
+        curso.DuracionHoras = cursoIA.DuracionHoras > 0 ? cursoIA.DuracionHoras : 5;
+        curso.Herramientas = DatosIA.Recortar(string.Join(" · ", cursoIA.Herramientas), 200);
         int idCurso = bd.CrearCurso(curso);
 
         foreach (UnidadIA unidadIA in cursoIA.Unidades)
@@ -445,7 +468,17 @@ public class CursoController : Controller
         }
         Rangos rango = RangoDeAbajo(bd, curso.IdRango);
         string instrucciones = ArmarInstruccionesUnidad(NumeroUnidad);
-        string datos = ArmarDatosGrupo(bd, rango, personas, formularios, bd.TraerFormularioEmpresa(curso.IdEmpresa));
+        string datos;
+        if (curso.Publico)
+        {
+            // Curso público: la unidad se rehace sin datos de la empresa ni de las personas
+            instrucciones = instrucciones + "\n\nES UN CURSO PÚBLICO: lo ve gente de cualquier empresa. No uses nombres de empresas, personas, clientes ni datos internos.";
+            datos = "CURSO PÚBLICO de la categoría " + curso.Categoria + ".\n";
+        }
+        else
+        {
+            datos = ArmarDatosGrupo(bd, rango, personas, formularios, bd.TraerFormularioEmpresa(curso.IdEmpresa));
+        }
         datos = datos + "\nPLAN ACTUAL DEL CURSO \"" + curso.Titulo + "\":\n";
         foreach (Unidades unidad in unidades)
         {
@@ -500,7 +533,7 @@ public class CursoController : Controller
             int idLeccion = bd.AgregarLeccion(leccion);
             foreach (Inscripciones item in asignaciones)
             {
-                bd.AgregarLeccionUsuario(idLeccion, item.IdUsuario, EstadoInicial(NumeroUnidad, numero, item.UnidadInicial));
+                bd.AgregarLeccionUsuario(idLeccion, item.IdInscripcion, EstadoInicial(NumeroUnidad, numero, item.UnidadInicial));
             }
             numero++;
         }
@@ -599,10 +632,10 @@ public class CursoController : Controller
         asignacion.IdUsuario = idUsuario;
         asignacion.UnidadInicial = unidadInicial;
         asignacion.MotivoNivel = DatosIA.Recortar(motivo, 300);
-        bd.AsignarCurso(asignacion);
+        int idInscripcion = bd.AsignarCurso(asignacion);
         foreach (Lecciones leccion in lecciones)
         {
-            bd.AgregarLeccionUsuario(leccion.IdLeccion, idUsuario, EstadoInicial(leccion.NumeroUnidad, leccion.Numero, unidadInicial));
+            bd.AgregarLeccionUsuario(leccion.IdLeccion, idInscripcion, EstadoInicial(leccion.NumeroUnidad, leccion.Numero, unidadInicial));
         }
         bd.ActualizarProgreso(idCurso, idUsuario);
     }
@@ -630,8 +663,21 @@ public class CursoController : Controller
         return datos;
     }
 
+    // Curso público: solo el tema, la categoría y el nivel de IA de cada persona (para nivelarla).
+    // Nada de la empresa ni de sus tareas: el curso lo va a ver gente de otras empresas.
+    private string ArmarDatosPublico(string tema, string categoria, List<Usuarios> personas, List<FormulariosEmpleado> formularios)
+    {
+        string datos = "CURSO PÚBLICO\nTEMA: " + DatosIA.Recortar(tema, 300) + "\nCATEGORÍA: " + categoria + "\n\n";
+        datos = datos + "PERSONAS PARA NIVELAR (solo su experiencia con la IA):\n";
+        for (int i = 0; i < personas.Count; i++)
+        {
+            datos = datos + "- IdUsuario " + personas[i].IdUsuario + ": " + DatosIA.Nivel(formularios[i].NivelIA) + "\n";
+        }
+        return datos;
+    }
+
     // El prompt fijo del curso por rango (ver PROMPT-IA.md)
-    private string ArmarInstrucciones()
+    private string ArmarInstrucciones(bool publico)
     {
         string texto = "Sos un diseñador de cursos de Fluenty, una app que enseña a usar inteligencia artificial en el trabajo con el estilo de Duolingo: ";
         texto = texto + "un camino largo de lecciones cortas, una por día, que se van desbloqueando.\n\n";
@@ -656,12 +702,21 @@ public class CursoController : Controller
         texto = texto + "ELEGÍ UNO DE ESTOS 7 MODELOS DE CURSO según el puesto: ";
         texto = texto + "Tareas de escritorio, Oficio y campo, Ventas y atención al cliente, Gestión y liderazgo, Creativo y marketing, Técnico y datos, Primer contacto (si casi no usan tecnología).\n\n";
 
+        if (publico)
+        {
+            texto = texto + "ES UN CURSO PÚBLICO: lo va a ver gente de CUALQUIER empresa en un buscador. Armalo sobre el TEMA y la CATEGORÍA que te pasan, ";
+            texto = texto + "para cualquier persona que trabaje con eso. No uses nombres de empresas, personas, clientes ni datos internos. ";
+            texto = texto + "En las unidades 2 a 4 usá ejemplos de trabajo comunes (no de una empresa en particular).\n\n";
+        }
+
         texto = texto + "REGLAS: español rioplatense, claro, motivador y sin relleno. Títulos de lección cortos (máximo 60 caracteres). ";
         texto = texto + "Objetivo de cada lección: una oración que empiece con un verbo. Si alguien maneja datos de clientes, incluí una lección sobre cuidarlos. ";
         texto = texto + "Si a varios les preocupa algo de la IA, incluí una lección temprana que lo responda con calma. Nunca pidas datos privados de clientes.\n\n";
 
         texto = texto + "RESPONDÉ SOLO CON UN JSON CON ESTE FORMATO EXACTO:\n";
         texto = texto + "{\"modelo\": \"...\", \"titulo\": \"título del curso\", \"descripcion\": \"una o dos oraciones\", ";
+        texto = texto + "\"categoria\": \"una de: " + string.Join(", ", Cursos.Categorias) + "\", ";
+        texto = texto + "\"duracionHoras\": horas totales estimadas del curso (número), \"herramientas\": [\"herramientas que se usan, ej. ChatGPT\", \"Excel\"], ";
         texto = texto + "\"objetivos\": [\"lo que van a lograr 1\", \"2\", \"3\"], ";
         texto = texto + "\"nivelacion\": [{\"idUsuario\": 5, \"unidadInicial\": 1, \"motivo\": \"...\"}, ...una por persona], ";
         texto = texto + "\"unidades\": [";

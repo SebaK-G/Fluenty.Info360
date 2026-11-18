@@ -31,7 +31,7 @@
 
         <!-- ===== Portada del curso ===== -->
         <div class="tarjeta-curso portada">
-            <p class="modelo">@ViewBag.Curso.Modelo · Rango @ViewBag.NombreRango</p>
+            <p class="modelo">@ViewBag.Curso.Modelo · Rango @ViewBag.NombreRango@(ViewBag.Curso.Publico ? " · 🌎 Público · " + ViewBag.Curso.Categoria : "")</p>
             <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
             <p>@ViewBag.Curso.Descripcion</p>
 

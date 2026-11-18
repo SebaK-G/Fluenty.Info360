@@ -121,18 +121,22 @@ public class BD
         int idCurso = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_CrearCurso";
-            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel, Objetivos = curso.Objetivos }, commandType: CommandType.StoredProcedure);
+            idCurso = connection.QueryFirstOrDefault<int>(storedProcedure, new { Titulo = curso.Titulo, Descripcion = curso.Descripcion, Modelo = curso.Modelo, Nivel = curso.Nivel, Objetivos = curso.Objetivos,
+                Publico = curso.Publico, Categoria = curso.Categoria, DuracionHoras = curso.DuracionHoras, Herramientas = curso.Herramientas }, commandType: CommandType.StoredProcedure);
         }
         return idCurso;
     }
 
     // ===================== CURSOS ASIGNADOS A CADA PERSONA (Inscripciones) =====================
 
-    public void AsignarCurso(Inscripciones asignacion){
+    // Devuelve el IdInscripcion nuevo: con ese se le cargan las lecciones a la persona
+    public int AsignarCurso(Inscripciones asignacion){
+        int idInscripcion = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AsignarCurso";
-            connection.Execute(storedProcedure, new { IdUsuario = asignacion.IdUsuario, UnidadInicial = asignacion.UnidadInicial, MotivoNivel = asignacion.MotivoNivel }, commandType: CommandType.StoredProcedure);
+            idInscripcion = connection.QuerySingle<int>(storedProcedure, new { IdUsuario = asignacion.IdUsuario, UnidadInicial = asignacion.UnidadInicial, MotivoNivel = asignacion.MotivoNivel }, commandType: CommandType.StoredProcedure);
         }
+        return idInscripcion;
     }
 
     public List<Inscripciones> TraerAsignacionesCurso(int idCurso){
@@ -263,11 +267,22 @@ public class BD
         return idLeccion;
     }
 
-    public void AgregarLeccionUsuario(int idLeccion, int idUsuario, string estado){
+    // La lección se agrega a una inscripción (no al usuario): así una persona puede tener varios cursos
+    public void AgregarLeccionUsuario(int idLeccion, int idInscripcion, string estado){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AgregarLeccionUsuario";
-            connection.Execute(storedProcedure, new { IdLeccion = idLeccion, IdUsuario = idUsuario, Estado = estado }, commandType: CommandType.StoredProcedure);
+            connection.Execute(storedProcedure, new { IdLeccion = idLeccion, IdInscripcion = idInscripcion, Estado = estado }, commandType: CommandType.StoredProcedure);
         }
+    }
+
+    // Todos los cursos confirmados de una persona, el más nuevo primero ("Mis cursos")
+    public List<CursoInscripto> TraerCursosUsuario(int idUsuario){
+        List<CursoInscripto> cursos = new List<CursoInscripto>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerCursosUsuario";
+            cursos = connection.Query<CursoInscripto>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return cursos;
     }
 
     public List<Unidades> TraerUnidadesCurso(int idCurso){

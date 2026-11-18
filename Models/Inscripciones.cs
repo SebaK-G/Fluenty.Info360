@@ -12,4 +12,6 @@ public class Inscripciones
     public int UnidadInicial { get; set; }
     public string MotivoNivel { get; set; }
     public DateTime FechaAsignado { get; set; }
+    // 'Equipo' = se lo asignó su rango · 'Publico' = se inscribió solo desde el buscador
+    public string Origen { get; set; }
 }
