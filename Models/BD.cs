@@ -134,7 +134,7 @@ public class BD
         int idInscripcion = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AsignarCurso";
-            idInscripcion = connection.QuerySingle<int>(storedProcedure, new { IdUsuario = asignacion.IdUsuario, UnidadInicial = asignacion.UnidadInicial, MotivoNivel = asignacion.MotivoNivel }, commandType: CommandType.StoredProcedure);
+            idInscripcion = connection.QuerySingle<int>(storedProcedure, new { IdUsuario = asignacion.IdUsuario, UnidadInicial = asignacion.UnidadInicial, MotivoNivel = asignacion.MotivoNivel, Origen = asignacion.Origen }, commandType: CommandType.StoredProcedure);
         }
         return idInscripcion;
     }
@@ -281,6 +281,17 @@ public class BD
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_TraerCursosUsuario";
             cursos = connection.Query<CursoInscripto>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return cursos;
+    }
+
+    // Sprint 3: el buscador de cursos públicos. Texto y Categoria vacíos = todos; Nivel 0 = todos.
+    // Orden: "recientes" (los últimos primero) o "populares" (los que tienen más inscriptos).
+    public List<CursoPublico> BuscarCursosPublicos(string texto, string categoria, int nivel, string orden){
+        List<CursoPublico> cursos = new List<CursoPublico>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_BuscarCursosPublicos";
+            cursos = connection.Query<CursoPublico>(storedProcedure, new { Texto = texto, Categoria = categoria, Nivel = nivel, Orden = orden }, commandType: CommandType.StoredProcedure).ToList();
         }
         return cursos;
     }

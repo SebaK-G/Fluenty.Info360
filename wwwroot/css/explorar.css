@@ -1,0 +1,333 @@
+/* ===================================================
+   SPRINT 3 · Buscador de cursos públicos y detalle del curso
+   =================================================== */
+
+/* ----- Buscador ----- */
+
+.buscador {
+    margin-bottom: 18px;
+}
+
+.fila-buscador {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.fila-buscador label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #44546a;
+}
+
+.fila-buscador .campo-buscar {
+    flex: 1;
+    min-width: 220px;
+}
+
+.fila-buscador input[type=text],
+.fila-buscador select {
+    border: 1px solid #c4d0de;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 15px;
+    color: #172333;
+    background-color: #ffffff;
+}
+
+.fila-buscador input[type=text]:focus,
+.fila-buscador select:focus {
+    outline: 2px solid #8fd3ff;
+    border-color: #0668c6;
+}
+
+.fila-buscador .boton-home {
+    border: none;
+    padding: 10px 22px;
+    cursor: pointer;
+}
+
+.chips-categorias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.chip-categoria {
+    text-decoration: none;
+    font-size: 14px;
+    color: #0b1ca6;
+    background-color: #eef4fa;
+    border: 1px solid #d5e2f0;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+.chip-categoria:hover {
+    border-color: #0668c6;
+    color: #0b1ca6;
+}
+
+.chip-activa {
+    background-color: #0b1ca6;
+    border-color: #0b1ca6;
+    color: #ffffff;
+}
+
+.chip-activa:hover {
+    color: #ffffff;
+}
+
+/* ----- Resultados ----- */
+
+.cantidad-resultados {
+    color: #c4d3e6;
+    font-size: 14px;
+    margin: 4px 4px 12px 4px;
+}
+
+.grilla-publicos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.tarjeta-publico {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 14px #00000030;
+    text-decoration: none;
+    color: #172333;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.tarjeta-publico:hover {
+    border-color: #8fd3ff;
+    transform: translateY(-2px);
+    color: #172333;
+}
+
+.tarjeta-publico h3 {
+    font-size: 19px;
+    margin: 0;
+}
+
+.descripcion-publico {
+    color: #44546a;
+    font-size: 14px;
+    margin: 0;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.etiquetas-publico {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.etiqueta-categoria,
+.etiqueta-nivel {
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.etiqueta-categoria {
+    background-color: #8fd3ff;
+    color: #172333;
+}
+
+.etiqueta-nivel {
+    background-color: #eef4fa;
+    color: #0b1ca6;
+}
+
+.pie-publico {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 13px;
+    color: #6b7a8f;
+    border-top: 1px solid #eef4fa;
+    padding-top: 10px;
+}
+
+.ya-lo-tenes {
+    color: #11823b;
+    font-weight: bold;
+}
+
+.sin-resultados {
+    text-align: center;
+}
+
+.sin-resultados p {
+    color: #44546a;
+    margin-bottom: 16px;
+}
+
+/* ----- Detalle de un curso público ----- */
+
+.volver-buscador {
+    display: inline-block;
+    color: #c4d3e6;
+    text-decoration: none;
+    margin-bottom: 14px;
+}
+
+.volver-buscador:hover {
+    color: #ffffff;
+}
+
+.detalle-publico {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 22px;
+    align-items: start;
+}
+
+.columna-detalle {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.columna-detalle h3 {
+    margin-top: 18px;
+}
+
+.chips-herramientas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip-herramienta {
+    font-size: 14px;
+    background-color: #eef4fa;
+    color: #172333;
+    padding: 5px 12px;
+    border-radius: 8px;
+}
+
+/* Temario: cada unidad se abre y se cierra (details/summary, sin JavaScript) */
+.unidad-temario {
+    border: 1px solid #d5e2f0;
+    border-radius: 12px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.unidad-temario summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.unidad-temario summary::-webkit-details-marker {
+    display: none;
+}
+
+.unidad-temario[open] summary {
+    background-color: #eef4fa;
+}
+
+.unidad-temario summary strong {
+    display: block;
+}
+
+.unidad-temario summary small {
+    color: #6b7a8f;
+}
+
+.numero-unidad {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #0b1ca6;
+    color: #ffffff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lecciones-temario {
+    margin: 0;
+    padding: 12px 16px 14px 60px;
+    color: #44546a;
+}
+
+.lecciones-temario li {
+    padding: 3px 0;
+}
+
+/* La caja de inscribirse queda fija al costado mientras se baja por el temario */
+.caja-inscribirse {
+    position: sticky;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.caja-inscribirse .datos-curso {
+    margin: 0;
+}
+
+.caja-inscribirse .datos-curso strong {
+    font-size: 20px;
+}
+
+.caja-inscribirse form .boton-home,
+.caja-inscribirse > .boton-home {
+    display: block;
+    width: 100%;
+    text-align: center;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.texto-inscribirse {
+    color: #44546a;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ----- Celular ----- */
+
+@media (max-width: 800px) {
+    .detalle-publico {
+        grid-template-columns: 1fr;
+    }
+
+    .caja-inscribirse {
+        position: static;
+    }
+
+    .fila-buscador .boton-home {
+        width: 100%;
+    }
+}

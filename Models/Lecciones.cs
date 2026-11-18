@@ -15,4 +15,20 @@ public class Lecciones
     // Vienen de LeccionXUsuario: la nota que sacó (porcentaje de aciertos a la primera) y cuántas veces la hizo
     public int? Nota { get; set; }
     public int Intentos { get; set; }
+
+    // El estado con el que arranca cada lección cuando alguien se suma a un curso:
+    // las unidades de antes de donde arranca quedan como "YaSabe", la primera lección de su unidad "Disponible"
+    // y el resto "Bloqueada". Lo usan CursoController (cursos del equipo) y CursoPublicoController (buscador).
+    public static string EstadoInicial(int numeroUnidad, int numeroLeccion, int unidadInicial)
+    {
+        if (numeroUnidad < unidadInicial)
+        {
+            return "YaSabe";
+        }
+        if (numeroUnidad == unidadInicial && numeroLeccion == 1)
+        {
+            return "Disponible";
+        }
+        return "Bloqueada";
+    }
 }

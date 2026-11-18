@@ -374,7 +374,8 @@ public class CursoController : Controller
         {
             foreach (Inscripciones item in asignaciones)
             {
-                if (asignacion == null && (IdUsuario == 0 || item.IdUsuario == IdUsuario))
+                // El responsable mira solo a su gente (no a los que se sumaron desde el buscador)
+                if (asignacion == null && item.Origen != "Publico" && (IdUsuario == 0 || item.IdUsuario == IdUsuario))
                 {
                     asignacion = item;
                 }
@@ -385,11 +386,15 @@ public class CursoController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        // Las personas del curso, para elegir de quién mirar el camino
+        // Las personas del equipo que tienen el curso, para elegir de quién mirar el camino
+        // (los que se inscribieron desde el buscador son de otras empresas: no se muestran)
         List<Usuarios> personas = new List<Usuarios>();
         foreach (Inscripciones item in asignaciones)
         {
-            personas.Add(bd.TraerEmpleado(item.IdUsuario));
+            if (item.Origen != "Publico")
+            {
+                personas.Add(bd.TraerEmpleado(item.IdUsuario));
+            }
         }
 
         ViewBag.Curso = curso;
@@ -398,6 +403,8 @@ public class CursoController : Controller
         ViewBag.ModoAlumno = modoAlumno;
         ViewBag.EsEmpleador = !modoAlumno;
         ViewBag.NombreRango = NombreRango(bd, curso.IdRango);
+        // Si se sumó desde el buscador, el curso no es de su rango: es un curso público
+        ViewBag.EsInscripcionPublica = modoAlumno && asignacion.Origen == "Publico";
         ViewBag.NombreEmpleado = "";
         ViewBag.Unidades = bd.TraerUnidadesCurso(IdCurso);
         ViewBag.Lecciones = new List<Lecciones>();
@@ -533,7 +540,7 @@ public class CursoController : Controller
             int idLeccion = bd.AgregarLeccion(leccion);
             foreach (Inscripciones item in asignaciones)
             {
-                bd.AgregarLeccionUsuario(idLeccion, item.IdInscripcion, EstadoInicial(NumeroUnidad, numero, item.UnidadInicial));
+                bd.AgregarLeccionUsuario(idLeccion, item.IdInscripcion, Lecciones.EstadoInicial(NumeroUnidad, numero, item.UnidadInicial));
             }
             numero++;
         }
@@ -632,10 +639,11 @@ public class CursoController : Controller
         asignacion.IdUsuario = idUsuario;
         asignacion.UnidadInicial = unidadInicial;
         asignacion.MotivoNivel = DatosIA.Recortar(motivo, 300);
+        asignacion.Origen = "Equipo";
         int idInscripcion = bd.AsignarCurso(asignacion);
         foreach (Lecciones leccion in lecciones)
         {
-            bd.AgregarLeccionUsuario(leccion.IdLeccion, idInscripcion, EstadoInicial(leccion.NumeroUnidad, leccion.Numero, unidadInicial));
+            bd.AgregarLeccionUsuario(leccion.IdLeccion, idInscripcion, Lecciones.EstadoInicial(leccion.NumeroUnidad, leccion.Numero, unidadInicial));
         }
         bd.ActualizarProgreso(idCurso, idUsuario);
     }
@@ -780,19 +788,6 @@ public class CursoController : Controller
             return null;
         }
         return unidad;
-    }
-
-    private string EstadoInicial(int numeroUnidad, int numeroLeccion, int unidadInicial)
-    {
-        if (numeroUnidad < unidadInicial)
-        {
-            return "YaSabe";
-        }
-        if (numeroUnidad == unidadInicial && numeroLeccion == 1)
-        {
-            return "Disponible";
-        }
-        return "Bloqueada";
     }
 
     private string ArmarInstruccionesUnidad(int numeroUnidad)

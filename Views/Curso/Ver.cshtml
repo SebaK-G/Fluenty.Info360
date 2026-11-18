@@ -31,7 +31,15 @@
 
         <!-- ===== Portada del curso ===== -->
         <div class="tarjeta-curso portada">
-            <p class="modelo">@ViewBag.Curso.Modelo · Rango @ViewBag.NombreRango@(ViewBag.Curso.Publico ? " · 🌎 Público · " + ViewBag.Curso.Categoria : "")</p>
+            @if (ViewBag.EsInscripcionPublica)
+            {
+                <!-- Se sumó desde el buscador: el curso no es de su rango -->
+                <p class="modelo">@ViewBag.Curso.Modelo · 🌎 Curso público@(ViewBag.Curso.Categoria != "" ? " · " + ViewBag.Curso.Categoria : "")</p>
+            }
+            else
+            {
+                <p class="modelo">@ViewBag.Curso.Modelo · Rango @ViewBag.NombreRango@(ViewBag.Curso.Publico ? " · 🌎 Público · " + ViewBag.Curso.Categoria : "")</p>
+            }
             <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
             <p>@ViewBag.Curso.Descripcion</p>
 
