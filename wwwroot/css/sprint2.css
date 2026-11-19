@@ -143,10 +143,27 @@
 }
 
 /* Cuanto más abajo en el árbol, más a la derecha */
-.profundidad-1 { margin-left: 34px; }
-.profundidad-2 { margin-left: 68px; }
-.profundidad-3 { margin-left: 102px; }
-.profundidad-4 { margin-left: 136px; }
+.profundidad-1 { margin-left: 48px; }
+.profundidad-2 { margin-left: 96px; }
+.profundidad-3 { margin-left: 144px; }
+.profundidad-4 { margin-left: 192px; }
+
+/* Cada nivel tiene su color en el borde izquierdo de la caja: más oscuro = más arriba en el árbol */
+.profundidad-1 .caja-rango { border-left: 8px solid #0b2a9e; }
+.profundidad-2 .caja-rango { border-left: 8px solid #0668c6; }
+.profundidad-3 .caja-rango { border-left: 8px solid #5fa3e0; }
+.profundidad-4 .caja-rango { border-left: 8px solid #a9cdef; }
+
+/* "Nivel 2 · depende de Encargado": deja claro quién está arriba de quién */
+.jefe-rango {
+    display: inline-block;
+    background-color: #dfe9f7;
+    color: #33475e;
+    font-size: 13px;
+    border-radius: 999px;
+    padding: 2px 10px;
+    margin: 4px 0;
+}
 
 /* Los rangos de abajo tienen la rama "└" a la izquierda: dos columnas (rama y caja) */
 .nodo-hijo {
@@ -606,10 +623,10 @@
     }
 
     /* Los rangos de abajo se corren menos a la derecha para que entren en la pantalla */
-    .profundidad-1 { margin-left: 10px; }
-    .profundidad-2 { margin-left: 20px; }
-    .profundidad-3 { margin-left: 30px; }
-    .profundidad-4 { margin-left: 40px; }
+    .profundidad-1 { margin-left: 12px; }
+    .profundidad-2 { margin-left: 24px; }
+    .profundidad-3 { margin-left: 36px; }
+    .profundidad-4 { margin-left: 48px; }
 
     .form-rango,
     .lista-mis-cursos {
