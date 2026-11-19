@@ -8,7 +8,8 @@ public class LeccionUsuario
     public int IdLeccion { get; set; }
     public int IdUsuario { get; set; }
     public string Estado { get; set; }
-    public int? Nota { get; set; }
+    // Si Intentos es 0 todavía no la rindió (y Nota queda en 0)
+    public int Nota { get; set; }
     public int Intentos { get; set; }
     public string Titulo { get; set; }
     public string Objetivo { get; set; }

@@ -34,6 +34,6 @@ public class Tarjetas
 
     public bool EsPregunta()
     {
-        return TiposPregunta.Contains(Tipo);
+        return Funciones.EstaEnArray(TiposPregunta, Tipo);
     }
 }

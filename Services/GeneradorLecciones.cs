@@ -292,7 +292,7 @@ public class GeneradorLecciones
     private bool PreguntaValida(TarjetaIA pregunta)
     {
         Limpiar(pregunta);
-        pregunta.Correcta = pregunta.Correcta.Trim().ToUpper();
+        pregunta.Correcta = Funciones.Limpiar(pregunta.Correcta).ToUpper();
         if (pregunta.Texto == "" || pregunta.OpcionA == "" || pregunta.OpcionB == "")
         {
             return false;
@@ -345,11 +345,11 @@ public class GeneradorLecciones
                 continue;
             }
             Limpiar(tarjeta);
-            tarjeta.Tipo = tarjeta.Tipo.Trim().ToLower();
+            tarjeta.Tipo = Funciones.Limpiar(tarjeta.Tipo).ToLower();
             if (tarjeta.Tipo == "pregunta")
             {
-                tarjeta.Subtipo = tarjeta.Subtipo.Trim().ToLower();
-                if (!Tarjetas.TiposPregunta.Contains(tarjeta.Subtipo))
+                tarjeta.Subtipo = Funciones.Limpiar(tarjeta.Subtipo).ToLower();
+                if (!Funciones.EstaEnArray(Tarjetas.TiposPregunta, tarjeta.Subtipo))
                 {
                     tarjeta.Subtipo = "opcion";
                 }
@@ -368,7 +368,7 @@ public class GeneradorLecciones
                     preguntas++;
                 }
             }
-            else if (tiposQueExplican.Contains(tarjeta.Tipo) && tarjeta.Texto != "")
+            else if (Funciones.EstaEnArray(tiposQueExplican, tarjeta.Tipo) && tarjeta.Texto != "")
             {
                 validas.Add(tarjeta);
                 if (tarjeta.Tipo == "practica")

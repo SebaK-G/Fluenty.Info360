@@ -53,12 +53,12 @@ public class HomeController : Controller
         // Los que tienen curso y no avanzan (no empezaron o hace una semana que no hacen nada)
         List<string> quietos = new List<string>();
         foreach (EmpleadoCurso miembro in bd.TraerMiembrosEmpresa(idEmpresa)){
-            if (miembro.IdRango != null && idsDeAbajo.Contains(miembro.IdRango.Value)){
+            if (Funciones.EstaEnLista(idsDeAbajo, miembro.IdRango)){
                 personas++;
                 if (miembro.EstadoCurso == "Confirmado"){
                     enCapacitacion++;
-                    if (!cursos.Contains(miembro.IdCurso.Value)){
-                        cursos.Add(miembro.IdCurso.Value);
+                    if (!Funciones.EstaEnLista(cursos, miembro.IdCurso)){
+                        cursos.Add(miembro.IdCurso);
                     }
                     if (miembro.Actividad() != ""){
                         quietos.Add(miembro.Nombre + " " + miembro.Apellido + ": " + miembro.Actividad().ToLower());
@@ -78,7 +78,7 @@ public class HomeController : Controller
         // Actividades recientes: los últimos 5 cursos asignados en sus rangos
         List<string> actividades = new List<string>();
         foreach (ActividadCurso actividad in bd.TraerActividadesEmpresa(idEmpresa)){
-            if (actividades.Count < 5 && idsDeAbajo.Contains(actividad.IdRango)){
+            if (actividades.Count < 5 && Funciones.EstaEnLista(idsDeAbajo, actividad.IdRango)){
                 actividades.Add("Curso \"" + actividad.Titulo + "\" asignado a " + actividad.Nombre + " " + actividad.Apellido);
             }
         }
@@ -137,7 +137,7 @@ public class HomeController : Controller
             HttpContext.Session.SetString("TipoUsuario", usuario.Rol);
             // Sprint 2: su rango en el árbol decide qué puede ver
             string idRango = "";
-            if (usuario.IdRango != null){
+            if (usuario.IdRango > 0){
                 idRango = usuario.IdRango.ToString();
             }
             HttpContext.Session.SetString("IdRango", idRango);
@@ -146,4 +146,4 @@ public class HomeController : Controller
         ViewBag.Mensaje = "Email o contraseña incorrectos";
         return View("Acceso");
     }
-}
+}

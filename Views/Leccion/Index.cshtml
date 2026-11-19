@@ -62,12 +62,9 @@
                 {
                     <div class="ejemplo-pasos">
                         <p class="titulo-ejemplo">👣 Ejemplo paso a paso</p>
-                        @foreach (string paso in tarjeta.Ejemplo.Split('\n'))
+                        @foreach (string paso in Funciones.Separar(tarjeta.Ejemplo, "\n"))
                         {
-                            if (paso.Trim() != "")
-                            {
-                                <p class="paso-ejemplo">@paso.Trim()</p>
-                            }
+                            <p class="paso-ejemplo">@paso</p>
                         }
                     </div>
                 }

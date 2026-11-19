@@ -1,13 +1,13 @@
 namespace Fluenty.Info360.Models;
 
 // Un rango del árbol de la empresa (Dueño > Encargado > Vendedor...). Cada uno tiene su link (Codigo).
-// IdRangoPadre es el rango de arriba; el dueño tiene IdRangoPadre null.
+// IdRangoPadre es el rango de arriba. El del dueño está en NULL en la base y acá queda en 0.
 public class Rangos
 {
     public int IdRango { get; set; }
     public int IdEmpresa { get; set; }
     public string Nombre { get; set; }
-    public int? IdRangoPadre { get; set; }
+    public int IdRangoPadre { get; set; }
     public string Codigo { get; set; }
     // Lo que hace la gente de este rango (lo cuenta el dueño). Si alguien llena mal su formulario, la IA usa esto.
     public string Tareas { get; set; }

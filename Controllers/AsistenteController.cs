@@ -70,11 +70,11 @@ public class AsistenteController : Controller
         int idUsuario = int.Parse(HttpContext.Session.GetString("IdUsuario"));
         BD bd = new BD();
 
-        if (Texto == null || Texto.Trim() == "")
+        if (Funciones.EstaVacio(Texto))
         {
             return RedirectToAction("Index", new { IdChat = IdChat });
         }
-        Texto = DatosIA.Recortar(Texto.Trim(), 2000);
+        Texto = DatosIA.Recortar(Funciones.Limpiar(Texto), 2000);
 
         if (IdChat != 0)
         {
@@ -117,7 +117,7 @@ public class AsistenteController : Controller
         try
         {
             string respuesta = await _groqService.ConversarAsync(ArmarInstrucciones(bd, idUsuario), historial);
-            bd.AgregarMensajeChat(IdChat, "IA", respuesta.Trim());
+            bd.AgregarMensajeChat(IdChat, "IA", Funciones.Limpiar(respuesta));
         }
         catch (Exception ex)
         {

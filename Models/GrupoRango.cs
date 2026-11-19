@@ -9,4 +9,17 @@ public class GrupoRango
     public Cursos Curso { get; set; }
     // Los que completaron el formulario pero todavía no tienen asignado el curso del rango
     public List<EmpleadoCurso> SinAsignar { get; set; } = new List<EmpleadoCurso>();
+
+    // true si la persona completó el formulario pero todavía no tiene el curso del rango
+    public bool EstaSinAsignar(int idUsuario)
+    {
+        foreach (EmpleadoCurso miembro in SinAsignar)
+        {
+            if (miembro.IdUsuario == idUsuario)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

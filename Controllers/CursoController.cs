@@ -164,7 +164,7 @@ public class CursoController : Controller
         {
             Tema = "";
         }
-        if (Publico && (Tema.Trim().Length < 5 || Array.IndexOf(Cursos.Categorias, Categoria) < 0))
+        if (Publico && (Funciones.Limpiar(Tema).Length < 5 || !Funciones.EstaEnArray(Cursos.Categorias, Categoria)))
         {
             return MostrarError("Para un curso público contá de qué trata (el tema) y elegí una categoría.");
         }
@@ -174,7 +174,7 @@ public class CursoController : Controller
         string datos;
         if (Publico)
         {
-            datos = GeneradorCursos.DatosPublico(Tema.Trim(), Categoria, personas, formularios);
+            datos = GeneradorCursos.DatosPublico(Funciones.Limpiar(Tema), Categoria, personas, formularios);
         }
         else
         {
@@ -226,7 +226,7 @@ public class CursoController : Controller
         curso.Publico = Publico;
         curso.Categoria = Publico ? Categoria : DatosIA.Recortar(cursoIA.Categoria, 50);
         curso.DuracionHoras = cursoIA.DuracionHoras > 0 ? cursoIA.DuracionHoras : 5;
-        curso.Herramientas = DatosIA.Recortar(string.Join(" · ", cursoIA.Herramientas), 200);
+        curso.Herramientas = DatosIA.Recortar(Funciones.Unir(cursoIA.Herramientas, " · "), 200);
         int idCurso = bd.CrearCurso(curso);
 
         foreach (UnidadIA unidadIA in cursoIA.Unidades)
@@ -425,7 +425,7 @@ public class CursoController : Controller
             ViewBag.Error = "Este curso ya está confirmado: solo se pueden cambiar unidades de un borrador.";
             return Ver(IdCurso);
         }
-        if (Pedido == null || Pedido.Trim() == "")
+        if (Funciones.EstaVacio(Pedido))
         {
             ViewBag.Error = "Escribí qué querés cambiar de la unidad " + NumeroUnidad + ".";
             return Ver(IdCurso);

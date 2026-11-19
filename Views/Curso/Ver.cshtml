@@ -137,7 +137,7 @@
                                 <div class="texto-paso">
                                     <p class="titulo-paso">@leccion.Titulo</p>
                                     <p class="objetivo-paso">@leccion.Objetivo</p>
-                                    @if (leccion.Nota != null)
+                                    @if (leccion.Intentos > 0)
                                     {
                                         <!-- Nota = preguntas bien a la primera; intentos = cuántas veces la terminó (o rindió) -->
                                         <p class="nota-paso @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "nota-baja" : "")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</p>

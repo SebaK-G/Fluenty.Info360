@@ -28,7 +28,7 @@ public class EmpleadosController : Controller
         List<EmpleadoCurso> equipo = new List<EmpleadoCurso>();
         foreach (EmpleadoCurso miembro in bd.TraerMiembrosEmpresa(idEmpresa))
         {
-            if (miembro.IdRango != null && idsDeAbajo.Contains(miembro.IdRango.Value))
+            if (Funciones.EstaEnLista(idsDeAbajo, miembro.IdRango))
             {
                 equipo.Add(miembro);
             }

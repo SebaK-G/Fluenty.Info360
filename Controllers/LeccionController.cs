@@ -198,7 +198,7 @@ public class LeccionController : Controller
         {
             return Json(new { aprobado = true, devolucion = "¡Este ya lo tenías aprobado!", intentos = tarjeta.Intentos, ejemplo = tarjeta.RespuestaBuena });
         }
-        if (Respuesta == null || Respuesta.Trim().Length < 10)
+        if (Funciones.Limpiar(Respuesta).Length < 10)
         {
             return Json(new { aprobado = false, devolucion = "Escribí tu pedido completo a la IA (al menos una oración) y lo corregimos.", intentos = tarjeta.Intentos, ejemplo = "" });
         }
@@ -210,7 +210,7 @@ public class LeccionController : Controller
         {
             try
             {
-                CorreccionIA correccion = await new GeneradorLecciones(_groqService).CorregirPractica(tarjeta, Respuesta.Trim(), tarjeta.Intentos >= 3);
+                CorreccionIA correccion = await new GeneradorLecciones(_groqService).CorregirPractica(tarjeta, Funciones.Limpiar(Respuesta), tarjeta.Intentos >= 3);
                 if (correccion != null)
                 {
                     aprobado = correccion.Aprobado;
@@ -336,11 +336,11 @@ public class LeccionController : Controller
         {
             if (tarjeta.EsPregunta())
             {
-                if (!ordenesPregunta.Contains(tarjeta.Orden))
+                if (!Funciones.EstaEnLista(ordenesPregunta, tarjeta.Orden))
                 {
                     ordenesPregunta.Add(tarjeta.Orden);
                 }
-                if (tarjeta.Resultado == "Bien" && !ordenesAprendidas.Contains(tarjeta.Orden))
+                if (tarjeta.Resultado == "Bien" && !Funciones.EstaEnLista(ordenesAprendidas, tarjeta.Orden))
                 {
                     ordenesAprendidas.Add(tarjeta.Orden);
                     // A la primera = la primera versión, respondida una sola vez (y bien)
@@ -357,7 +357,7 @@ public class LeccionController : Controller
         }
         foreach (int orden in ordenesPregunta)
         {
-            if (!ordenesAprendidas.Contains(orden) && (ordenPendiente == 0 || orden < ordenPendiente))
+            if (!Funciones.EstaEnLista(ordenesAprendidas, orden) && (ordenPendiente == 0 || orden < ordenPendiente))
             {
                 ordenPendiente = orden;
             }
@@ -421,12 +421,13 @@ public class LeccionController : Controller
             }
             DateTime hoy = DateTime.Today;
             int racha = yo.Racha;
-            if (yo.UltimoDiaActivo == null || yo.UltimoDiaActivo.Value.Date < hoy.AddDays(-1))
+            // Si nunca hizo una lección (new DateTime()) o la última fue antes de ayer, la racha arranca de nuevo
+            if (yo.UltimoDiaActivo == new DateTime() || yo.UltimoDiaActivo < hoy.AddDays(-1))
             {
                 racha = 1;
                 ViewBag.RachaSubio = true;
             }
-            else if (yo.UltimoDiaActivo.Value.Date == hoy.AddDays(-1))
+            else if (yo.UltimoDiaActivo == hoy.AddDays(-1))
             {
                 racha = racha + 1;
                 ViewBag.RachaSubio = true;
@@ -486,7 +487,7 @@ public class LeccionController : Controller
         BD bd = new BD();
         LeccionUsuario leccion = bd.TraerLeccionUsuario(idLeccion, idUsuario);
         // Se vuelve a revisar acá: que no se pueda saltar mandando el formulario a mano
-        if (leccion == null || leccion.Nota == null || QueNivelacionOfrecer(bd, leccion, idUsuario, leccion.Nota.Value) != opcion)
+        if (leccion == null || leccion.Intentos == 0 || QueNivelacionOfrecer(bd, leccion, idUsuario, leccion.Nota) != opcion)
         {
             return RedirectToAction("Index", "Home");
         }
@@ -557,7 +558,7 @@ public class LeccionController : Controller
         List<int> ordenes = new List<int>();
         foreach (Tarjetas tarjeta in todas)
         {
-            if (!ordenes.Contains(tarjeta.Orden))
+            if (!Funciones.EstaEnLista(ordenes, tarjeta.Orden))
             {
                 ordenes.Add(tarjeta.Orden);
             }

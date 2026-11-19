@@ -94,7 +94,7 @@
                         <div class="pie-publico">
                             <span>⏱ @(curso.DuracionHoras > 0 ? curso.DuracionHoras + " h" : "20 lecciones")</span>
                             <span>👥 @curso.Inscriptos @(curso.Inscriptos == 1 ? "persona" : "personas")</span>
-                            @if (misCursos.Contains(curso.IdCurso))
+                            @if (Funciones.EstaEnLista(misCursos, curso.IdCurso))
                             {
                                 <span class="ya-lo-tenes">✓ Ya lo tenés</span>
                             }

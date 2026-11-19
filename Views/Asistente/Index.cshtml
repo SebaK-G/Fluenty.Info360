@@ -75,12 +75,9 @@
                             <div class="avatar-ia">✦</div>
                             <div class="burbuja">
                                 <!-- Cada renglón del mensaje es un párrafo (así se respetan los saltos de línea) -->
-                                @foreach (string parrafo in mensaje.Texto.Split('\n'))
+                                @foreach (string parrafo in Funciones.Separar(mensaje.Texto, "\n"))
                                 {
-                                    if (parrafo.Trim() != "")
-                                    {
-                                        <p>@parrafo</p>
-                                    }
+                                    <p>@parrafo</p>
                                 }
                             </div>
                         </div>
@@ -89,12 +86,9 @@
                     {
                         <div class="fila-mensaje de-persona">
                             <div class="burbuja">
-                                @foreach (string parrafo in mensaje.Texto.Split('\n'))
+                                @foreach (string parrafo in Funciones.Separar(mensaje.Texto, "\n"))
                                 {
-                                    if (parrafo.Trim() != "")
-                                    {
-                                        <p>@parrafo</p>
-                                    }
+                                    <p>@parrafo</p>
                                 }
                             </div>
                         </div>

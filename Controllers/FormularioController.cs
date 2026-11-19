@@ -51,7 +51,7 @@ public class FormularioController : Controller
             {
                 tareas = tareas + "; ";
             }
-            tareas = tareas + OtraTarea.Trim();
+            tareas = tareas + Funciones.Limpiar(OtraTarea);
         }
 
         // 1. Creamos su usuario con rol Empleado, en la empresa y el rango del link
@@ -127,13 +127,8 @@ public class FormularioController : Controller
         List<string> opciones = new List<string>();
         if (formulario != null && !DatosIA.EsFloja(formulario.Tareas))
         {
-            foreach (string tarea in formulario.Tareas.Split(';'))
-            {
-                if (tarea.Trim() != "")
-                {
-                    opciones.Add(tarea.Trim());
-                }
-            }
+            // Las tareas se guardan juntas separadas por ";"
+            opciones = Funciones.Separar(formulario.Tareas, ";");
         }
         if (opciones.Count < 2)
         {
@@ -161,13 +156,13 @@ public class FormularioController : Controller
         string tarea = Opcion;
         if (!DatosIA.EsFloja(Otra))
         {
-            tarea = Otra.Trim();
+            tarea = Funciones.Limpiar(Otra);
         }
         if (!DatosIA.EsFloja(tarea))
         {
             if (!DatosIA.EsFloja(Detalle))
             {
-                tarea = tarea + ": " + Detalle.Trim();
+                tarea = tarea + ": " + Funciones.Limpiar(Detalle);
             }
             BD bd = new BD();
             bd.ActualizarTareaConcreta(int.Parse(idTexto), DatosIA.Recortar(tarea, 500));
@@ -192,11 +187,7 @@ public class FormularioController : Controller
     // Un campo opcional que no completó llega en null: lo guardamos vacío
     private string Texto(string valor)
     {
-        if (valor == null)
-        {
-            return "";
-        }
-        return valor.Trim();
+        return Funciones.Limpiar(valor);
     }
 
     // Junta las casillas tildadas en un solo texto: "Con ejemplos prácticos; Directo al grano"

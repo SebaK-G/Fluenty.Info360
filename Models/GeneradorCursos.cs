@@ -50,7 +50,7 @@ public static class GeneradorCursos
 
         texto = texto + "RESPONDÉ SOLO CON UN JSON CON ESTE FORMATO EXACTO:\n";
         texto = texto + "{\"modelo\": \"...\", \"titulo\": \"título del curso\", \"descripcion\": \"una o dos oraciones\", ";
-        texto = texto + "\"categoria\": \"una de: " + string.Join(", ", Cursos.Categorias) + "\", ";
+        texto = texto + "\"categoria\": \"una de: " + Funciones.Unir(new List<string>(Cursos.Categorias), ", ") + "\", ";
         texto = texto + "\"duracionHoras\": horas totales estimadas del curso (número), \"herramientas\": [\"herramientas que se usan, ej. ChatGPT\", \"Excel\"], ";
         texto = texto + "\"objetivos\": [\"lo que van a lograr 1\", \"2\", \"3\"], ";
         texto = texto + "\"nivelacion\": [{\"idUsuario\": 5, \"unidadInicial\": 1, \"motivo\": \"...\"}, ...una por persona], ";
@@ -179,7 +179,7 @@ public static class GeneradorCursos
             }
         }
         datos = datos + "\nUNIDAD A REHACER: la " + numeroUnidad + ".\n";
-        datos = datos + "QUÉ PIDE EL RESPONSABLE: " + DatosIA.Recortar(pedido.Trim(), 300) + "\n";
+        datos = datos + "QUÉ PIDE EL RESPONSABLE: " + DatosIA.Recortar(Funciones.Limpiar(pedido), 300) + "\n";
         return datos;
     }
 

@@ -42,12 +42,12 @@
                             <div class="datos-rango">
                                 <p class="nombre-rango">@rango.Nombre @(esPropio ? "(vos)" : "")</p>
                                 <p class="personas-rango">@ViewBag.PersonasPorRango[rango.IdRango] personas</p>
-                                @if (rango.IdRangoPadre != null && !ViewBag.EsDueno && rango.Tareas != "")
+                                @if (rango.IdRangoPadre > 0 && !ViewBag.EsDueno && rango.Tareas != "")
                                 {
                                     <p class="tareas-rango">@rango.Tareas</p>
                                 }
                             </div>
-                            @if (rango.IdRangoPadre != null)
+                            @if (rango.IdRangoPadre > 0)
                             {
                                 <div class="link-rango">
                                     <input type="text" value="@link" readonly />
@@ -55,7 +55,7 @@
                                 </div>
                             }
                             </div>
-                            @if (rango.IdRangoPadre != null && ViewBag.EsDueno)
+                            @if (rango.IdRangoPadre > 0 && ViewBag.EsDueno)
                             {
                                 <!-- Qué hace la gente de este rango: si alguien llena mal su formulario, la IA usa esto -->
                                 <form class="tareas-form" method="post" action='@Url.Action("GuardarTareas", "Equipo")'>

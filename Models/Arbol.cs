@@ -18,7 +18,8 @@ public static class Arbol
         List<Rangos> resultado = new List<Rangos>();
         foreach (Rangos rango in todos)
         {
-            if (rango.IdRangoPadre == null)
+            // El de más arriba (el dueño) no tiene rango padre: queda en 0
+            if (rango.IdRangoPadre == 0)
             {
                 rango.Profundidad = 0;
                 resultado.Add(rango);

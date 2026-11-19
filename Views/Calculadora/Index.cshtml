@@ -75,15 +75,15 @@
                     <p class="numero-grande">@resultado.HorasAhorradasMes.ToString("0.#") <span>horas por mes</span></p>
                     <p class="detalle-resultado">Son @resultado.HorasAhorradasSemana().ToString("0.#") horas por semana, o <strong>@resultado.DiasAhorradosMes().ToString("0.#") @(resultado.DiasAhorradosMes() == 1 ? "jornada" : "jornadas") de trabajo</strong> por mes que el equipo puede usar en otra cosa.</p>
 
-                    @if (resultado.PlataAhorradaMes != null)
+                    @if (resultado.PlataAhorradaMes > 0)
                     {
                         <div class="cajas-resultado">
                             <div>
-                                <strong>$ @resultado.PlataAhorradaMes.Value.ToString("N0")</strong>
+                                <strong>$ @resultado.PlataAhorradaMes.ToString("N0")</strong>
                                 <span>por mes</span>
                             </div>
                             <div>
-                                <strong>$ @resultado.PlataAhorradaAnio().Value.ToString("N0")</strong>
+                                <strong>$ @resultado.PlataAhorradaAnio().ToString("N0")</strong>
                                 <span>por año</span>
                             </div>
                         </div>
@@ -134,9 +134,9 @@
                             <span>@calculo.HorasSemana.ToString("0.#") h por semana</span>
                             <span>
                                 <strong>@calculo.HorasAhorradasMes.ToString("0.#") h</strong>
-                                @if (calculo.PlataAhorradaMes != null)
+                                @if (calculo.PlataAhorradaMes > 0)
                                 {
-                                    <span class="plata-tabla">· $ @calculo.PlataAhorradaMes.Value.ToString("N0")</span>
+                                    <span class="plata-tabla">· $ @calculo.PlataAhorradaMes.ToString("N0")</span>
                                 }
                             </span>
                             <span>@calculo.Fecha.ToString("dd/MM/yyyy")</span>

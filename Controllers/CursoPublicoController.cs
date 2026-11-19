@@ -47,7 +47,7 @@ public class CursoPublicoController : Controller
             misCursos.Add(curso.IdCurso);
         }
 
-        ViewBag.Cursos = bd.BuscarCursosPublicos(Texto.Trim(), Categoria, Nivel, Orden);
+        ViewBag.Cursos = bd.BuscarCursosPublicos(Funciones.Limpiar(Texto), Categoria, Nivel, Orden);
         ViewBag.MisCursos = misCursos;
         ViewBag.Categorias = Cursos.Categorias;
         ViewBag.Texto = Texto;
@@ -83,17 +83,7 @@ public class CursoPublicoController : Controller
         }
 
         // Las herramientas se guardan juntas ("ChatGPT · Excel · Gmail"): se separan para mostrarlas como chips
-        List<string> herramientas = new List<string>();
-        if (curso.Herramientas != null)
-        {
-            foreach (string herramienta in curso.Herramientas.Split('·'))
-            {
-                if (herramienta.Trim() != "")
-                {
-                    herramientas.Add(herramienta.Trim());
-                }
-            }
-        }
+        List<string> herramientas = Funciones.Separar(curso.Herramientas, "·");
 
         ViewBag.Curso = curso;
         ViewBag.Unidades = bd.TraerUnidadesCurso(IdCurso);

@@ -12,8 +12,9 @@ public class Lecciones
     public string Objetivo { get; set; }
     public string Estado { get; set; }
     public int NumeroUnidad { get; set; }
-    // Vienen de LeccionXUsuario: la nota que sacó (porcentaje de aciertos a la primera) y cuántas veces la hizo
-    public int? Nota { get; set; }
+    // Vienen de LeccionXUsuario: la nota que sacó (porcentaje de aciertos a la primera) y cuántas veces la hizo.
+    // Si Intentos es 0 todavía no la rindió (y Nota queda en 0)
+    public int Nota { get; set; }
     public int Intentos { get; set; }
 
     // El estado con el que arranca cada lección cuando alguien se suma a un curso:

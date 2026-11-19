@@ -1,14 +1,14 @@
 namespace Fluenty.Info360.Models;
 
 // Lo que devuelve sp_TraerMiembrosEmpresa: una persona de la empresa (menos el dueño),
-// su rango, si completó el formulario y su curso. Si no tiene curso, IdCurso, Progreso y EstadoCurso quedan en null.
+// su rango, si completó el formulario y su curso. Si no tiene curso, IdCurso y Progreso quedan en 0 y EstadoCurso en null.
 public class EmpleadoCurso
 {
     public int IdUsuario { get; set; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
     public string Puesto { get; set; }
-    public int? IdRango { get; set; }
+    public int IdRango { get; set; }
     public string NombreRango { get; set; }
     // El Id de su formulario (0 si todavía no lo completó). Con eso BD arma TieneFormulario
     public int IdFormularioEmpleado { get; set; }
@@ -16,25 +16,27 @@ public class EmpleadoCurso
     public string Tareas { get; set; }
     public int XP { get; set; }
     public int Racha { get; set; }
-    // El último día que terminó una lección (null = todavía no hizo ninguna)
-    public DateTime? UltimoDiaActivo { get; set; }
-    public int? IdCurso { get; set; }
-    public int? Progreso { get; set; }
+    // El último día que terminó una lección. Si todavía no hizo ninguna queda en new DateTime() (el 1/1/0001)
+    public DateTime UltimoDiaActivo { get; set; }
+    // 0 = no tiene curso del equipo
+    public int IdCurso { get; set; }
+    public int Progreso { get; set; }
     public string EstadoCurso { get; set; }
 
     // Si tiene el curso confirmado y no avanza, devuelve el aviso para su responsable ("" si va bien).
     // El responsable ve si participa, nunca lo que contestó en el formulario.
     public string Actividad()
     {
-        if (EstadoCurso != "Confirmado" || Progreso == null || Progreso.Value >= 100)
+        if (EstadoCurso != "Confirmado" || Progreso >= 100)
         {
             return "";
         }
-        if (UltimoDiaActivo == null)
+        if (UltimoDiaActivo == new DateTime())
         {
             return "Todavía no empezó";
         }
-        int dias = (DateTime.Today - UltimoDiaActivo.Value.Date).Days;
+        // Restando dos fechas queda el tiempo entre las dos; .Days son los días
+        int dias = (DateTime.Today - UltimoDiaActivo).Days;
         if (dias >= 7)
         {
             return "Sin avanzar hace " + dias + " días";

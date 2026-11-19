@@ -101,7 +101,7 @@
                                 {
                                     <span class="estado-grupo">Sin formulario</span>
                                 }
-                                else if (grupo.SinAsignar.Contains(miembro))
+                                else if (grupo.EstaSinAsignar(miembro.IdUsuario))
                                 {
                                     <form method="post" action='@Url.Action("Sumar", "Curso")' onsubmit="mostrarCarga()">
                                         <input type="hidden" name="IdCurso" value="@grupo.Curso.IdCurso" />
@@ -109,7 +109,7 @@
                                         <input class="boton-curso" type="submit" value="Sumarlo al curso" />
                                     </form>
                                 }
-                                else if (miembro.Progreso != null)
+                                else if (miembro.IdCurso > 0)
                                 {
                                     string actividad = miembro.Actividad();
                                     <span class="estado-grupo">@miembro.Progreso% · ⚡ @miembro.XP XP</span>

@@ -1,4 +1,3 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Fluenty.Info360.Models;
 
@@ -38,23 +37,24 @@ public class CalculadoraController : Controller
         int sumaProgreso = 0;
         foreach (EmpleadoCurso miembro in bd.TraerMiembrosEmpresa(idEmpresa))
         {
-            if (miembro.IdRango != null && idsDeAbajo.Contains(miembro.IdRango.Value))
+            if (Funciones.EstaEnLista(idsDeAbajo, miembro.IdRango))
             {
                 personas++;
                 if (miembro.Tareas != null)
                 {
                     foreach (TiposTarea tipo in tipos)
                     {
-                        if (miembro.Tareas.Contains(tipo.Nombre))
+                        // IndexOf devuelve -1 si no lo encuentra
+                        if (miembro.Tareas.IndexOf(tipo.Nombre) >= 0)
                         {
                             personasPorTarea[tipo.IdTipoTarea]++;
                         }
                     }
                 }
-                if (miembro.EstadoCurso == "Confirmado" && miembro.Progreso != null)
+                if (miembro.EstadoCurso == "Confirmado")
                 {
                     enCurso++;
-                    sumaProgreso = sumaProgreso + miembro.Progreso.Value;
+                    sumaProgreso = sumaProgreso + miembro.Progreso;
                 }
             }
         }
@@ -94,8 +94,9 @@ public class CalculadoraController : Controller
     {
         // Los números llegan como texto: así "2,5" y "2.5" valen lo mismo en cualquier compu
         decimal horasSemana = LeerNumero(HorasSemana);
-        decimal? valorHora = null;
-        if (ValorHora != null && ValorHora.Trim() != "")
+        // 0 = no cargó el valor de la hora
+        decimal valorHora = 0;
+        if (!Funciones.EstaVacio(ValorHora))
         {
             valorHora = LeerNumero(ValorHora);
         }
@@ -118,7 +119,7 @@ public class CalculadoraController : Controller
             }
         }
         // Que los números tengan sentido (una semana tiene como mucho 48 horas de trabajo)
-        if (tipo == null || Personas < 1 || Personas > 10000 || horasSemana <= 0 || horasSemana > 48 || (valorHora != null && valorHora < 0))
+        if (tipo == null || Personas < 1 || Personas > 10000 || horasSemana <= 0 || horasSemana > 48 || valorHora < 0)
         {
             HttpContext.Session.SetString("ErrorCalculo", "Revisá los datos: elegí una tarea, al menos 1 persona y entre 0,5 y 48 horas por semana.");
             return RedirectToAction("Index");
@@ -149,30 +150,60 @@ public class CalculadoraController : Controller
         return RedirectToAction("Index");
     }
 
-    // Pasa "2,5", "2.5" o "15.000" a número. Si no es un número, devuelve -1 (y la validación lo rechaza).
+    // Pasa "2,5", "2.5", "15.000" o "$ 15.000,50" a número. Si no es un número, devuelve -1 (y la validación lo rechaza).
+    // Se arma a mano, cifra por cifra, para que funcione igual en cualquier compu
+    // (en algunas la coma es el decimal y en otras es el punto).
     private decimal LeerNumero(string texto)
     {
-        if (texto == null)
+        texto = Funciones.Limpiar(texto).Replace("$", "").Replace(" ", "");
+        // Cuántos puntos tiene: el largo del texto menos el largo sin los puntos
+        int puntos = texto.Length - texto.Replace(".", "").Length;
+        if (texto.IndexOf(",") >= 0)
+        {
+            // Con coma: la coma es el decimal y los puntos son de miles ("15.000,50")
+            texto = texto.Replace(".", "").Replace(",", ".");
+        }
+        else if (puntos > 1 || (puntos == 1 && texto.Length - texto.IndexOf(".") == 4))
+        {
+            // Varios puntos, o uno solo con 3 cifras después: son de miles ("1.500.000", "15.000")
+            texto = texto.Replace(".", "");
+        }
+        if (texto == "")
         {
             return -1;
         }
-        texto = texto.Trim().Replace("$", "").Replace(" ", "");
-        // Con coma: la coma es el decimal y los puntos son de miles ("15.000,50")
-        if (texto.Contains(","))
+
+        decimal numero = 0;
+        decimal divisor = 1;
+        bool despuesDelPunto = false;
+        for (int i = 0; i < texto.Length; i++)
         {
-            texto = texto.Replace(".", "").Replace(",", ".");
+            string caracter = texto.Substring(i, 1);
+            if (caracter == ".")
+            {
+                if (despuesDelPunto)
+                {
+                    return -1; // dos puntos decimales: no es un número
+                }
+                despuesDelPunto = true;
+            }
+            else
+            {
+                // La posición en "0123456789" es justo el valor de la cifra ("7" está en la posición 7)
+                int cifra = "0123456789".IndexOf(caracter);
+                if (cifra < 0)
+                {
+                    return -1; // una letra u otro símbolo
+                }
+                numero = numero * 10 + cifra;
+                if (despuesDelPunto)
+                {
+                    divisor = divisor * 10;
+                }
+            }
         }
-        // Solo puntos y tres cifras después del último: son de miles ("15.000")
-        else if (texto.Contains(".") && texto.Length - texto.LastIndexOf('.') == 4)
-        {
-            texto = texto.Replace(".", "");
-        }
-        decimal numero;
-        if (decimal.TryParse(texto, NumberStyles.Number, CultureInfo.InvariantCulture, out numero))
-        {
-            return numero;
-        }
-        return -1;
+        // "2.5" se leyó como 25 con divisor 10: 25 / 10 = 2,5
+        return numero / divisor;
     }
 
     // Los rangos que tiene abajo (si no tiene ninguno, no puede usar la calculadora)

@@ -80,11 +80,11 @@ public class EquipoController : Controller
                 padreValido = true;
             }
         }
-        if (padreValido && Nombre != null && Nombre.Trim() != "")
+        if (padreValido && !Funciones.EstaVacio(Nombre))
         {
             Rangos nuevo = new Rangos();
             nuevo.IdEmpresa = idEmpresa;
-            nuevo.Nombre = Nombre.Trim();
+            nuevo.Nombre = Funciones.Limpiar(Nombre);
             nuevo.IdRangoPadre = IdRangoPadre;
             nuevo.Codigo = Guid.NewGuid().ToString();
             nuevo.Tareas = DatosIA.Recortar(Texto(Tareas), 300);
@@ -116,10 +116,6 @@ public class EquipoController : Controller
 
     private string Texto(string valor)
     {
-        if (valor == null)
-        {
-            return "";
-        }
-        return valor.Trim();
+        return Funciones.Limpiar(valor);
     }
 }

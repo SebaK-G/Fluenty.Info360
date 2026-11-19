@@ -45,7 +45,7 @@ public static class DatosIA
         Rangos rango = null;
         foreach (Rangos item in bd.TraerRangosEmpresa(persona.IdEmpresa))
         {
-            if (persona.IdRango != null && item.IdRango == persona.IdRango.Value)
+            if (item.IdRango == persona.IdRango)
             {
                 rango = item;
             }
@@ -107,8 +107,8 @@ public static class DatosIA
         {
             return true;
         }
-        string texto = respuesta.Trim().ToLower();
-        texto = texto.Replace(";", "").Replace(".", "").Replace(",", "").Trim();
+        string texto = Funciones.Limpiar(respuesta).ToLower();
+        texto = Funciones.Limpiar(texto.Replace(";", "").Replace(".", "").Replace(",", ""));
         if (texto.Length < 4)
         {
             return true;
@@ -123,15 +123,16 @@ public static class DatosIA
         }
         // Cosas como "aaaaaa" o "asdasdasd": muy pocas letras distintas
         // (solo en textos largos, porque "jefe" o "caja" tienen 3 letras distintas y están bien)
-        List<char> distintas = new List<char>();
+        // En "distintas" se va guardando cada letra la primera vez que aparece
+        string distintas = "";
         foreach (char letra in texto)
         {
-            if (letra != ' ' && !distintas.Contains(letra))
+            if (letra != ' ' && distintas.IndexOf(letra) < 0)
             {
-                distintas.Add(letra);
+                distintas = distintas + letra;
             }
         }
-        if (distintas.Count < 2 || (texto.Length >= 6 && distintas.Count < 4))
+        if (distintas.Length < 2 || (texto.Length >= 6 && distintas.Length < 4))
         {
             return true;
         }
@@ -139,7 +140,7 @@ public static class DatosIA
         bool tieneVocal = false;
         foreach (char letra in texto)
         {
-            if ("aeiouáéíóú".Contains(letra))
+            if ("aeiouáéíóú".IndexOf(letra) >= 0)
             {
                 tieneVocal = true;
             }
