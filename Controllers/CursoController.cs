@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Fluenty.Info360.Models;
 using Fluenty.Services;
@@ -170,15 +169,16 @@ public class CursoController : Controller
             return MostrarError("Para un curso público contá de qué trata (el tema) y elegí una categoría.");
         }
 
-        string instrucciones = ArmarInstrucciones(Publico);
+        // El prompt y los datos los arma GeneradorCursos (Models)
+        string instrucciones = GeneradorCursos.InstruccionesCurso(Publico);
         string datos;
         if (Publico)
         {
-            datos = ArmarDatosPublico(Tema.Trim(), Categoria, personas, formularios);
+            datos = GeneradorCursos.DatosPublico(Tema.Trim(), Categoria, personas, formularios);
         }
         else
         {
-            datos = ArmarDatosGrupo(bd, rango, personas, formularios, formEmpresa);
+            datos = GeneradorCursos.DatosGrupo(bd, rango, personas, formularios, formEmpresa);
         }
 
         // 2) Le pedimos el curso a la IA (si viene mal, probamos una vez más)
@@ -189,7 +189,7 @@ public class CursoController : Controller
             while (intento <= 2 && cursoIA == null)
             {
                 string respuesta = await _groqService.PreguntarAsync(instrucciones, datos, true);
-                cursoIA = LeerCurso(respuesta);
+                cursoIA = GeneradorCursos.LeerCurso(respuesta);
                 intento++;
             }
         }
@@ -301,20 +301,11 @@ public class CursoController : Controller
         {
             try
             {
-                string plan = "";
-                foreach (Unidades unidad in bd.TraerUnidadesCurso(IdCurso))
-                {
-                    plan = plan + "Unidad " + unidad.Numero + ": " + unidad.Titulo + " (" + unidad.Objetivo + ")\n";
-                }
-                string instrucciones = "Sos el que nivela a las personas en los cursos de Fluenty (4 unidades: la 1 son fundamentos y la 4 es lo más avanzado). ";
-                instrucciones = instrucciones + "Decidí en qué unidad arranca esta persona según lo que ya sabe de IA: si nunca la usó o solo la probó, en la 1; si la usa a veces, puede ir a la 2; si la usa seguido en su trabajo, a la 3. Casi nunca a la 4. ";
-                instrucciones = instrucciones + "Respondé SOLO con un JSON: {\"unidadInicial\": 1, \"motivo\": \"una oración en español rioplatense\"}";
-                string datos = "PLAN DEL CURSO \"" + curso.Titulo + "\":\n" + plan + "\nLA PERSONA:\n" + DatosIA.Persona(bd, persona, form);
+                string instrucciones = GeneradorCursos.InstruccionesNivelacion();
+                string datos = GeneradorCursos.DatosNivelacion(bd, curso, bd.TraerUnidadesCurso(IdCurso), persona, form);
                 string respuesta = await _groqService.PreguntarAsync(instrucciones, datos, true);
-                JsonSerializerOptions opciones = new JsonSerializerOptions();
-                opciones.PropertyNameCaseInsensitive = true;
-                NivelacionIA nivelacion = JsonSerializer.Deserialize<NivelacionIA>(respuesta, opciones);
-                if (nivelacion != null && nivelacion.UnidadInicial >= 1 && nivelacion.UnidadInicial <= 4)
+                NivelacionIA nivelacion = GeneradorCursos.LeerNivelacion(respuesta);
+                if (nivelacion != null)
                 {
                     unidadInicial = nivelacion.UnidadInicial;
                     motivo = nivelacion.Motivo;
@@ -473,33 +464,20 @@ public class CursoController : Controller
                 formularios.Add(form);
             }
         }
+        // El prompt y los datos los arma GeneradorCursos (Models)
         Rangos rango = RangoDeAbajo(bd, curso.IdRango);
-        string instrucciones = ArmarInstruccionesUnidad(NumeroUnidad);
-        string datos;
+        string instrucciones = GeneradorCursos.InstruccionesUnidad(NumeroUnidad, curso.Publico);
+        string datosBase;
         if (curso.Publico)
         {
             // Curso público: la unidad se rehace sin datos de la empresa ni de las personas
-            instrucciones = instrucciones + "\n\nES UN CURSO PÚBLICO: lo ve gente de cualquier empresa. No uses nombres de empresas, personas, clientes ni datos internos.";
-            datos = "CURSO PÚBLICO de la categoría " + curso.Categoria + ".\n";
+            datosBase = "CURSO PÚBLICO de la categoría " + curso.Categoria + ".\n";
         }
         else
         {
-            datos = ArmarDatosGrupo(bd, rango, personas, formularios, bd.TraerFormularioEmpresa(curso.IdEmpresa));
+            datosBase = GeneradorCursos.DatosGrupo(bd, rango, personas, formularios, bd.TraerFormularioEmpresa(curso.IdEmpresa));
         }
-        datos = datos + "\nPLAN ACTUAL DEL CURSO \"" + curso.Titulo + "\":\n";
-        foreach (Unidades unidad in unidades)
-        {
-            datos = datos + "Unidad " + unidad.Numero + ": " + unidad.Titulo + " (" + unidad.Objetivo + ")\n";
-            foreach (Lecciones leccion in lecciones)
-            {
-                if (leccion.NumeroUnidad == unidad.Numero)
-                {
-                    datos = datos + "   Lección " + leccion.Numero + ": " + leccion.Titulo + "\n";
-                }
-            }
-        }
-        datos = datos + "\nUNIDAD A REHACER: la " + NumeroUnidad + ".\n";
-        datos = datos + "QUÉ PIDE EL RESPONSABLE: " + DatosIA.Recortar(Pedido.Trim(), 300) + "\n";
+        string datos = GeneradorCursos.DatosRehacerUnidad(datosBase, curso, unidades, lecciones, NumeroUnidad, Pedido);
 
         UnidadIA unidadIA = null;
         try
@@ -508,7 +486,7 @@ public class CursoController : Controller
             while (intento <= 2 && unidadIA == null)
             {
                 string respuesta = await _groqService.PreguntarAsync(instrucciones, datos, true);
-                unidadIA = LeerUnidad(respuesta);
+                unidadIA = GeneradorCursos.LeerUnidad(respuesta);
                 intento++;
             }
         }
@@ -653,167 +631,4 @@ public class CursoController : Controller
         ViewBag.Mensaje = mensaje;
         return Index();
     }
-
-    // Los datos de todo el rango para la IA: la empresa y cada persona
-    private string ArmarDatosGrupo(BD bd, Rangos rango, List<Usuarios> personas, List<FormulariosEmpleado> formularios, FormulariosEmpresa formEmpresa)
-    {
-        string datos = "RANGO: " + rango.Nombre + " (" + personas.Count + " personas)\n\n";
-        int cantidad = personas.Count;
-        if (cantidad > 8)
-        {
-            cantidad = 8;
-        }
-        for (int i = 0; i < cantidad; i++)
-        {
-            datos = datos + "PERSONA " + (i + 1) + ":\n" + DatosIA.Persona(bd, personas[i], formularios[i]) + "\n";
-        }
-        datos = datos + DatosIA.Empresa(bd, formEmpresa);
-        return datos;
-    }
-
-    // Curso público: solo el tema, la categoría y el nivel de IA de cada persona (para nivelarla).
-    // Nada de la empresa ni de sus tareas: el curso lo va a ver gente de otras empresas.
-    private string ArmarDatosPublico(string tema, string categoria, List<Usuarios> personas, List<FormulariosEmpleado> formularios)
-    {
-        string datos = "CURSO PÚBLICO\nTEMA: " + DatosIA.Recortar(tema, 300) + "\nCATEGORÍA: " + categoria + "\n\n";
-        datos = datos + "PERSONAS PARA NIVELAR (solo su experiencia con la IA):\n";
-        for (int i = 0; i < personas.Count; i++)
-        {
-            datos = datos + "- IdUsuario " + personas[i].IdUsuario + ": " + DatosIA.Nivel(formularios[i].NivelIA) + "\n";
-        }
-        return datos;
-    }
-
-    // El prompt fijo del curso por rango (ver PROMPT-IA.md)
-    private string ArmarInstrucciones(bool publico)
-    {
-        string texto = "Sos un diseñador de cursos de Fluenty, una app que enseña a usar inteligencia artificial en el trabajo con el estilo de Duolingo: ";
-        texto = texto + "un camino largo de lecciones cortas, una por día, que se van desbloqueando.\n\n";
-
-        texto = texto + "TU TAREA: armar el PLAN de UN curso de 4 semanas para TODAS las personas de un rango (el mismo puesto dentro de la empresa): ";
-        texto = texto + "4 unidades de 5 lecciones cada una (20 lecciones, una por día). Todavía no escribas el contenido de las lecciones: solo el plan. ";
-        texto = texto + "El curso es uno solo para el grupo; lo que cambia de persona a persona es en qué unidad arranca.\n\n";
-
-        texto = texto + "CÓMO ARMAR LAS UNIDADES:\n";
-        texto = texto + "Unidad 1: fundamentos de IA adaptados a este puesto (qué es, qué no es, cómo pedirle bien las cosas, cuidar los datos).\n";
-        texto = texto + "Unidad 2: aplicar la IA a la tarea repetitiva MÁS COMÚN del grupo.\n";
-        texto = texto + "Unidad 3: aplicar la IA a otras tareas repetitivas que comparten.\n";
-        texto = texto + "Unidad 4: un proyecto real del puesto, apuntando a los objetivos de la empresa.\n";
-        texto = texto + "La lección 5 de cada unidad es SIEMPRE un desafío que repasa la unidad: su título empieza con \"Desafío:\".\n";
-        texto = texto + "Las lecciones van de lo simple a lo difícil, no se repiten y cada una enseña UNA cosa concreta que se puede usar al día siguiente. ";
-        texto = texto + "Usá las tareas, herramientas, dificultades y días típicos reales del grupo. Si el grupo es de personas muy distintas, buscá lo que tienen en común.\n\n";
-
-        texto = texto + "NIVELACIÓN (para CADA persona, por su IdUsuario): decidí en qué unidad arranca (1 a 4) según lo que ya sabe de IA. ";
-        texto = texto + "Si nunca la usó o solo la probó, arranca en la 1. Si la usa a veces para cosas simples, puede arrancar en la 2. Solo si la usa seguido en su trabajo arranca en la 3. ";
-        texto = texto + "Casi nunca se arranca en la 4. En motivo explicá en una oración por qué la ubicaste ahí.\n\n";
-
-        texto = texto + "ELEGÍ UNO DE ESTOS 7 MODELOS DE CURSO según el puesto: ";
-        texto = texto + "Tareas de escritorio, Oficio y campo, Ventas y atención al cliente, Gestión y liderazgo, Creativo y marketing, Técnico y datos, Primer contacto (si casi no usan tecnología).\n\n";
-
-        if (publico)
-        {
-            texto = texto + "ES UN CURSO PÚBLICO: lo va a ver gente de CUALQUIER empresa en un buscador. Armalo sobre el TEMA y la CATEGORÍA que te pasan, ";
-            texto = texto + "para cualquier persona que trabaje con eso. No uses nombres de empresas, personas, clientes ni datos internos. ";
-            texto = texto + "En las unidades 2 a 4 usá ejemplos de trabajo comunes (no de una empresa en particular).\n\n";
-        }
-
-        texto = texto + "REGLAS: español rioplatense, claro, motivador y sin relleno. Títulos de lección cortos (máximo 60 caracteres). ";
-        texto = texto + "Objetivo de cada lección: una oración que empiece con un verbo. Si alguien maneja datos de clientes, incluí una lección sobre cuidarlos. ";
-        texto = texto + "Si a varios les preocupa algo de la IA, incluí una lección temprana que lo responda con calma. Nunca pidas datos privados de clientes.\n\n";
-
-        texto = texto + "RESPONDÉ SOLO CON UN JSON CON ESTE FORMATO EXACTO:\n";
-        texto = texto + "{\"modelo\": \"...\", \"titulo\": \"título del curso\", \"descripcion\": \"una o dos oraciones\", ";
-        texto = texto + "\"categoria\": \"una de: " + string.Join(", ", Cursos.Categorias) + "\", ";
-        texto = texto + "\"duracionHoras\": horas totales estimadas del curso (número), \"herramientas\": [\"herramientas que se usan, ej. ChatGPT\", \"Excel\"], ";
-        texto = texto + "\"objetivos\": [\"lo que van a lograr 1\", \"2\", \"3\"], ";
-        texto = texto + "\"nivelacion\": [{\"idUsuario\": 5, \"unidadInicial\": 1, \"motivo\": \"...\"}, ...una por persona], ";
-        texto = texto + "\"unidades\": [";
-        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\", \"lecciones\": [";
-        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\"}, ";
-        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}, ";
-        texto = texto + "{\"numero\": 5, \"titulo\": \"Desafío: ...\", \"objetivo\": \"...\"}]}, ";
-        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}";
-        texto = texto + "]}";
-        return texto;
-    }
-
-    private CursoIA LeerCurso(string respuesta)
-    {
-        CursoIA curso = null;
-        try
-        {
-            JsonSerializerOptions opciones = new JsonSerializerOptions();
-            opciones.PropertyNameCaseInsensitive = true;
-            curso = JsonSerializer.Deserialize<CursoIA>(respuesta, opciones);
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-
-        // Tiene que venir completo: título, objetivos y 4 unidades de 5 lecciones
-        if (curso == null || curso.Titulo == null || curso.Titulo == "" || curso.Objetivos == null || curso.Unidades == null)
-        {
-            return null;
-        }
-        if (curso.Objetivos.Count == 0 || curso.Unidades.Count != 4)
-        {
-            return null;
-        }
-        foreach (UnidadIA unidad in curso.Unidades)
-        {
-            if (unidad.Lecciones == null || unidad.Lecciones.Count != 5)
-            {
-                return null;
-            }
-        }
-        return curso;
-    }
-
-    private UnidadIA LeerUnidad(string respuesta)
-    {
-        UnidadIA unidad = null;
-        try
-        {
-            JsonSerializerOptions opciones = new JsonSerializerOptions();
-            opciones.PropertyNameCaseInsensitive = true;
-            unidad = JsonSerializer.Deserialize<UnidadIA>(respuesta, opciones);
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-        if (unidad == null || unidad.Titulo == null || unidad.Titulo == "" || unidad.Lecciones == null || unidad.Lecciones.Count != 5)
-        {
-            return null;
-        }
-        return unidad;
-    }
-
-    private string ArmarInstruccionesUnidad(int numeroUnidad)
-    {
-        string texto = "Sos un diseñador de cursos de Fluenty, una app que enseña a usar inteligencia artificial en el trabajo con el estilo de Duolingo: ";
-        texto = texto + "lecciones cortas, una por día, que se van desbloqueando.\n\n";
-
-        texto = texto + "TU TAREA: el responsable revisó el plan del curso y quiere cambiar SOLO la unidad " + numeroUnidad + ". ";
-        texto = texto + "Rehacé esa unidad (su título, su objetivo y sus 5 lecciones) siguiendo lo que pide el responsable. ";
-        texto = texto + "Las demás unidades NO se tocan: usalas solo para no repetir temas y para que la unidad nueva encaje entre la anterior y la siguiente. ";
-        texto = texto + "Todavía no escribas el contenido de las lecciones: solo el plan.\n\n";
-
-        texto = texto + "REGLAS: la lección 5 es SIEMPRE un desafío que repasa la unidad y su título empieza con \"Desafío:\". ";
-        texto = texto + "Las lecciones van de lo simple a lo difícil y cada una enseña UNA cosa concreta que el empleado puede usar al día siguiente en su trabajo. ";
-        texto = texto + "Usá sus tareas, herramientas, dificultades y objetivos reales. ";
-        texto = texto + "Español rioplatense, claro y sin relleno. Títulos de lección cortos (máximo 60 caracteres). ";
-        texto = texto + "Objetivo de cada lección: una oración que empiece con un verbo. Nunca pidas datos privados de clientes. ";
-        texto = texto + "Si el pedido del responsable no tiene que ver con el curso, ignoralo y mejorá la unidad igual.\n\n";
-
-        texto = texto + "RESPONDÉ SOLO CON UN JSON CON ESTE FORMATO EXACTO:\n";
-        texto = texto + "{\"numero\": " + numeroUnidad + ", \"titulo\": \"...\", \"objetivo\": \"...\", \"lecciones\": [";
-        texto = texto + "{\"numero\": 1, \"titulo\": \"...\", \"objetivo\": \"...\"}, ";
-        texto = texto + "{\"numero\": 2, ...}, {\"numero\": 3, ...}, {\"numero\": 4, ...}, ";
-        texto = texto + "{\"numero\": 5, \"titulo\": \"Desafío: ...\", \"objetivo\": \"...\"}]}";
-
-        return texto;
-    }
-
 }

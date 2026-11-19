@@ -10,6 +10,8 @@ public class EmpleadoCurso
     public string Puesto { get; set; }
     public int? IdRango { get; set; }
     public string NombreRango { get; set; }
+    // El Id de su formulario (0 si todavía no lo completó). Con eso BD arma TieneFormulario
+    public int IdFormularioEmpleado { get; set; }
     public bool TieneFormulario { get; set; }
     public string Tareas { get; set; }
     public int XP { get; set; }

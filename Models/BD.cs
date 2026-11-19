@@ -20,18 +20,20 @@ public class BD
 
     public bool ExisteUsuarioDuplicado(string email, string dni, string telefono){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string query = @"SELECT TOP 1 IdUsuario FROM Usuarios WHERE Email = @pEmail OR Dni = @pDni OR Telefono = @pTelefono";
-            int? usuario = connection.QueryFirstOrDefault<int?>(query, new { pEmail = email, pDni = dni, pTelefono = telefono });
-            return usuario.HasValue;
+            // Cuenta cuántos usuarios tienen ese email, DNI o teléfono: si hay alguno, está repetido
+            string query = "SELECT COUNT(*) FROM Usuarios WHERE Email = @pEmail OR Dni = @pDni OR Telefono = @pTelefono";
+            int cantidad = connection.QueryFirstOrDefault<int>(query, new { pEmail = email, pDni = dni, pTelefono = telefono });
+            return cantidad > 0;
         }
     }
 
     // Crea el usuario y devuelve su IdUsuario (hoy lo usa el link para unirse; después, el alta desde la Landing)
     public int Signup(Usuarios usuario){
         int idUsuario = 0;
-        string query = "INSERT INTO Usuarios (Nombre, Apellido, Email, Dni, Telefono, Contrasena, Rol, Puesto, IdRango) VALUES (@pNombre, @pApellido, @pEmail, @pDni, @pTelefono, @pContrasena, @pRol, @pPuesto, @pIdRango); SELECT CAST(SCOPE_IDENTITY() as int)";
+        // Después del INSERT, el IdUsuario nuevo es el más alto con ese email (el email no se repite)
+        string query = "INSERT INTO Usuarios (Nombre, Apellido, Email, Dni, Telefono, Contrasena, Rol, Puesto, IdRango) VALUES (@pNombre, @pApellido, @pEmail, @pDni, @pTelefono, @pContrasena, @pRol, @pPuesto, @pIdRango); SELECT MAX(IdUsuario) FROM Usuarios WHERE Email = @pEmail";
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            idUsuario = connection.QuerySingle<int>(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pEmail = usuario.Email, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena, pRol = usuario.Rol, pPuesto = usuario.Puesto, pIdRango = usuario.IdRango });
+            idUsuario = connection.QueryFirstOrDefault<int>(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pEmail = usuario.Email, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena, pRol = usuario.Rol, pPuesto = usuario.Puesto, pIdRango = usuario.IdRango });
         }
         return idUsuario;
     }
@@ -39,8 +41,9 @@ public class BD
     public int CrearEmpresa(Empresas empresa){
         int idEmpresa = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string query = "INSERT INTO Empresas (Nombre, Email, CantidadEmpleados, Cuit) VALUES (@pNombre, @pEmail, @pCantidadEmpleados, @pCuit); SELECT CAST(SCOPE_IDENTITY() as int)";
-            idEmpresa = connection.QuerySingle<int>(query, new { pNombre = empresa.Nombre, pEmail = empresa.Email, pCantidadEmpleados = empresa.CantidadEmpleados, pCuit = empresa.Cuit });
+            // Después del INSERT, el IdEmpresa nuevo es el más alto con ese CUIT
+            string query = "INSERT INTO Empresas (Nombre, Email, CantidadEmpleados, Cuit) VALUES (@pNombre, @pEmail, @pCantidadEmpleados, @pCuit); SELECT MAX(IdEmpresa) FROM Empresas WHERE Cuit = @pCuit";
+            idEmpresa = connection.QueryFirstOrDefault<int>(query, new { pNombre = empresa.Nombre, pEmail = empresa.Email, pCantidadEmpleados = empresa.CantidadEmpleados, pCuit = empresa.Cuit });
         }
         return idEmpresa;
     }
@@ -86,6 +89,10 @@ public class BD
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_TraerMiembrosEmpresa";
             lista = connection.Query<EmpleadoCurso>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        // Si no completó el formulario, IdFormularioEmpleado viene vacío y queda en 0
+        foreach (EmpleadoCurso miembro in lista){
+            miembro.TieneFormulario = miembro.IdFormularioEmpleado > 0;
         }
         return lista;
     }
@@ -134,7 +141,7 @@ public class BD
         int idInscripcion = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AsignarCurso";
-            idInscripcion = connection.QuerySingle<int>(storedProcedure, new { IdUsuario = asignacion.IdUsuario, UnidadInicial = asignacion.UnidadInicial, MotivoNivel = asignacion.MotivoNivel, Origen = asignacion.Origen }, commandType: CommandType.StoredProcedure);
+            idInscripcion = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = asignacion.IdUsuario, UnidadInicial = asignacion.UnidadInicial, MotivoNivel = asignacion.MotivoNivel, Origen = asignacion.Origen }, commandType: CommandType.StoredProcedure);
         }
         return idInscripcion;
     }
@@ -472,7 +479,8 @@ public class BD
     public void CompletarLeccion(int idLeccionXUsuario){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_CompletarLeccion";
-            connection.Execute(storedProcedure, new { IdLeccionXUsuario = idLeccionXUsuario }, commandType: CommandType.StoredProcedure);
+            // La fecha en que la terminó se manda desde acá
+            connection.Execute(storedProcedure, new { IdLeccionXUsuario = idLeccionXUsuario, Fecha = DateTime.Now }, commandType: CommandType.StoredProcedure);
         }
     }
 
@@ -541,7 +549,7 @@ public class BD
         int pudo = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_UsarPedidoIA";
-            pudo = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = idUsuario, Tope = tope }, commandType: CommandType.StoredProcedure);
+            pudo = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = idUsuario, Tope = tope, Hoy = DateTime.Today }, commandType: CommandType.StoredProcedure);
         }
         return pudo == 1;
     }
@@ -550,7 +558,7 @@ public class BD
         int cantidad = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_TraerPedidosIAHoy";
-            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = idUsuario, Hoy = DateTime.Today }, commandType: CommandType.StoredProcedure);
         }
         return cantidad;
     }
@@ -581,7 +589,8 @@ public class BD
     public void BajarUnidad(int idCurso, int idUsuario, int numeroUnidad){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_BajarUnidad";
-            connection.Execute(storedProcedure, new { IdCurso = idCurso, IdUsuario = idUsuario, NumeroUnidad = numeroUnidad }, commandType: CommandType.StoredProcedure);
+            string motivo = "Le costó la primera lección de la unidad " + numeroUnidad + ", así que arranca una unidad antes.";
+            connection.Execute(storedProcedure, new { IdCurso = idCurso, IdUsuario = idUsuario, NumeroUnidad = numeroUnidad, MotivoNivel = motivo }, commandType: CommandType.StoredProcedure);
         }
     }
 
@@ -591,7 +600,7 @@ public class BD
         int idChat = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_CrearChat";
-            idChat = connection.QuerySingle<int>(storedProcedure, new { IdUsuario = idUsuario, Titulo = titulo }, commandType: CommandType.StoredProcedure);
+            idChat = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = idUsuario, Titulo = titulo, Fecha = DateTime.Now }, commandType: CommandType.StoredProcedure);
         }
         return idChat;
     }
@@ -626,7 +635,7 @@ public class BD
     public void AgregarMensajeChat(int idChat, string rol, string texto){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_AgregarMensajeChat";
-            connection.Execute(storedProcedure, new { IdChat = idChat, Rol = rol, Texto = texto }, commandType: CommandType.StoredProcedure);
+            connection.Execute(storedProcedure, new { IdChat = idChat, Rol = rol, Texto = texto, Fecha = DateTime.Now }, commandType: CommandType.StoredProcedure);
         }
     }
 
@@ -642,7 +651,8 @@ public class BD
         int cantidad = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_TraerMensajesChatHoy";
-            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+            // DateTime.Today es hoy a las 00:00: cuenta los mensajes desde esa hora
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = idUsuario, Hoy = DateTime.Today }, commandType: CommandType.StoredProcedure);
         }
         return cantidad;
     }
@@ -662,7 +672,7 @@ public class BD
         int idCalculo = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_GuardarCalculo";
-            idCalculo = connection.QuerySingle<int>(storedProcedure, new { IdUsuario = calculo.IdUsuario, IdTipoTarea = calculo.IdTipoTarea, Personas = calculo.Personas, HorasSemana = calculo.HorasSemana, ValorHora = calculo.ValorHora, PorcentajeAhorro = calculo.PorcentajeAhorro, HorasAhorradasMes = calculo.HorasAhorradasMes, PlataAhorradaMes = calculo.PlataAhorradaMes }, commandType: CommandType.StoredProcedure);
+            idCalculo = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdUsuario = calculo.IdUsuario, IdTipoTarea = calculo.IdTipoTarea, Personas = calculo.Personas, HorasSemana = calculo.HorasSemana, ValorHora = calculo.ValorHora, PorcentajeAhorro = calculo.PorcentajeAhorro, HorasAhorradasMes = calculo.HorasAhorradasMes, PlataAhorradaMes = calculo.PlataAhorradaMes, Fecha = DateTime.Now }, commandType: CommandType.StoredProcedure);
         }
         return idCalculo;
     }
