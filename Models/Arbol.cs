@@ -12,7 +12,8 @@ public static class Arbol
         return resultado;
     }
 
-    // Todo el árbol ordenado desde arriba, cada rango con su profundidad (0 = el de más arriba)
+    // Todo el árbol ordenado por niveles: primero el de más arriba (el dueño), después todos los del nivel 1,
+    // después todos los del nivel 2, y así. Cada rango queda con su profundidad (0 = el de más arriba).
     public static List<Rangos> Ordenado(List<Rangos> todos)
     {
         List<Rangos> resultado = new List<Rangos>();
@@ -23,13 +24,13 @@ public static class Arbol
             {
                 rango.Profundidad = 0;
                 resultado.Add(rango);
-                AgregarHijos(todos, rango.IdRango, 1, resultado);
             }
         }
+        AgregarPorNiveles(todos, resultado);
         return resultado;
     }
 
-    // El rango y todo lo que tiene abajo, ordenado (para mostrar el subárbol de alguien)
+    // El rango y todo lo que tiene abajo, también por niveles (para mostrar el subárbol de alguien)
     public static List<Rangos> ConSuArbol(List<Rangos> todos, int idRango)
     {
         List<Rangos> resultado = new List<Rangos>();
@@ -41,7 +42,7 @@ public static class Arbol
                 resultado.Add(rango);
             }
         }
-        AgregarHijos(todos, idRango, 1, resultado);
+        AgregarPorNiveles(todos, resultado);
         return resultado;
     }
 
@@ -67,6 +68,27 @@ public static class Arbol
             }
         }
         return false;
+    }
+
+    // Recorre la lista desde el principio y, por cada rango, agrega al final a los que dependen de él.
+    // Como los hijos se agregan al final, primero quedan todos los de un nivel y después los del siguiente.
+    // (La base es un árbol, sin ciclos, así que en algún momento no quedan más hijos y el while termina.)
+    private static void AgregarPorNiveles(List<Rangos> todos, List<Rangos> resultado)
+    {
+        int posicion = 0;
+        while (posicion < resultado.Count)
+        {
+            Rangos padre = resultado[posicion];
+            foreach (Rangos rango in todos)
+            {
+                if (rango.IdRangoPadre == padre.IdRango)
+                {
+                    rango.Profundidad = padre.Profundidad + 1;
+                    resultado.Add(rango);
+                }
+            }
+            posicion++;
+        }
     }
 
     // Recorre el árbol en profundidad: primero un hijo con todos sus descendientes, después el siguiente

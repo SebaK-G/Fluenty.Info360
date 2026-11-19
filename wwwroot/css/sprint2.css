@@ -165,19 +165,6 @@
     margin: 4px 0;
 }
 
-/* Los rangos de abajo tienen la rama "└" a la izquierda: dos columnas (rama y caja) */
-.nodo-hijo {
-    display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 8px;
-}
-
-.rama {
-    color: #9db4cc;
-    font-size: 22px;
-    padding-top: 14px;
-}
-
 .caja-rango {
     background-color: #f3f7fc;
     border: 2px solid #dce4ee;

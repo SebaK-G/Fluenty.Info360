@@ -31,12 +31,8 @@
                 {
                     string link = ViewBag.LinkBase + rango.Codigo;
                     bool esPropio = rango.IdRango.ToString() == ViewBag.IdRangoPropio;
-                    <!-- La clase profundidad-N lo corre a la derecha según qué tan abajo está en el árbol (de 4 en adelante, igual que 4) -->
-                    <li class="nodo profundidad-@(rango.Profundidad > 4 ? 4 : rango.Profundidad) @(rango.Profundidad > 0 ? "nodo-hijo" : "")">
-                        @if (rango.Profundidad > 0)
-                        {
-                            <span class="rama">└</span>
-                        }
+                    <!-- Van por niveles (primero el nivel 1, después el 2...). La clase profundidad-N lo corre a la derecha y le da el color de su nivel (de 4 en adelante, igual que 4) -->
+                    <li class="nodo profundidad-@(rango.Profundidad > 4 ? 4 : rango.Profundidad)">
                         <div class="caja-rango @(esPropio ? "caja-propia" : "")">
                             <div class="fila-rango">
                             <div class="datos-rango">
