@@ -7,28 +7,26 @@
     color: #172333;
 }
 
+/* Dos columnas: la lista de chats (1 parte) y el chat abierto (3 partes) */
 .asistente {
     width: 90%;
-    max-width: 1200px;
     margin: 24px auto;
     display: grid;
-    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-columns: 1fr 3fr;
     gap: 18px;
-    height: calc(100vh - 150px);
-    min-height: 480px;
+    align-items: start;
 }
 
 /* ----- Lista de chats ----- */
 
 .lista-chats {
-    background-color: #ffffff18;
-    border: 1px solid #ffffff30;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     padding: 14px;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    overflow-y: auto;
 }
 
 .nuevo-chat {
@@ -53,7 +51,7 @@
 }
 
 .item-chat:hover {
-    background-color: #ffffff18;
+    background-color: rgba(255, 255, 255, 0.1);
     color: #ffffff;
 }
 
@@ -69,9 +67,6 @@
 
 .titulo-chat {
     font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .item-chat small {
@@ -84,10 +79,6 @@
 .chat {
     background-color: #ffffff;
     border-radius: 16px;
-    box-shadow: 0 4px 14px #00000030;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
 }
 
 .cabecera-chat {
@@ -102,68 +93,73 @@
 .cabecera-chat h1 {
     font-size: 18px;
     margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .boton-borrar-chat {
-    background: none;
+    background-color: transparent;
     border: 1px solid #e3c4c4;
     color: #a12b2b;
     border-radius: 8px;
     padding: 6px 12px;
     font-size: 13px;
-    cursor: pointer;
 }
 
 .boton-borrar-chat:hover {
     background-color: #fdf0f0;
 }
 
+/* Los mensajes van uno abajo del otro; si son muchos, se baja con el scroll de la página */
 .mensajes {
-    flex: 1;
-    overflow-y: auto;
     padding: 22px;
     display: flex;
     flex-direction: column;
     gap: 14px;
 }
 
+/* Cada fila es un mensaje. El padding de un costado hace que la burbuja ocupe como mucho el 75% */
 .fila-mensaje {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
 }
 
 .de-persona {
     justify-content: flex-end;
+    padding-left: 25%;
+}
+
+/* La fila de la IA deja lugar a la izquierda para el avatar (que va con position absolute) */
+.de-ia {
+    position: relative;
+    padding-left: 42px;
+    padding-right: 25%;
 }
 
 .burbuja {
-    max-width: 75%;
     padding: 12px 16px;
-    border-radius: 16px;
     font-size: 15px;
-    line-height: 1.5;
-    /* Respeta los saltos de línea de la respuesta */
-    white-space: pre-line;
-    overflow-wrap: anywhere;
 }
 
+.burbuja p {
+    margin-bottom: 8px;
+}
+
+.burbuja p:last-child {
+    margin-bottom: 0;
+}
+
+/* border-radius con 4 valores: arriba-izq, arriba-der, abajo-der, abajo-izq.
+   La esquina más chica es la "colita" que apunta a quien habla */
 .de-ia .burbuja {
     background-color: #eef4fa;
-    border-top-left-radius: 4px;
+    border-radius: 4px 16px 16px 16px;
 }
 
 .de-persona .burbuja {
     background-color: #0b1ca6;
     color: #ffffff;
-    border-top-right-radius: 4px;
+    border-radius: 16px 4px 16px 16px;
 }
 
 .avatar-ia {
-    flex-shrink: 0;
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -173,6 +169,13 @@
     align-items: center;
     justify-content: center;
     font-size: 15px;
+}
+
+/* En la fila de la IA, el avatar queda arriba a la izquierda */
+.de-ia .avatar-ia {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .avatar-ia.grande {
@@ -186,20 +189,11 @@
     display: none;
 }
 
-/* Lo leen los lectores de pantalla pero no se ve */
-.oculto-lector {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-}
-
 /* ----- Chat nuevo: saludo y sugerencias ----- */
 
 .bienvenida-chat {
-    margin: auto;
-    max-width: 560px;
+    width: 70%;
+    margin: 20px auto;
     text-align: center;
 }
 
@@ -227,11 +221,10 @@
     font-size: 14px;
     color: #172333;
     text-align: left;
-    cursor: pointer;
 }
 
 .sugerencia:hover {
-    border-color: #0668c6;
+    border: 1px solid #0668c6;
     background-color: #eef4fa;
 }
 
@@ -246,39 +239,32 @@
     font-size: 14px;
 }
 
+/* El cuadro de texto ocupa 5 partes y el botón Enviar 1 */
 .escribir {
-    display: flex;
-    align-items: flex-end;
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    align-items: end;
     gap: 10px;
     padding: 12px 22px 6px 22px;
     border-top: 1px solid #eef4fa;
 }
 
 .escribir textarea {
-    flex: 1;
-    resize: none;
     border: 1px solid #c4d0de;
     border-radius: 12px;
     padding: 10px 14px;
     font-family: inherit;
     font-size: 15px;
-    max-height: 160px;
-}
-
-.escribir textarea:focus {
-    outline: 2px solid #8fd3ff;
-    border-color: #0668c6;
 }
 
 .escribir .boton-home {
     border: none;
     padding: 11px 22px;
-    cursor: pointer;
 }
 
-.escribir .boton-home:disabled {
+/* [disabled] es un selector de atributo: el botón mientras se espera la respuesta */
+.escribir .boton-home[disabled] {
     background-color: #c4d0de;
-    cursor: default;
 }
 
 .restantes-chat {
@@ -288,7 +274,7 @@
     margin: 0;
 }
 
-/* Los puntitos mientras la IA escribe */
+/* Los puntitos mientras la IA escribe: cada uno salta con un poco de demora */
 .puntitos {
     display: flex;
     gap: 5px;
@@ -296,6 +282,8 @@
 }
 
 .puntitos span {
+    position: relative;
+    top: 0;
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -303,29 +291,31 @@
     animation: puntito 1s infinite ease-in-out;
 }
 
-.puntitos span:nth-child(2) {
+.puntitos .puntito-2 {
     animation-delay: 0.15s;
 }
 
-.puntitos span:nth-child(3) {
+.puntitos .puntito-3 {
     animation-delay: 0.3s;
 }
 
+/* Sube 4px y vuelve (top con position relative), y se ve más fuerte arriba */
 @keyframes puntito {
-    0%, 80%, 100% {
+    0% {
         opacity: 0.3;
-        transform: translateY(0);
+        top: 0;
     }
     40% {
         opacity: 1;
-        transform: translateY(-4px);
+        top: -4px;
     }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .puntitos span {
-        animation: none;
-        opacity: 0.6;
+    80% {
+        opacity: 0.3;
+        top: 0;
+    }
+    100% {
+        opacity: 0.3;
+        top: 0;
     }
 }
 
@@ -335,18 +325,29 @@
     .asistente {
         width: 94%;
         grid-template-columns: 1fr;
-        height: auto;
     }
 
-    .lista-chats {
-        max-height: 180px;
+    .de-persona {
+        padding-left: 12%;
     }
 
-    .chat {
-        height: 75vh;
+    .de-ia {
+        padding-right: 12%;
     }
 
-    .burbuja {
-        max-width: 88%;
+    .bienvenida-chat {
+        width: 100%;
+    }
+
+    .escribir {
+        grid-template-columns: 3fr 1fr;
+    }
+}
+
+/* ----- Pantallas grandes: el asistente no pasa de 1200px de ancho ----- */
+
+@media (min-width: 1350px) {
+    .asistente {
+        width: 1200px;
     }
 }

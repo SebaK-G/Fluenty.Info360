@@ -7,14 +7,12 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 body.landing {
     font-family: "Segoe UI", Arial, sans-serif;
     background-color: #0d1726;
     color: #172333;
-    line-height: 1.6;
 }
 
 .landing a {
@@ -26,16 +24,9 @@ body.landing {
     list-style-type: none;
 }
 
-.landing h1,
-.landing h2,
-.landing h3 {
-    line-height: 1.2;
-}
-
 /* Ancho máximo del contenido de cada sección */
 .contenido {
     width: 90%;
-    max-width: 1140px;
     margin: 0 auto;
 }
 
@@ -51,7 +42,6 @@ body.landing {
     border-radius: 12px;
     border: 2px solid #2f8cff;
     text-align: center;
-    box-shadow: 0 8px 20px #0668c650;
 }
 
 .boton:hover {
@@ -59,20 +49,19 @@ body.landing {
 }
 
 .boton-borde {
-    background: none;
-    border: 2px solid #ffffff60;
-    box-shadow: none;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.38);
 }
 
 .boton-borde:hover {
-    background: #ffffff15;
-    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid #ffffff;
 }
 
 .boton-blanco {
     background: #ffffff;
     color: #0b1ca6;
-    border-color: #ffffff;
+    border: 2px solid #ffffff;
 }
 
 .boton-blanco:hover {
@@ -93,8 +82,8 @@ body.landing {
     font-weight: bold;
     text-transform: uppercase;
     color: #8fd3ff;
-    background-color: #8fd3ff18;
-    border: 1px solid #8fd3ff40;
+    background-color: rgba(143, 211, 255, 0.09);
+    border: 1px solid rgba(143, 211, 255, 0.25);
     padding: 5px 12px;
     border-radius: 20px;
     margin-bottom: 16px;
@@ -102,8 +91,8 @@ body.landing {
 
 .etiqueta-clara {
     color: #0668c6;
-    background-color: #0668c612;
-    border-color: #0668c630;
+    background-color: rgba(6, 104, 198, 0.07);
+    border: 1px solid rgba(6, 104, 198, 0.19);
 }
 
 /* ===== Encabezado fijo arriba ===== */
@@ -118,7 +107,6 @@ body.landing {
     gap: 16px;
     background-color: #ffffff;
     padding: 12px 5%;
-    box-shadow: 0 2px 14px #00000025;
 }
 
 .marca {
@@ -227,12 +215,15 @@ body.landing {
 }
 
 .ventajas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 22px;
     margin-top: 28px;
     color: #a9bad0;
     font-size: 15px;
+}
+
+/* Cada ventaja es inline-block: quedan en fila y bajan de renglón si no entran */
+.ventajas li {
+    display: inline-block;
+    margin: 0 22px 10px 0;
 }
 
 /* ----- Vista previa del curso ----- */
@@ -247,7 +238,9 @@ body.landing {
     color: #172333;
     border-radius: 20px;
     padding: 0 0 18px 0;
-    box-shadow: 0 30px 60px #00000060;
+    /* relative + top: así la animación "flotar" la puede subir y bajar */
+    position: relative;
+    top: 0;
     animation: flotar 6s ease-in-out infinite;
 }
 
@@ -379,7 +372,6 @@ body.landing {
     font-weight: bold;
     padding: 8px 14px;
     border-radius: 12px;
-    box-shadow: 0 10px 24px #00000040;
 }
 
 .globo-arriba {
@@ -393,7 +385,7 @@ body.landing {
     left: 8px;
     color: #0668c6;
     border-left: 4px solid #0668c6;
-    animation: flotar 5s ease-in-out infinite;
+    animation: flotar-abajo 5s ease-in-out infinite;
 }
 
 /* ===== Tarjetas (problema y para quién) ===== */
@@ -424,7 +416,6 @@ body.landing {
 .tarjeta-destacada {
     background: linear-gradient(150deg, #0b1ca6, #0668c6);
     color: #ffffff;
-    box-shadow: 0 16px 36px #0668c640;
 }
 
 .tarjeta-borde {
@@ -464,7 +455,7 @@ body.landing {
 }
 
 .paso:hover {
-    border-color: #0668c6;
+    border: 1px solid #0668c6;
 }
 
 .numero {
@@ -502,20 +493,27 @@ body.landing {
 }
 
 .funcion {
-    background-color: #ffffff0d;
-    border: 1px solid #ffffff20;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.13);
     border-radius: 18px;
     padding: 26px;
 }
 
 .funcion:hover {
-    background-color: #ffffff17;
-    border-color: #8fd3ff60;
+    background-color: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(143, 211, 255, 0.38);
+}
+
+/* Las 4 funciones chicas: una por renglón en celular, de a dos en tablet y compu */
+.funciones-chicas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
 }
 
 .funcion-grande {
     background: linear-gradient(150deg, #0668c6, #0b1ca6);
-    border-color: #2f8cff;
+    border: 1px solid #2f8cff;
 }
 
 .funcion-grande:hover {
@@ -529,7 +527,7 @@ body.landing {
     width: 42px;
     height: 42px;
     border-radius: 12px;
-    background-color: #ffffff20;
+    background-color: rgba(255, 255, 255, 0.13);
     font-size: 20px;
     margin-bottom: 16px;
 }
@@ -588,7 +586,7 @@ body.landing {
     border-radius: 18px;
     padding: 22px 18px;
     color: #ffffff;
-    border-bottom: 6px solid #00000030;
+    border-bottom: 6px solid rgba(0, 0, 0, 0.19);
 }
 
 .unidad-1 {
@@ -628,7 +626,7 @@ body.landing {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background-color: #ffffff40;
+    background-color: rgba(255, 255, 255, 0.25);
 }
 
 .puntos .lleno {
@@ -638,23 +636,24 @@ body.landing {
 /* ===== Lo que viene ===== */
 
 .proximamente {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
     margin-top: 30px;
     color: #6b7a8f;
     font-size: 14px;
     font-weight: bold;
 }
 
-.proximamente ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+.proximamente p,
+.proximamente ul,
+.proximamente li {
+    display: inline-block;
+}
+
+.proximamente p {
+    margin-right: 10px;
 }
 
 .proximamente li {
+    margin: 0 8px 8px 0;
     background-color: #f3f7fc;
     border: 1px dashed #c4d0de;
     border-radius: 20px;
@@ -726,10 +725,9 @@ body.landing {
     margin-bottom: 8px;
 }
 
-.pie nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 22px;
+.pie nav li {
+    display: inline-block;
+    margin: 0 22px 10px 0;
 }
 
 .pie a {
@@ -745,7 +743,7 @@ body.landing {
     font-size: 13px;
     margin-top: 36px;
     padding-top: 20px;
-    border-top: 1px solid #ffffff15;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     width: 90%;
     margin-left: auto;
     margin-right: auto;
@@ -756,35 +754,48 @@ body.landing {
 @keyframes aparecer {
     from {
         opacity: 0;
-        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
+/* Sube 10px y vuelve (cambia top; el elemento tiene position relative) */
 @keyframes flotar {
     0% {
-        transform: translateY(0);
+        top: 0;
     }
     50% {
-        transform: translateY(-10px);
+        top: -10px;
     }
     100% {
-        transform: translateY(0);
+        top: 0;
     }
 }
 
-@keyframes latido {
+/* El globito de abajo está ubicado con bottom: se anima bottom */
+@keyframes flotar-abajo {
     0% {
-        box-shadow: 0 0 0 0 #0668c680;
+        bottom: -16px;
     }
-    70% {
-        box-shadow: 0 0 0 12px #0668c600;
+    50% {
+        bottom: -6px;
     }
     100% {
-        box-shadow: 0 0 0 0 #0668c600;
+        bottom: -16px;
+    }
+}
+
+/* La lección disponible "late": se aclara y vuelve */
+@keyframes latido {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
     }
 }
 
@@ -806,12 +817,8 @@ body.landing {
         grid-template-columns: 1fr 1fr;
     }
 
-    .grilla-funciones {
+    .funciones-chicas {
         grid-template-columns: 1fr 1fr;
-    }
-
-    .funcion-grande {
-        grid-column: span 2;
     }
 
     .landing h1 {
@@ -868,13 +875,12 @@ body.landing {
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 
+    /* La función grande a la izquierda (1 parte) y las 4 chicas a la derecha (2 partes) */
     .grilla-funciones {
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 2fr;
     }
 
     .funcion-grande {
-        grid-column: span 1;
-        grid-row: span 2;
         padding: 36px;
     }
 
@@ -909,13 +915,10 @@ body.landing {
     }
 }
 
-/* Si la persona pidió menos movimiento en su compu, sacamos las animaciones */
-@media (prefers-reduced-motion: reduce) {
-    .hero-texto,
-    .hero-visual,
-    .mock,
-    .globo-abajo,
-    .disponible span {
-        animation: none;
+/* ===== Pantallas grandes: el contenido no pasa de 1140px de ancho ===== */
+
+@media (min-width: 1300px) {
+    .contenido {
+        width: 1140px;
     }
 }

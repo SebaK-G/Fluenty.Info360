@@ -73,24 +73,41 @@
                     {
                         <div class="fila-mensaje de-ia">
                             <div class="avatar-ia">✦</div>
-                            <div class="burbuja">@mensaje.Texto</div>
+                            <div class="burbuja">
+                                <!-- Cada renglón del mensaje es un párrafo (así se respetan los saltos de línea) -->
+                                @foreach (string parrafo in mensaje.Texto.Split('\n'))
+                                {
+                                    if (parrafo.Trim() != "")
+                                    {
+                                        <p>@parrafo</p>
+                                    }
+                                }
+                            </div>
                         </div>
                     }
                     else
                     {
                         <div class="fila-mensaje de-persona">
-                            <div class="burbuja">@mensaje.Texto</div>
+                            <div class="burbuja">
+                                @foreach (string parrafo in mensaje.Texto.Split('\n'))
+                                {
+                                    if (parrafo.Trim() != "")
+                                    {
+                                        <p>@parrafo</p>
+                                    }
+                                }
+                            </div>
                         </div>
                     }
                 }
 
                 <!-- Se muestran al mandar, mientras la IA responde -->
                 <div class="fila-mensaje de-persona oculto" id="mi-pregunta">
-                    <div class="burbuja" id="texto-mi-pregunta"></div>
+                    <div class="burbuja"><p id="texto-mi-pregunta"></p></div>
                 </div>
                 <div class="fila-mensaje de-ia oculto" id="escribiendo">
                     <div class="avatar-ia">✦</div>
-                    <div class="burbuja"><p class="puntitos"><span></span><span></span><span></span></p></div>
+                    <div class="burbuja"><p class="puntitos"><span></span><span class="puntito-2"></span><span class="puntito-3"></span></p></div>
                 </div>
             </div>
 
@@ -101,8 +118,7 @@
 
             <form class="escribir" id="form-chat" method="post" action='@Url.Action("Enviar", "Asistente")' onsubmit="return enviar();">
                 <input type="hidden" name="IdChat" value="@idChat" />
-                <label for="texto" class="oculto-lector">Tu pregunta</label>
-                <textarea id="texto" name="Texto" rows="1" maxlength="2000" placeholder="Escribí tu pregunta..." onkeydown="teclaEnter(event)" oninput="ajustarAlto()">@ViewBag.Borrador</textarea>
+                <textarea id="texto" name="Texto" aria-label="Tu pregunta" rows="1" maxlength="2000" placeholder="Escribí tu pregunta..." onkeydown="teclaEnter(event)" oninput="ajustarAlto()">@ViewBag.Borrador</textarea>
                 <input class="boton-home" id="boton-enviar" type="submit" value="Enviar" />
             </form>
             <p class="restantes-chat">Te quedan @(ViewBag.Restantes > 0 ? ViewBag.Restantes : 0) preguntas por hoy · La IA puede equivocarse: revisá lo importante.</p>
@@ -112,9 +128,8 @@
 </div>
 
 <script>
-    // Que se vea el último mensaje
-    var caja = document.getElementById("mensajes");
-    caja.scrollTop = caja.scrollHeight;
+    // Que se vea el último mensaje: baja la página hasta el final
+    window.scrollTo(0, document.body.scrollHeight);
 
     // Al mandar: se muestra la pregunta y los puntitos hasta que llegue la respuesta
     function enviar() {
@@ -130,7 +145,7 @@
         document.getElementById("mi-pregunta").classList.remove("oculto");
         document.getElementById("escribiendo").classList.remove("oculto");
         document.getElementById("boton-enviar").disabled = true;
-        caja.scrollTop = caja.scrollHeight;
+        window.scrollTo(0, document.body.scrollHeight);
         return true;
     }
 

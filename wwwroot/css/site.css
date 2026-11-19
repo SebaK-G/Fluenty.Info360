@@ -1,17 +1,18 @@
 * {
 	margin: 0;
 	padding: 0;
-	box-sizing: border-box;
 }
 
 body {
 	font-family: Arial, sans-serif;
 	background: linear-gradient(to bottom, #1f3144, #035b99);
-	min-height: 100vh;
+	/* fixed: el degradado queda quieto y ocupa toda la pantalla aunque la página sea corta */
+	background-attachment: fixed;
 }
 
-.container {
-	max-width: 100%;
+/* Contenedor de todas las pantallas (está en _Layout) */
+.contenedor {
+	width: 100%;
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -21,7 +22,6 @@ body {
 .encabezado-app {
 	background-color: #ffffff;
 	height: 78px;
-	min-height: 78px;
 	padding: 12px 30px 12px 30px;
 	margin-top: 12px;
 	border-radius: 14px;
@@ -29,7 +29,6 @@ body {
 	align-items: center;
 	justify-content: space-between;
 	gap: 20px;
-	box-shadow: 0 3px 12px #00000030;
 }
 
 .logo-app {
@@ -39,21 +38,17 @@ body {
 	font-size: 24px;
 	font-weight: bold;
 	color: #172333;
-	line-height: 1;
 }
 
 .logo-app img {
 	width: 40px;
 	height: 40px;
-	object-fit: contain;
 }
 
 .nav-app {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	flex-wrap: wrap;
-	height: 100%;
 }
 
 .nav-app a {
@@ -64,10 +59,7 @@ body {
 	border-radius: 20px;
 	font-size: 14px;
 	font-weight: bold;
-	display: inline-flex;
-	align-items: center;
-	height: 42px;
-	line-height: 1;
+	display: inline-block;
 }
 
 .nav-app a:hover,
@@ -79,7 +71,6 @@ body {
 .nav-app .sin-link,
 .nav-app .sin-link:hover {
 	background-color: #0b1ca6;
-	cursor: default;
 }
 
 .nav-app .salir {
@@ -114,7 +105,6 @@ body {
 	background-color: #ffffff;
 	border-radius: 16px;
 	padding: 22px 26px;
-	box-shadow: 0 4px 14px #00000030;
 	animation: aparecer 0.6s ease;
 }
 
@@ -125,7 +115,6 @@ body {
 
 .tarjeta-home p {
 	color: #44546a;
-	line-height: 1.5;
 }
 
 .fila-superior {
@@ -194,7 +183,6 @@ body {
 	align-items: center;
 	justify-content: space-between;
 	gap: 14px;
-	box-shadow: 0 3px 8px #00000020;
 }
 
 .herramienta h3 {
@@ -214,7 +202,6 @@ body {
 	border-radius: 8px;
 	font-size: 14px;
 	font-weight: bold;
-	white-space: nowrap;
 }
 
 .boton-home:hover {
@@ -225,7 +212,6 @@ body {
 .deshabilitado {
 	background-color: #c4d0de;
 	color: #44546a;
-	cursor: default;
 }
 
 .deshabilitado:hover {
@@ -240,27 +226,32 @@ body {
 	margin-bottom: 8px;
 }
 
+/* Las tarjetas aparecen de a poco (de transparentes a visibles) */
 @keyframes aparecer {
 	from {
 		opacity: 0;
-		transform: translateY(20px);
 	}
 	to {
 		opacity: 1;
-		transform: translateY(0);
 	}
 }
 
 @media (max-width: 980px) {
 	.encabezado-app {
 		height: auto;
-		min-height: 78px;
 		padding: 12px 16px;
 		flex-direction: column;
 	}
 
+	/* En pantallas chicas los botones del menú bajan de renglón: el menú pasa a block
+	   y cada botón es inline-block, como palabras en un texto centrado */
 	.nav-app {
-		justify-content: center;
+		display: block;
+		text-align: center;
+	}
+
+	.nav-app a {
+		margin: 4px 2px;
 	}
 
 	.home {

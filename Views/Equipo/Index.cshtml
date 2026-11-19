@@ -31,12 +31,14 @@
                 {
                     string link = ViewBag.LinkBase + rango.Codigo;
                     bool esPropio = rango.IdRango.ToString() == ViewBag.IdRangoPropio;
-                    <li class="nodo" style="margin-left: @(rango.Profundidad * 34)px">
+                    <!-- La clase profundidad-N lo corre a la derecha según qué tan abajo está en el árbol (de 4 en adelante, igual que 4) -->
+                    <li class="nodo profundidad-@(rango.Profundidad > 4 ? 4 : rango.Profundidad) @(rango.Profundidad > 0 ? "nodo-hijo" : "")">
                         @if (rango.Profundidad > 0)
                         {
                             <span class="rama">└</span>
                         }
                         <div class="caja-rango @(esPropio ? "caja-propia" : "")">
+                            <div class="fila-rango">
                             <div class="datos-rango">
                                 <p class="nombre-rango">@rango.Nombre @(esPropio ? "(vos)" : "")</p>
                                 <p class="personas-rango">@ViewBag.PersonasPorRango[rango.IdRango] personas</p>
@@ -52,6 +54,7 @@
                                     <a class="boton-curso" href="https://wa.me/?text=@Uri.EscapeDataString("Sumate a nuestro equipo en Fluenty como " + rango.Nombre + ": " + link)">WhatsApp</a>
                                 </div>
                             }
+                            </div>
                             @if (rango.IdRangoPadre != null && ViewBag.EsDueno)
                             {
                                 <!-- Qué hace la gente de este rango: si alguien llena mal su formulario, la IA usa esto -->

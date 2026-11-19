@@ -35,7 +35,7 @@
             <form class="tarjeta-calculadora" method="post" action='@Url.Action("Calcular", "Calculadora")'>
                 <h2>Tus datos</h2>
 
-                <label for="tarea">1. ¿Qué tarea querés calcular?</label>
+                <label for="tarea" class="primera-pregunta">1. ¿Qué tarea querés calcular?</label>
                 <select id="tarea" name="IdTipoTarea" required onchange="elegirTarea()">
                     @foreach (TiposTarea tipo in tipos)
                     {
@@ -118,42 +118,34 @@
             <section class="tarjeta-calculadora">
                 <h2>Tus cálculos</h2>
                 <div class="tabla-calculos">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tarea</th>
-                                <th>Personas</th>
-                                <th>Horas por semana</th>
-                                <th>Ahorro por mes</th>
-                                <th>Fecha</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (Calculos calculo in calculos)
-                            {
-                                <tr class="@(resultado != null && calculo.IdCalculo == resultado.IdCalculo ? "fila-elegida" : "")">
-                                    <td><a href='@Url.Action("Index", "Calculadora", new { IdCalculo = calculo.IdCalculo })'>@calculo.NombreTarea</a></td>
-                                    <td>@calculo.Personas</td>
-                                    <td>@calculo.HorasSemana.ToString("0.#") h</td>
-                                    <td>
-                                        <strong>@calculo.HorasAhorradasMes.ToString("0.#") h</strong>
-                                        @if (calculo.PlataAhorradaMes != null)
-                                        {
-                                            <span class="plata-tabla">· $ @calculo.PlataAhorradaMes.Value.ToString("N0")</span>
-                                        }
-                                    </td>
-                                    <td>@calculo.Fecha.ToString("dd/MM/yyyy")</td>
-                                    <td>
-                                        <form method="post" action='@Url.Action("Borrar", "Calculadora")'>
-                                            <input type="hidden" name="IdCalculo" value="@calculo.IdCalculo" />
-                                            <input class="boton-borrar-calculo" type="submit" value="Borrar" />
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                    <div class="fila-calculo encabezado-calculos">
+                        <span>Tarea</span>
+                        <span>Personas</span>
+                        <span>Horas por semana</span>
+                        <span>Ahorro por mes</span>
+                        <span>Fecha</span>
+                        <span></span>
+                    </div>
+                    @foreach (Calculos calculo in calculos)
+                    {
+                        <div class="fila-calculo @(resultado != null && calculo.IdCalculo == resultado.IdCalculo ? "fila-elegida" : "")">
+                            <a href='@Url.Action("Index", "Calculadora", new { IdCalculo = calculo.IdCalculo })'>@calculo.NombreTarea</a>
+                            <span>@calculo.Personas @(calculo.Personas == 1 ? "persona" : "personas")</span>
+                            <span>@calculo.HorasSemana.ToString("0.#") h por semana</span>
+                            <span>
+                                <strong>@calculo.HorasAhorradasMes.ToString("0.#") h</strong>
+                                @if (calculo.PlataAhorradaMes != null)
+                                {
+                                    <span class="plata-tabla">· $ @calculo.PlataAhorradaMes.Value.ToString("N0")</span>
+                                }
+                            </span>
+                            <span>@calculo.Fecha.ToString("dd/MM/yyyy")</span>
+                            <form method="post" action='@Url.Action("Borrar", "Calculadora")'>
+                                <input type="hidden" name="IdCalculo" value="@calculo.IdCalculo" />
+                                <input class="boton-borrar-calculo" type="submit" value="Borrar" />
+                            </form>
+                        </div>
+                    }
                 </div>
             </section>
         }

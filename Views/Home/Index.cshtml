@@ -45,7 +45,7 @@
                     </div>
                 </div>
 
-                <div class="lista-mis-cursos">
+                <div class="lista-mis-cursos @(ViewBag.MisCursos.Count == 1 ? "un-curso" : "")">
                     @foreach (CursoInscripto curso in ViewBag.MisCursos)
                     {
                         <div class="mi-curso">

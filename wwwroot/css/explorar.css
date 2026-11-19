@@ -4,14 +4,11 @@
 
 /* ----- Buscador ----- */
 
-.buscador {
-    margin-bottom: 18px;
-}
-
+/* Buscar ocupa 3 partes; Nivel, Ordenar y el botón, 1 parte cada uno */
 .fila-buscador {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr;
+    align-items: end;
     gap: 14px;
 }
 
@@ -24,11 +21,6 @@
     color: #44546a;
 }
 
-.fila-buscador .campo-buscar {
-    flex: 1;
-    min-width: 220px;
-}
-
 .fila-buscador input[type=text],
 .fila-buscador select {
     border: 1px solid #c4d0de;
@@ -39,26 +31,19 @@
     background-color: #ffffff;
 }
 
-.fila-buscador input[type=text]:focus,
-.fila-buscador select:focus {
-    outline: 2px solid #8fd3ff;
-    border-color: #0668c6;
-}
-
 .fila-buscador .boton-home {
     border: none;
     padding: 10px 22px;
-    cursor: pointer;
 }
 
 .chips-categorias {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
     margin-top: 16px;
 }
 
+/* inline-block: los chips quedan uno al lado del otro y bajan de renglón cuando no entran */
 .chip-categoria {
+    display: inline-block;
+    margin: 0 8px 8px 0;
     text-decoration: none;
     font-size: 14px;
     color: #0b1ca6;
@@ -69,13 +54,13 @@
 }
 
 .chip-categoria:hover {
-    border-color: #0668c6;
+    border: 1px solid #0668c6;
     color: #0b1ca6;
 }
 
 .chip-activa {
     background-color: #0b1ca6;
-    border-color: #0b1ca6;
+    border: 1px solid #0b1ca6;
     color: #ffffff;
 }
 
@@ -91,29 +76,31 @@
     margin: 4px 4px 12px 4px;
 }
 
+/* 3 cursos por fila en compu, 2 en tablet y 1 en celular (ver media queries) */
 .grilla-publicos {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 18px;
 }
 
 .tarjeta-publico {
+    position: relative;
+    top: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
     background-color: #ffffff;
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 4px 14px #00000030;
     text-decoration: none;
     color: #172333;
-    border: 2px solid transparent;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    border: 2px solid #ffffff;
 }
 
+/* Al pasar el mouse: borde celeste y la tarjeta sube 2px (top negativo con position relative) */
 .tarjeta-publico:hover {
-    border-color: #8fd3ff;
-    transform: translateY(-2px);
+    border: 2px solid #8fd3ff;
+    top: -2px;
     color: #172333;
 }
 
@@ -126,22 +113,12 @@
     color: #44546a;
     font-size: 14px;
     margin: 0;
-    flex: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.etiquetas-publico {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 4px;
 }
 
 .etiqueta-categoria,
 .etiqueta-nivel {
+    display: inline-block;
+    margin: 0 6px 6px 0;
     font-size: 12px;
     font-weight: bold;
     padding: 3px 10px;
@@ -159,13 +136,15 @@
 }
 
 .pie-publico {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
     font-size: 13px;
     color: #6b7a8f;
     border-top: 1px solid #eef4fa;
     padding-top: 10px;
+}
+
+.pie-publico span {
+    display: inline-block;
+    margin-right: 14px;
 }
 
 .ya-lo-tenes {
@@ -195,30 +174,21 @@
     color: #ffffff;
 }
 
+/* El detalle ocupa 2 partes y la caja para inscribirse 1 */
 .detalle-publico {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-columns: 2fr 1fr;
     gap: 22px;
     align-items: start;
-}
-
-.columna-detalle {
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
 }
 
 .columna-detalle h3 {
     margin-top: 18px;
 }
 
-.chips-herramientas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
 .chip-herramienta {
+    display: inline-block;
+    margin: 0 8px 8px 0;
     font-size: 14px;
     background-color: #eef4fa;
     color: #172333;
@@ -231,24 +201,23 @@
     border: 1px solid #d5e2f0;
     border-radius: 12px;
     margin-top: 10px;
-    overflow: hidden;
 }
 
+/* El número (32px) a la izquierda y el título en el resto */
 .unidad-temario summary {
-    display: flex;
+    display: grid;
+    grid-template-columns: 32px 1fr;
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    cursor: pointer;
-    list-style: none;
+    list-style-type: none;
+    border-radius: 12px;
 }
 
-.unidad-temario summary::-webkit-details-marker {
-    display: none;
-}
-
+/* [open] es un selector de atributo: la unidad que está abierta */
 .unidad-temario[open] summary {
     background-color: #eef4fa;
+    border-radius: 12px 12px 0 0;
 }
 
 .unidad-temario summary strong {
@@ -259,8 +228,7 @@
     color: #6b7a8f;
 }
 
-.numero-unidad {
-    flex-shrink: 0;
+.numero-temario {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -282,7 +250,7 @@
     padding: 3px 0;
 }
 
-/* La caja de inscribirse queda fija al costado mientras se baja por el temario */
+/* La caja de inscribirse queda pegada arriba mientras se baja por el temario (sticky + top) */
 .caja-inscribirse {
     position: sticky;
     top: 20px;
@@ -299,15 +267,13 @@
     font-size: 20px;
 }
 
-.caja-inscribirse form .boton-home,
-.caja-inscribirse > .boton-home {
+.caja-inscribirse .boton-home {
     display: block;
     width: 100%;
     text-align: center;
     border: none;
     padding: 12px;
     font-size: 16px;
-    cursor: pointer;
 }
 
 .texto-inscribirse {
@@ -316,18 +282,28 @@
     margin: 0;
 }
 
+/* ----- Tablet ----- */
+
+@media (max-width: 1000px) {
+    .grilla-publicos {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .fila-buscador {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 /* ----- Celular ----- */
 
-@media (max-width: 800px) {
-    .detalle-publico {
+@media (max-width: 700px) {
+    .grilla-publicos,
+    .detalle-publico,
+    .fila-buscador {
         grid-template-columns: 1fr;
     }
 
     .caja-inscribirse {
         position: static;
-    }
-
-    .fila-buscador .boton-home {
-        width: 100%;
     }
 }

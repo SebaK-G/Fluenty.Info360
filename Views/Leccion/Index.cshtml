@@ -18,9 +18,9 @@
     <header class="barra-leccion">
         <a class="cerrar-leccion" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })' title="Salir de la lección">✕</a>
         <div class="progreso-leccion"><span id="relleno"></span></div>
-        <span class="xp-leccion">⚡ @ViewBag.XP</span>
-        <span class="xp-leccion">🔥 @ViewBag.Racha</span>
-        <span class="xp-leccion" title="Pedidos a la IA que te quedan hoy">🤖 <span id="pedidos">@ViewBag.PedidosRestantes</span></span>
+        <span class="xp-leccion">⚡&nbsp;@ViewBag.XP</span>
+        <span class="xp-leccion">🔥&nbsp;@ViewBag.Racha</span>
+        <span class="xp-leccion" title="Pedidos a la IA que te quedan hoy">🤖&nbsp;<span id="pedidos">@ViewBag.PedidosRestantes</span></span>
     </header>
 
     <p class="contexto-leccion">Unidad @ViewBag.Leccion.NumeroUnidad · @(esExamen ? "Examen de la unidad" : "Lección " + ViewBag.Leccion.Numero)</p>
@@ -122,7 +122,7 @@
                 <div class="devolucion-opcion @(resuelta ? "visible" : "")" id="devolucion-@tarjeta.Orden">
                     <p class="veredicto" id="veredicto-@tarjeta.Orden">@(resuelta ? "✅ Esta ya la contestaste bien." : "")</p>
                     <p id="explicacion-@tarjeta.Orden">@(resuelta ? tarjeta.Explicacion : "")</p>
-                    <div class="reexplicacion" id="reexplicacion-@tarjeta.Orden"></div>
+                    <div class="reexplicacion" id="reexplicacion-@tarjeta.Orden" style="display:none"></div>
                     <button type="button" class="boton-leccion boton-otra" id="otra-@tarjeta.Orden" onclick="otraPregunta(@tarjeta.Orden)">Probar con otra pregunta del mismo tema</button>
                 </div>
             }
@@ -167,14 +167,16 @@
                     <button type="button" class="ayuda" onclick="reexplicar(@tarjeta.Orden, 'ejemplo')">🔁 Dame otro ejemplo</button>
                 }
             </div>
-            <p class="mensaje-ayuda" id="mensaje-@tarjeta.Orden"></p>
+            <p class="mensaje-ayuda" id="mensaje-@tarjeta.Orden" style="display:none"></p>
         </section>
     }
 
     <!-- ===== Botones de abajo ===== -->
     <footer class="navegacion-leccion">
-        <button type="button" id="atras" class="boton-secundario" onclick="mostrar(actual - 1)">Atrás</button>
-        <button type="button" id="siguiente" class="boton-leccion" onclick="mostrar(actual + 1)">Continuar</button>
+        <div class="botones-navegacion">
+            <button type="button" id="atras" class="boton-secundario" onclick="mostrar(actual - 1)">Atrás</button>
+            <button type="button" id="siguiente" class="boton-leccion" onclick="mostrar(actual + 1)">Continuar</button>
+        </div>
     </footer>
     <p class="aviso-siguiente" id="aviso-siguiente">Para seguir, primero resolvé esta tarjeta 🙂</p>
 </div>
@@ -182,12 +184,18 @@
 <!-- Mientras la IA responde -->
 <div id="carga" class="fondo-carga">
     <div class="caja-carga">
-        <p class="puntitos"><span></span><span></span><span></span></p>
+        <p class="puntitos"><span></span><span class="puntito-2"></span><span class="puntito-3"></span></p>
         <p id="texto-carga">Un segundo...</p>
     </div>
 </div>
 
 <script>
+    // Pone un texto en un elemento y lo muestra; si el texto está vacío, lo oculta
+    function ponerTexto(elemento, texto) {
+        elemento.innerText = texto;
+        elemento.style.display = texto == "" ? "none" : "block";
+    }
+
     // Se ve una sola tarjeta por vez. "actual" es la que se está viendo.
     let actual = @inicial;
     const total = @tarjetas.Count;
@@ -221,8 +229,9 @@
     function actualizarSiguiente() {
         const siguiente = document.getElementById("siguiente");
         const resuelta = tarjeta(actual).dataset.resuelta == "si";
-        siguiente.style.visibility = actual == total ? "hidden" : "visible";
-        siguiente.disabled = !resuelta;
+        // En la última tarjeta no hay "Continuar": se vuelve transparente (opacity 0) y no se puede tocar
+        siguiente.style.opacity = actual == total ? "0" : "1";
+        siguiente.disabled = !resuelta || actual == total;
         document.getElementById("aviso-siguiente").style.display = (resuelta || actual == total) ? "none" : "block";
     }
 
@@ -252,7 +261,7 @@
         }
         ocultarCarga();
         if (datos.error) {
-            document.getElementById("mensaje-" + numero).innerText = datos.error;
+            ponerTexto(document.getElementById("mensaje-" + numero), datos.error);
             for (let i = 0; i < botones.length; i++) {
                 botones[i].disabled = false;
             }
@@ -269,14 +278,14 @@
         const otra = document.getElementById("otra-" + numero);
         if (datos.bien) {
             veredicto.innerText = "¡Bien ahí! 🎉";
-            reexplicacion.innerText = "";
+            ponerTexto(reexplicacion, "");
             otra.style.display = "none";
             caja.dataset.resuelta = "si";
         } else {
             boton.classList.add("mal");
             veredicto.innerText = "Esta vez no. Leé por qué y probá con otra pregunta del mismo tema:";
             if (datos.reexplicacion) {
-                reexplicacion.innerText = "📘 Te lo explicamos de otra forma: " + datos.reexplicacion;
+                ponerTexto(reexplicacion, "📘 Te lo explicamos de otra forma: " + datos.reexplicacion);
             }
             otra.style.display = "block";
             proximas[numero] = datos.siguiente;
@@ -309,7 +318,7 @@
             botones[i].classList.remove("mal");
         }
         document.getElementById("devolucion-" + numero).classList.remove("visible");
-        document.getElementById("reexplicacion-" + numero).innerText = "";
+        ponerTexto(document.getElementById("reexplicacion-" + numero), "");
         proximas[numero] = null;
         window.scrollTo(0, 0);
     }
@@ -366,7 +375,7 @@
         }
         ocultarCarga();
         if (!datos.ok) {
-            mensaje.innerText = datos.mensaje;
+            ponerTexto(mensaje, datos.mensaje);
             if (datos.sinPedidos) {
                 document.getElementById("pedidos").innerText = "0";
             }
@@ -376,7 +385,7 @@
         caja.querySelector(".texto-tarjeta").innerText = datos.texto;
         caja.dataset.leer = datos.titulo + ". " + datos.texto;
         document.getElementById("pedidos").innerText = datos.restantesHoy;
-        mensaje.innerText = datos.restantesTarjeta > 0 ? "Podés pedir otra explicación " + datos.restantesTarjeta + " vez/veces más en esta tarjeta." : "";
+        ponerTexto(mensaje, datos.restantesTarjeta > 0 ? "Podés pedir otra explicación " + datos.restantesTarjeta + " vez/veces más en esta tarjeta." : "");
     }
 
     // Copia el pedido bueno para que lo pegue en ChatGPT (o la IA que use) y lo aproveche hoy mismo

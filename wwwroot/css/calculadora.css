@@ -9,7 +9,6 @@
 
 .calculadora {
     width: 90%;
-    max-width: 1100px;
     margin: 28px auto 40px auto;
     display: flex;
     flex-direction: column;
@@ -27,7 +26,7 @@
 
 .titulo-calculadora p {
     color: #c4d3e6;
-    max-width: 680px;
+    width: 60%;
 }
 
 .etiqueta-calculadora {
@@ -42,7 +41,7 @@
 
 .fila-calculadora {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 22px;
     align-items: start;
 }
@@ -51,7 +50,6 @@
     background-color: #ffffff;
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 4px 14px #00000030;
 }
 
 .tarjeta-calculadora h2 {
@@ -67,7 +65,8 @@
     margin: 16px 0 6px 0;
 }
 
-.tarjeta-calculadora label:first-of-type {
+/* La primera pregunta no necesita espacio arriba */
+.tarjeta-calculadora .primera-pregunta {
     margin-top: 0;
 }
 
@@ -86,12 +85,6 @@
     font-size: 15px;
     color: #172333;
     background-color: #ffffff;
-}
-
-.tarjeta-calculadora select:focus,
-.tarjeta-calculadora input:focus {
-    outline: 2px solid #8fd3ff;
-    border-color: #0668c6;
 }
 
 .campo-plata {
@@ -127,7 +120,6 @@
     margin-top: 22px;
     padding: 12px;
     font-size: 16px;
-    cursor: pointer;
 }
 
 /* ----- Resultado ----- */
@@ -155,7 +147,6 @@
 .numero-grande {
     font-size: 56px;
     font-weight: bold;
-    line-height: 1.1;
     margin: 6px 0 10px 0;
 }
 
@@ -176,7 +167,7 @@
 }
 
 .cajas-resultado div {
-    background-color: #ffffff1f;
+    background-color: rgba(255, 255, 255, 0.12);
     border-radius: 12px;
     padding: 12px 14px;
 }
@@ -192,16 +183,15 @@
 }
 
 .avance-resultado {
-    border-top: 1px solid #ffffff30;
+    border-top: 1px solid rgba(255, 255, 255, 0.19);
     margin-top: 16px;
     padding-top: 14px;
 }
 
 .barra-avance {
     height: 10px;
-    background-color: #ffffff30;
+    background-color: rgba(255, 255, 255, 0.19);
     border-radius: 10px;
-    overflow: hidden;
     margin: 8px 0;
 }
 
@@ -219,35 +209,27 @@
 }
 
 .resultado.vacio {
-    background: #ffffff18;
-    border: 1px dashed #ffffff60;
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px dashed rgba(255, 255, 255, 0.38);
 }
 
 /* ----- Cálculos guardados ----- */
 
-.tabla-calculos {
-    overflow-x: auto;
-}
-
-.tabla-calculos table {
-    width: 100%;
-    border-collapse: collapse;
+/* Cada fila es una grilla de 6 columnas: la tarea es la más ancha */
+.fila-calculo {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 2fr 1fr 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
     font-size: 14px;
+    border-bottom: 1px solid #eef4fa;
 }
 
-.tabla-calculos th {
-    text-align: left;
+.encabezado-calculos {
     color: #6b7a8f;
     font-weight: bold;
-    padding: 8px 10px;
     border-bottom: 2px solid #eef4fa;
-    white-space: nowrap;
-}
-
-.tabla-calculos td {
-    padding: 10px;
-    border-bottom: 1px solid #eef4fa;
 }
 
 .tabla-calculos a {
@@ -264,13 +246,12 @@
 }
 
 .boton-borrar-calculo {
-    background: none;
+    background-color: transparent;
     border: 1px solid #e3c4c4;
     color: #a12b2b;
     border-radius: 8px;
     padding: 4px 10px;
     font-size: 13px;
-    cursor: pointer;
 }
 
 .boton-borrar-calculo:hover {
@@ -288,7 +269,28 @@
         grid-template-columns: 1fr;
     }
 
+    .titulo-calculadora p {
+        width: 100%;
+    }
+
+    /* En el celular cada cálculo usa 2 columnas y los títulos de la tabla no se muestran */
+    .fila-calculo {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .encabezado-calculos {
+        display: none;
+    }
+
     .numero-grande {
         font-size: 44px;
+    }
+}
+
+/* ----- Pantallas grandes: la calculadora no pasa de 1100px de ancho ----- */
+
+@media (min-width: 1250px) {
+    .calculadora {
+        width: 1100px;
     }
 }

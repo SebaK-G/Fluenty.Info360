@@ -89,7 +89,8 @@
                             <span class="etiqueta-nivel">@CursoPublico.NombreNivel(curso.Nivel)</span>
                         </div>
                         <h3>@curso.Titulo</h3>
-                        <p class="descripcion-publico">@curso.Descripcion</p>
+                        <!-- Si la descripción es muy larga, se muestran los primeros 140 caracteres -->
+                        <p class="descripcion-publico">@(curso.Descripcion != null && curso.Descripcion.Length > 140 ? curso.Descripcion.Substring(0, 140) + "..." : curso.Descripcion)</p>
                         <div class="pie-publico">
                             <span>⏱ @(curso.DuracionHoras > 0 ? curso.DuracionHoras + " h" : "20 lecciones")</span>
                             <span>👥 @curso.Inscriptos @(curso.Inscriptos == 1 ? "persona" : "personas")</span>

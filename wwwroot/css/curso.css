@@ -2,7 +2,6 @@
 
 .pagina-curso {
     width: 100%;
-    min-height: 100vh;
     color: #172333;
     padding-bottom: 40px;
 }
@@ -55,7 +54,6 @@
     background-color: #ffffff;
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 4px 14px #00000030;
     animation: aparecer 0.6s ease;
 }
 
@@ -67,7 +65,6 @@
 
 .tarjeta-curso p {
     color: #44546a;
-    line-height: 1.6;
     margin-bottom: 10px;
 }
 
@@ -113,7 +110,6 @@
 .tilde {
     width: 50px;
     height: 50px;
-    line-height: 50px;
     margin: 0 auto 14px auto !important;
     border-radius: 50%;
     background-color: #e3f6e8;
@@ -131,7 +127,6 @@
     justify-content: center;
     gap: 12px;
     margin-top: 20px;
-    flex-wrap: wrap;
 }
 
 /* ----- Partes del curso ----- */
@@ -149,7 +144,6 @@
 }
 
 .texto-parte {
-    white-space: pre-line;
     font-size: 16px;
 }
 
@@ -183,7 +177,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #172333cc;
+    background-color: rgba(23, 35, 51, 0.8);
     align-items: center;
     justify-content: center;
 }
@@ -201,7 +195,6 @@
     background-color: #dce7f2;
     border-radius: 10px;
     margin: 16px 0;
-    overflow: hidden;
 }
 
 .barra-relleno {
@@ -227,7 +220,6 @@
     padding: 9px 22px;
     font-size: 14px;
     font-weight: bold;
-    cursor: pointer;
 }
 
 .boton-curso:hover {
@@ -242,40 +234,19 @@
 
 /* ----- Animaciones ----- */
 
+/* Las tarjetas aparecen de a poco (de transparentes a visibles) */
 @keyframes aparecer {
     from {
         opacity: 0;
-        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
 @keyframes cargar {
     0% { width: 0%; }
     100% { width: 95%; }
-}
-
-/* ----- Celular ----- */
-
-@media (max-width: 900px) {
-    .contenido-curso,
-    .vacio,
-    .resultado,
-    .caja-carga {
-        width: 100%;
-    }
-
-    .fila-empleado {
-        flex-direction: column;
-    }
-
-    .fila-rehacer {
-        flex-direction: column;
-        align-items: stretch;
-    }
 }
 
 /* ----- Formularios y link ----- */
@@ -354,34 +325,31 @@
     color: #172333;
 }
 
+/* Los 3 números del curso (unidades, lecciones, personas) en 3 columnas iguales */
 .datos-curso {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 14px;
     margin: 16px 0;
 }
 
 .datos-curso div {
-    flex: 1;
     background-color: #eef4fa;
     border-radius: 12px;
     padding: 12px;
     text-align: center;
-    display: flex;
-    flex-direction: column;
 }
 
 .datos-curso strong {
+    display: block;
     font-size: 26px;
     color: #0b1ca6;
 }
 
 .datos-curso span {
+    display: block;
     font-size: 13px;
     color: #44546a;
-}
-
-.objetivos {
-    white-space: pre-line;
 }
 
 .nivelacion {
@@ -466,20 +434,20 @@
     margin-bottom: 8px;
 }
 
+/* El cuadro de texto ocupa 4 partes y el botón 1 */
 .fila-rehacer {
-    display: flex;
+    display: grid;
+    grid-template-columns: 4fr 1fr;
     align-items: center;
     gap: 10px;
 }
 
 .rehacer-unidad textarea {
-    flex: 1;
     padding: 10px;
     border: 1px solid #c4d0de;
     border-radius: 10px;
     font-family: Arial, sans-serif;
     font-size: 14px;
-    resize: vertical;
 }
 
 /* ----- El camino de lecciones ----- */
@@ -489,11 +457,12 @@
     border-radius: 16px;
     padding: 22px;
     margin-top: 10px;
-    box-shadow: 0 4px 14px #00000030;
 }
 
+/* Cada lección: el círculo (62px) a la izquierda y el texto en el resto */
 .paso {
-    display: flex;
+    display: grid;
+    grid-template-columns: 62px 1fr;
     align-items: center;
     gap: 16px;
     margin-bottom: 18px;
@@ -513,8 +482,9 @@
 .circulo {
     width: 62px;
     height: 62px;
-    min-width: 62px;
     border-radius: 50%;
+    /* El borde de abajo más oscuro le da el efecto de botón 3D */
+    border-bottom: 5px solid #a9b4c2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -522,23 +492,22 @@
     font-weight: bold;
     color: #ffffff;
     background-color: #d0d7e1;
-    box-shadow: 0 5px 0 #a9b4c2;
 }
 
 .circulo-Disponible {
     background-color: #58cc02;
-    box-shadow: 0 5px 0 #46a302;
+    border-bottom: 5px solid #46a302;
     animation: latir 1.6s infinite;
 }
 
 .circulo-Completada {
     background-color: #ffc800;
-    box-shadow: 0 5px 0 #d9a800;
+    border-bottom: 5px solid #d9a800;
 }
 
 .circulo-YaSabe {
     background-color: #8a96a6;
-    box-shadow: 0 5px 0 #6b7686;
+    border-bottom: 5px solid #6b7686;
 }
 
 .titulo-paso {
@@ -552,35 +521,17 @@
     margin-bottom: 0 !important;
 }
 
+/* La lección que toca hacer "late": su verde se aclara y vuelve */
 @keyframes latir {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
-
-@media (max-width: 900px) {
-    .paso-1, .paso-2, .paso-3, .paso-4, .paso-5 {
-        margin-left: 0%;
-    }
-
-    .datos-curso {
-        flex-direction: column;
-    }
-
-    .etiqueta-unidad {
-        position: relative;
-        top: 0;
-        right: 0;
-        display: inline-block;
-        margin-top: 10px;
-    }
+    0% { background-color: #58cc02; }
+    50% { background-color: #8ee04e; }
+    100% { background-color: #58cc02; }
 }
 
 /* ----- Formulario de la empresa (las tarjetas y opciones están en formulario.css) ----- */
 
 .formulario-empresa {
-    width: 100%;
-    max-width: 820px;
+    width: 820px;
     margin: 0 auto;
     padding-bottom: 40px;
 }
@@ -597,8 +548,8 @@
     font-weight: bold;
     text-transform: uppercase;
     color: #8fd3ff;
-    background-color: #8fd3ff18;
-    border: 1px solid #8fd3ff40;
+    background-color: rgba(143, 211, 255, 0.09);
+    border: 1px solid rgba(143, 211, 255, 0.25);
     padding: 5px 12px;
     border-radius: 20px;
     margin-bottom: 14px;
@@ -606,11 +557,54 @@
 
 .titulo-formulario-empresa h1 {
     font-size: 36px;
-    line-height: 1.2;
     margin-bottom: 10px;
 }
 
-.titulo-formulario-empresa > p {
+.titulo-formulario-empresa p {
     color: #c4d3e6;
     font-size: 16px;
+}
+
+/* Las media queries van al final: a igual especificidad, gana la regla que está más abajo */
+
+/* ----- Celular ----- */
+
+@media (max-width: 900px) {
+    .contenido-curso,
+    .vacio,
+    .resultado,
+    .caja-carga {
+        width: 100%;
+    }
+
+    .fila-empleado,
+    .botones {
+        flex-direction: column;
+    }
+
+    .fila-rehacer {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .paso-1, .paso-2, .paso-3, .paso-4, .paso-5 {
+        margin-left: 0%;
+    }
+
+    .datos-curso {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-empresa {
+        width: 100%;
+    }
+
+    .etiqueta-unidad {
+        position: relative;
+        top: 0;
+        right: 0;
+        display: inline-block;
+        margin-top: 10px;
+    }
 }

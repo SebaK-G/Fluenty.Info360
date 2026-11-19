@@ -15,8 +15,8 @@
     font-weight: bold;
     text-transform: uppercase;
     color: #8fd3ff;
-    background-color: #8fd3ff18;
-    border: 1px solid #8fd3ff40;
+    background-color: rgba(143, 211, 255, 0.09);
+    border: 1px solid rgba(143, 211, 255, 0.25);
     padding: 5px 12px;
     border-radius: 20px;
     margin-bottom: 12px;
@@ -27,10 +27,16 @@
     margin-bottom: 8px;
 }
 
-.titulo-sprint2 > p {
+.titulo-sprint2 p {
     color: #c4d3e6;
     font-size: 16px;
-    max-width: 760px;
+    width: 70%;
+}
+
+/* La etiqueta de arriba también es un <p>: con un selector más específico (dos clases)
+   le ganamos al width de la regla anterior y vuelve a medir lo que su texto */
+.titulo-sprint2 .etiqueta-sprint2 {
+    width: auto;
 }
 
 .ayuda-sprint2 {
@@ -42,11 +48,6 @@
 /* ----- Home: Mi curso ----- */
 
 .mi-curso {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 22px;
     background: linear-gradient(150deg, #0b1ca6, #0668c6);
     color: #ffffff;
 }
@@ -61,16 +62,10 @@
     font-weight: bold;
 }
 
-.mi-curso-texto {
-    flex: 1;
-    min-width: 260px;
-}
-
 .barra-mi-curso {
     height: 14px;
-    background-color: #ffffff30;
+    background-color: rgba(255, 255, 255, 0.19);
     border-radius: 10px;
-    overflow: hidden;
 }
 
 .barra-mi-curso span {
@@ -108,7 +103,7 @@
     border-radius: 16px;
     padding: 14px 20px;
     text-align: center;
-    min-width: 110px;
+    width: 130px;
 }
 
 .medalla strong {
@@ -144,26 +139,29 @@
 }
 
 .nodo {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
     margin-bottom: 12px;
+}
+
+/* Cuanto más abajo en el árbol, más a la derecha */
+.profundidad-1 { margin-left: 34px; }
+.profundidad-2 { margin-left: 68px; }
+.profundidad-3 { margin-left: 102px; }
+.profundidad-4 { margin-left: 136px; }
+
+/* Los rangos de abajo tienen la rama "└" a la izquierda: dos columnas (rama y caja) */
+.nodo-hijo {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
 }
 
 .rama {
     color: #9db4cc;
     font-size: 22px;
-    line-height: 1;
     padding-top: 14px;
 }
 
 .caja-rango {
-    flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
     background-color: #f3f7fc;
     border: 2px solid #dce4ee;
     border-radius: 14px;
@@ -171,7 +169,7 @@
 }
 
 .caja-propia {
-    border-color: #0668c6;
+    border: 2px solid #0668c6;
     background-color: #e8f1fc;
 }
 
@@ -188,17 +186,26 @@
     margin: 0;
 }
 
-.link-rango {
+/* Arriba de cada caja: los datos del rango a la izquierda y su link a la derecha */
+.fila-rango {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex: 1;
-    min-width: 240px;
-    max-width: 520px;
+    justify-content: space-between;
+    gap: 12px;
 }
 
+/* El link: el cuadro de texto ocupa 3 partes y el botón 1 */
+.link-rango {
+    width: 50%;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: center;
+    gap: 8px;
+}
+
+/* width 100%: el cuadro de texto se achica para entrar en su columna */
 .link-rango input {
-    flex: 1;
+    width: 100%;
     padding: 8px 10px;
     border: 1px solid #c4d0de;
     border-radius: 10px;
@@ -207,16 +214,15 @@
     color: #44546a;
 }
 
+/* Agregar un rango: los 3 campos (2 partes cada uno) y el botón (1 parte) en la misma fila */
 .form-rango {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr 1fr;
+    align-items: end;
     gap: 14px;
 }
 
 .form-rango .campo-curso {
-    flex: 1;
-    min-width: 220px;
     margin-bottom: 0;
 }
 
@@ -228,7 +234,6 @@
 
 .encabezado-grupo {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
@@ -277,7 +282,6 @@
 
 .miembro {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
@@ -291,13 +295,10 @@
 
 /* ----- Ver curso: personas y lecciones para hacer ----- */
 
-.personas-curso {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
+/* Los chips son inline-block: se acomodan uno al lado del otro y bajan de renglón solos */
 .chip-persona {
+    display: inline-block;
+    margin: 0 8px 8px 0;
     text-decoration: none;
     color: #172333;
     background-color: #f3f7fc;
@@ -309,22 +310,21 @@
 }
 
 .chip-persona:hover {
-    border-color: #2f8cff;
+    border: 2px solid #2f8cff;
 }
 
 .chip-elegida {
     background-color: #0668c6;
-    border-color: #0668c6;
+    border: 2px solid #0668c6;
     color: #ffffff;
 }
 
 .circulo-link {
     text-decoration: none;
-    cursor: pointer;
 }
 
 .circulo-link:hover {
-    transform: scale(1.08);
+    opacity: 0.8;
 }
 
 .empezar-leccion {
@@ -340,9 +340,12 @@
 .fondo-carga {
     display: none;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 30;
-    background-color: #172333dd;
+    background-color: rgba(23, 35, 51, 0.87);
     align-items: center;
     justify-content: center;
 }
@@ -352,14 +355,13 @@
     border-radius: 18px;
     padding: 26px 30px;
     text-align: center;
-    max-width: 420px;
+    width: 420px;
 }
 
 .barra-carga {
     height: 12px;
     background-color: #dce7f2;
     border-radius: 10px;
-    overflow: hidden;
     margin-top: 14px;
 }
 
@@ -375,20 +377,6 @@
 @keyframes ir-y-venir {
     from { margin-left: 0%; }
     to { margin-left: 70%; }
-}
-
-@media (max-width: 700px) {
-    .medallas {
-        width: 100%;
-    }
-
-    .medalla {
-        flex: 1;
-    }
-
-    .titulo-sprint2 h1 {
-        font-size: 28px;
-    }
 }
 
 /* Nota y cantidad de intentos de cada lección (la ven el alumno y su responsable) */
@@ -411,6 +399,7 @@
 /* Qué hace la gente de cada rango (lo completa el dueño en Equipo) */
 .tareas-form {
     width: 100%;
+    margin-top: 12px;
 }
 
 .tareas-form label {
@@ -421,15 +410,15 @@
     margin-bottom: 6px;
 }
 
+/* El cuadro de texto ocupa 4 partes y el botón Guardar 1 */
 .fila-tareas {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 4fr 1fr;
     gap: 8px;
 }
 
 .fila-tareas input[type="text"] {
-    flex: 1;
-    min-width: 220px;
+    width: 100%;
     padding: 8px 10px;
     border: 1px solid #c4d0de;
     border-radius: 10px;
@@ -461,7 +450,6 @@
 
 .lista-quietos {
     margin: 10px 0 10px 20px;
-    line-height: 1.7;
 }
 
 .ayuda-quietos {
@@ -469,8 +457,9 @@
     color: #44546a;
 }
 
-.contenido-curso > .tarjeta-curso + .tarjeta-curso {
-    margin-top: 22px;
+/* Separación entre las tarjetas de una pantalla */
+.contenido-curso .tarjeta-curso {
+    margin-bottom: 22px;
 }
 
 /* ----- Home: Mis cursos (una persona puede tener varios) ----- */
@@ -491,7 +480,6 @@
 
 .encabezado-mis-cursos {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
@@ -500,14 +488,19 @@
 
 .lista-mis-cursos {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
+}
+
+/* Si tiene un solo curso, ocupa todo el ancho */
+.lista-mis-cursos.un-curso {
+    grid-template-columns: 1fr;
 }
 
 /* Cada curso adentro de "Mis cursos": tarjeta más clara sobre el fondo azul */
 .lista-mis-cursos .mi-curso {
-    background: #ffffff18;
-    border: 1px solid #ffffff30;
+    background-color: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.19);
     border-radius: 16px;
     padding: 18px;
 }
@@ -527,7 +520,6 @@
 
 .para-quien {
     display: flex;
-    flex-wrap: wrap;
     gap: 14px;
     font-size: 14px;
     font-weight: bold;
@@ -537,7 +529,6 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    cursor: pointer;
 }
 
 .datos-publico {
@@ -568,4 +559,60 @@
 .estado-publico {
     background-color: #e6f0ff;
     color: #0b1ca6;
+}
+
+/* ----- Celular -----
+   Va al final del archivo: si dos reglas tienen la misma especificidad, gana la que está más abajo */
+
+@media (max-width: 700px) {
+    .medallas {
+        width: 100%;
+    }
+
+    /* Todas las medallas con width 100%: flex las achica por igual y entran en la fila */
+    .medalla {
+        width: 100%;
+    }
+
+    .titulo-sprint2 h1 {
+        font-size: 28px;
+    }
+
+    .titulo-sprint2 p {
+        width: 100%;
+    }
+
+    .caja-carga {
+        width: 90%;
+    }
+
+    /* Lo que estaba en fila pasa a columna */
+    .fila-rango,
+    .encabezado-grupo,
+    .miembro,
+    .encabezado-mis-cursos {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .link-rango {
+        width: 100%;
+    }
+
+    /* El link y su botón, y las tareas y su botón, uno abajo del otro */
+    .link-rango,
+    .fila-tareas {
+        grid-template-columns: 1fr;
+    }
+
+    /* Los rangos de abajo se corren menos a la derecha para que entren en la pantalla */
+    .profundidad-1 { margin-left: 10px; }
+    .profundidad-2 { margin-left: 20px; }
+    .profundidad-3 { margin-left: 30px; }
+    .profundidad-4 { margin-left: 40px; }
+
+    .form-rango,
+    .lista-mis-cursos {
+        grid-template-columns: 1fr;
+    }
 }
