@@ -1,10 +1,10 @@
 @{
     ViewData["Title"] = "Una sola pregunta más";
-    List<string> opciones = ViewBag.Opciones;
 }
-
-<link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/completar.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/completar.css" asp-append-version="true" />
+}
 
 <div class="pagina-completar">
 
@@ -30,9 +30,9 @@
                 <div class="campo">
                     <p class="pregunta-campo">¿Qué es lo que más tiempo te lleva en el día?</p>
                     <div class="opciones opciones-columna">
-                        @foreach (string opcion in opciones)
+                        @foreach (string opcion in ViewBag.Opciones)
                         {
-                            <label class="eleccion"><input type="radio" name="Opcion" value="@opcion" /> @opcion</label>
+                            <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="Opcion" value="@opcion" /> @opcion</label>
                         }
                     </div>
                     <input class="otro" type="text" name="Otra" maxlength="80" placeholder="Otra cosa (opcional)" />

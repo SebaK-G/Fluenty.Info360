@@ -8,4 +8,6 @@ public class MensajesChat
     public string Rol { get; set; }
     public string Texto { get; set; }
     public DateTime Fecha { get; set; }
+    // No es columna: el texto cortado en renglones, para mostrar cada uno como un párrafo (lo arma LogicaAsistente)
+    public List<string> Parrafos { get; set; }
 }

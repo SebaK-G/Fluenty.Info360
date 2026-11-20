@@ -8,32 +8,22 @@ public class EmpleadosController : Controller
 {
     public IActionResult Index()
     {
-        string idRangoTexto = HttpContext.Session.GetString("IdRango");
-        if (HttpContext.Session.GetString("IdUsuario") == null || idRangoTexto == null || idRangoTexto == "")
+        if (HttpContext.Session.GetString("IdUsuario") == null)
         {
             return RedirectToAction("Acceso", "Home");
         }
-        BD bd = new BD();
+        int idUsuario = int.Parse(HttpContext.Session.GetString("IdUsuario"));
         int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
-        List<int> idsDeAbajo = new List<int>();
-        foreach (Rangos rango in Arbol.Debajo(bd.TraerRangosEmpresa(idEmpresa), int.Parse(idRangoTexto)))
-        {
-            idsDeAbajo.Add(rango.IdRango);
-        }
-        if (idsDeAbajo.Count == 0)
+        int idRango = int.Parse(HttpContext.Session.GetString("IdRango"));
+        bool esDueno = HttpContext.Session.GetString("TipoUsuario") == "Empleador";
+
+        string idsRangos = LogicaEmpleados.RangosDeAbajo(idEmpresa, idRango);
+        if (idsRangos == "")
         {
             return RedirectToAction("Index", "Home");
         }
-
-        List<EmpleadoCurso> equipo = new List<EmpleadoCurso>();
-        foreach (EmpleadoCurso miembro in bd.TraerMiembrosEmpresa(idEmpresa))
-        {
-            if (Funciones.EstaEnLista(idsDeAbajo, miembro.IdRango))
-            {
-                equipo.Add(miembro);
-            }
-        }
-        ViewBag.Equipo = equipo;
+        ViewBag.Equipo = LogicaEmpleados.TraerEquipo(idsRangos);
+        ViewBag.Menu = Menu.Armar(idUsuario, idRango, esDueno);
         return View();
     }
 }

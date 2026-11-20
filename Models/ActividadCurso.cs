@@ -1,6 +1,6 @@
 namespace Fluenty.Info360.Models;
 
-// Lo que devuelve sp_TraerActividadesEmpresa: un curso confirmado y para quién
+// Lo que devuelve sp_TraerActividadesRangos: un curso confirmado y para quién
 public class ActividadCurso
 {
     public int IdCurso { get; set; }

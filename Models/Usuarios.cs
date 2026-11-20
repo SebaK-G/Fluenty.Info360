@@ -23,4 +23,6 @@ public class Usuarios
     public DateTime UltimoDiaActivo { get; set; }
     public int PedidosIAHoy { get; set; }
     public DateTime FechaPedidosIA { get; set; }
+    // No es columna: en Curso/Ver marca a la persona de la que se está mirando el camino
+    public bool Elegida { get; set; }
 }

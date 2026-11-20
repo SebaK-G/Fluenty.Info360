@@ -29,6 +29,17 @@ public class Tarjetas
     public int Intentos { get; set; }
     public int VecesReexplicada { get; set; }
 
+    // No son columnas: las arma LogicaLeccion para que la vista solo tenga que mostrarlas
+    public bool EsDePregunta { get; set; }
+    // Si ya está resuelta: una tarjeta que solo explica, o una pregunta/práctica que ya hizo bien
+    public bool Resuelta { get; set; }
+    // El cartelito de arriba ("💡 Para arrancar", "🤔 ¿Cuál es mejor?"...)
+    public string Etiqueta { get; set; }
+    // Lo que se lee en voz alta con "Escuchar"
+    public string TextoParaLeer { get; set; }
+    // El ejemplo cortado en pasos (un renglón por paso)
+    public List<string> PasosEjemplo { get; set; }
+
     // Los tipos que son preguntas (se responden eligiendo una opción)
     public static readonly string[] TiposPregunta = { "opcion", "verdaderofalso", "completar", "error", "mejorrespuesta" };
 

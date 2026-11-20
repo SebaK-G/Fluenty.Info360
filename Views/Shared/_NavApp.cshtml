@@ -1,57 +1,33 @@
 @model string
-@using Fluenty.Info360.Models
 @*
     Menú de arriba, igual para todos los rangos (sprint 2). Model = el botón que va marcado.
+    Lo que ve cada uno lo arma el controller con Menu.Armar y llega en ViewBag.Menu.
     - El dueño ve Equipo (para armar el árbol de rangos).
     - Quien tiene rangos abajo ve Equipo, Cursos y Empleados.
     - Quien tiene un curso confirmado ve "Mi curso" (o "Mis cursos" si tiene varios).
     - Todos ven Explorar (el buscador de cursos públicos) y Asistente (el chat con la IA), sprint 3.
     - El rango más bajo ve Home, Mi curso, Explorar, Asistente y Salir.
 *@
-@{
-    bool esDueno = Context.Session.GetString("TipoUsuario") == "Empleador";
-    bool gestiona = false;
-    int idCursoPropio = 0;
-    int cantidadCursos = 0;
-    string idEmpresaTexto = Context.Session.GetString("IdEmpresa");
-    string idRangoTexto = Context.Session.GetString("IdRango");
-    string idUsuarioTexto = Context.Session.GetString("IdUsuario");
-    if (idEmpresaTexto != null && idUsuarioTexto != null)
-    {
-        BD bd = new BD();
-        if (idRangoTexto != null && idRangoTexto != "")
-        {
-            gestiona = Arbol.TieneRangosAbajo(bd.TraerRangosEmpresa(int.Parse(idEmpresaTexto)), int.Parse(idRangoTexto));
-        }
-        // "Mis cursos": si tiene uno solo va directo a ese curso; si tiene varios, a la lista del Home
-        List<CursoInscripto> misCursos = bd.TraerCursosUsuario(int.Parse(idUsuarioTexto));
-        cantidadCursos = misCursos.Count;
-        if (cantidadCursos == 1)
-        {
-            idCursoPropio = misCursos[0].IdCurso;
-        }
-    }
-}
 <nav class="nav-app">
     <a href='@Url.Action("Index", "Home")' class='@(Model == "Home" ? "activo" : "")'>Home</a>
-    @if (esDueno || gestiona)
+    @if (ViewBag.Menu.EsDueno || ViewBag.Menu.Gestiona)
     {
         <a href='@Url.Action("Index", "Equipo")' class='@(Model == "Equipo" ? "activo" : "")'>Equipo</a>
     }
-    @if (gestiona)
+    @if (ViewBag.Menu.Gestiona)
     {
         <a href='@Url.Action("Index", "Curso")' class='@(Model == "Cursos" ? "activo" : "")'>Cursos</a>
         <a href='@Url.Action("Index", "Empleados")' class='@(Model == "Empleados" ? "activo" : "")'>Empleados</a>
     }
-    @if (cantidadCursos == 1)
+    @if (ViewBag.Menu.CantidadCursos == 1)
     {
-        <a href='@Url.Action("Ver", "Curso", new { IdCurso = idCursoPropio })' class='@(Model == "MiCurso" ? "activo" : "")'>Mi curso</a>
+        <a href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Menu.IdCursoPropio })' class='@(Model == "MiCurso" ? "activo" : "")'>Mi curso</a>
     }
-    else if (cantidadCursos > 1)
+    else if (ViewBag.Menu.CantidadCursos > 1)
     {
         <a href='@Url.Action("Index", "Home")#mis-cursos' class='@(Model == "MiCurso" ? "activo" : "")'>Mis cursos</a>
     }
     <a href='@Url.Action("Buscar", "CursoPublico")' class='@(Model == "Explorar" ? "activo" : "")'>Explorar</a>
     <a href='@Url.Action("Index", "Asistente")' class='@(Model == "Asistente" ? "activo" : "")'>Asistente</a>
     <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
-</nav>
+</nav>

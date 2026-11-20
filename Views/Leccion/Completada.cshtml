@@ -1,16 +1,15 @@
 @{
-    bool aprobo = ViewBag.Aprobo;
-    bool esExamen = ViewBag.EsExamen;
-    ViewData["Title"] = aprobo ? (esExamen ? "¡Examen aprobado!" : "¡Lección terminada!") : "Examen no aprobado";
+    ViewData["Title"] = ViewBag.Aprobo ? (ViewBag.EsExamen ? "¡Examen aprobado!" : "¡Lección terminada!") : "Examen no aprobado";
+}
+@section Estilos {
+    <link rel="stylesheet" href="~/css/leccion.css" asp-append-version="true" />
 }
 
-<link rel="stylesheet" href="~/css/leccion.css" asp-append-version="true" />
-
 <div class="reproductor festejo">
-    @if (aprobo)
+    @if (ViewBag.Aprobo)
     {
-        <div class="medalla-grande">@(esExamen ? "🏆" : "✓")</div>
-        <h1>@(esExamen ? "¡Aprobaste el examen!" : "¡Lección terminada!")</h1>
+        <div class="medalla-grande">@(ViewBag.EsExamen ? "🏆" : "✓")</div>
+        <h1>@(ViewBag.EsExamen ? "¡Aprobaste el examen!" : "¡Lección terminada!")</h1>
     }
     else
     {
@@ -23,13 +22,13 @@
     <p class="nota-final">@ViewBag.Nota%</p>
     <p class="detalle-nota">
         Contestaste bien a la primera @ViewBag.AciertosPrimera de @ViewBag.Preguntas @(ViewBag.Preguntas == 1 ? "pregunta" : "preguntas").
-        @if (esExamen)
+        @if (ViewBag.EsExamen)
         {
             <span>Para aprobar hace falta @ViewBag.NotaMinima%.</span>
         }
     </p>
 
-    @if (aprobo)
+    @if (ViewBag.Aprobo)
     {
         <div class="premios">
             <div class="premio">
@@ -50,7 +49,7 @@
         }
         else
         {
-            <p class="aviso-festejo">El XP sale de cómo te fue: 10 por cada pregunta bien a la primera y 4 por cada una que aprendiste después de equivocarte@(esExamen ? ", más 20 por aprobar el examen" : "").</p>
+            <p class="aviso-festejo">El XP sale de cómo te fue: 10 por cada pregunta bien a la primera y 4 por cada una que aprendiste después de equivocarte@(ViewBag.EsExamen ? ", más 20 por aprobar el examen" : "").</p>
         }
 
         @if (ViewBag.Ofrecer == "saltar")
@@ -79,7 +78,7 @@
         <div class="botones-festejo">
             @if (ViewBag.Proxima != null)
             {
-                <a class="boton-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Proxima.IdLeccion })' onclick="document.getElementById('carga').style.display='flex'">Seguir con: @ViewBag.Proxima.Titulo</a>
+                <a class="boton-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Proxima.IdLeccion })' onclick="mostrarCarga()">Seguir con: @ViewBag.Proxima.Titulo</a>
             }
             <a class="boton-secundario" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })'>Volver a mi curso</a>
         </div>
@@ -89,7 +88,7 @@
     {
         <p class="aviso-festejo">No pasa nada: repasá las lecciones de la unidad y volvé a rendirlo. Te armamos un examen nuevo, con otras preguntas, así no se puede pasar de memoria.</p>
         <div class="botones-festejo">
-            <a class="boton-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Leccion.IdLeccion })' onclick="document.getElementById('carga').style.display='flex'">Volver a rendir</a>
+            <a class="boton-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = ViewBag.Leccion.IdLeccion })' onclick="mostrarCarga()">Volver a rendir</a>
             <a class="boton-secundario" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })'>Repasar la unidad</a>
         </div>
     }
@@ -101,8 +100,3 @@
         <p>Preparando la próxima lección...</p>
     </div>
 </div>
-<script>
-    window.onpageshow = function () {
-        document.getElementById("carga").style.display = "none";
-    };
-</script>

@@ -3,9 +3,9 @@ using Fluenty.Info360.Models;
 
 namespace Fluenty.Info360.Controllers;
 
+// Sprint 2: cada uno se une con el link de SU RANGO (la lógica está en Models/LogicaFormulario.cs)
 public class FormularioController : Controller
 {
-    // ============ Sprint 2: cada uno se une con el link de SU RANGO ============
     public IActionResult Unirse(string Codigo)
     {
         BD bd = new BD();
@@ -17,12 +17,11 @@ public class FormularioController : Controller
         ViewBag.Rango = rango;
         // Las casillas de herramientas salen del catálogo
         ViewBag.Herramientas = bd.TraerHerramientas();
+        ViewBag.Mensaje = "";
         return View();
     }
 
-    // Herramientas llega con el IdHerramienta de cada casilla tildada (puede venir vacío).
-    // Sprint 2: el formulario es más corto (casi todo opciones) porque capaz al empleado lo obligan y no tiene ganas.
-    // Las preguntas que se sacaron quedan vacías en la base; la IA usa lo que el dueño contó del rango.
+    // Herramientas llega con el IdHerramienta de cada casilla tildada (puede venir vacío)
     [HttpPost]
     public IActionResult Unirse(string Codigo, string Nombre, string Apellido, string Email, string Dni, string Telefono, string Contrasena,
         string Puesto, string Area, string[] Tareas, string OtraTarea, string TareaConcreta, int[] Herramientas, string DatosClientes,
@@ -35,84 +34,48 @@ public class FormularioController : Controller
             return View("LinkInvalido");
         }
 
-        if (bd.ExisteUsuarioDuplicado(Email, Dni, Telefono))
+        Usuarios usuario = new Usuarios();
+        usuario.Nombre = Funciones.Limpiar(Nombre);
+        usuario.Apellido = Funciones.Limpiar(Apellido);
+        usuario.Email = Funciones.Limpiar(Email);
+        usuario.Dni = Funciones.Limpiar(Dni);
+        usuario.Telefono = Funciones.Limpiar(Telefono);
+        usuario.Contrasena = Contrasena;
+        usuario.Puesto = Funciones.Limpiar(Puesto);
+        usuario.IdRango = rango.IdRango;
+
+        FormulariosEmpleado formulario = new FormulariosEmpleado();
+        formulario.NivelIA = NivelIA;
+        formulario.Area = Funciones.Limpiar(Area);
+        formulario.TareaConcreta = TareaConcreta;
+        formulario.DatosClientes = Funciones.Limpiar(DatosClientes);
+        formulario.ComodidadTecnologia = Funciones.Limpiar(ComodidadTecnologia);
+        formulario.RangoEdad = Funciones.Limpiar(RangoEdad);
+        formulario.TiempoXDia = TiempoXDia;
+        formulario.Hobbies = Hobbies;
+
+        string error = LogicaFormulario.Validar(usuario, formulario);
+        if (error != "")
         {
             ViewBag.Rango = rango;
             ViewBag.Herramientas = bd.TraerHerramientas();
-            ViewBag.Mensaje = "Ya existe un usuario con ese email, DNI o teléfono.";
+            ViewBag.Mensaje = error;
             return View();
         }
+        int idUsuario = LogicaFormulario.Registrar(usuario, formulario, Tareas, OtraTarea, Herramientas, PreocupacionIA);
 
-        // Las tareas que tocó, más la que escribió en "Otra"
-        string tareas = Juntar(Tareas);
-        if (!DatosIA.EsFloja(OtraTarea))
-        {
-            if (tareas != "")
-            {
-                tareas = tareas + "; ";
-            }
-            tareas = tareas + Funciones.Limpiar(OtraTarea);
-        }
-
-        // 1. Creamos su usuario con rol Empleado, en la empresa y el rango del link
-        Usuarios usuario = new Usuarios();
-        usuario.Nombre = Nombre;
-        usuario.Apellido = Apellido;
-        usuario.Email = Email;
-        usuario.IdRango = rango.IdRango;
-        usuario.Dni = Dni;
-        usuario.Telefono = Telefono;
-        usuario.Contrasena = Contrasena;
-        usuario.Rol = "Empleado";
-        usuario.Puesto = Puesto;
-        int idUsuario = bd.Signup(usuario);
-
-        // 2. Guardamos su formulario (lo opcional que no completó queda vacío)
-        FormulariosEmpleado formulario = new FormulariosEmpleado();
-        formulario.IdUsuario = idUsuario;
-        formulario.NivelIA = NivelIA;
-        formulario.Area = Area;
-        formulario.Tareas = DatosIA.Recortar(tareas, 250);
-        formulario.TareaConcreta = DatosIA.Recortar(Texto(TareaConcreta), 500);
-        formulario.DatosClientes = DatosClientes;
-        formulario.ComodidadTecnologia = ComodidadTecnologia;
-        formulario.RangoEdad = RangoEdad;
-        formulario.PreocupacionIA = DatosIA.Recortar(Juntar(PreocupacionIA), 250);
-        formulario.TiempoXDia = TiempoXDia;
-        formulario.Hobbies = Texto(Hobbies);
-        formulario.Dificultades = "";
-        formulario.Objetivos = "";
-        formulario.DificultadPrincipal = "";
-        formulario.MejoraEmpresa = "";
-        formulario.FortalezasDebilidades = "";
-        formulario.MejoraPersonal = "";
-        formulario.ComoAprende = "";
-        formulario.DiaTipico = "";
-        bd.AgregarFormularioEmpleado(formulario);
-
-        // 3. Las herramientas que tildó, en la tabla intermedia HerramientasXUsuario
-        if (Herramientas != null)
-        {
-            foreach (int idHerramienta in Herramientas)
-            {
-                bd.AgregarHerramientaUsuario(idUsuario, idHerramienta);
-            }
-        }
-
-        // 4. Si no contó qué es lo que más tiempo le come (o puso "nada", "asd"...),
-        //    le hacemos UNA pregunta más, con opciones para tocar. Se puede saltear.
-        if (DatosIA.EsFloja(TareaConcreta))
+        // Si no contó qué es lo que más tiempo le come, le hacemos UNA pregunta más (se puede saltear)
+        if (LogicaFormulario.HaceFaltaUnaMas(formulario))
         {
             HttpContext.Session.SetString("IdUsuarioNuevo", idUsuario.ToString());
-            HttpContext.Session.SetString("NombreNuevo", Nombre);
+            HttpContext.Session.SetString("NombreNuevo", usuario.Nombre);
             return RedirectToAction("UnaMas");
         }
-
-        ViewBag.Nombre = Nombre;
+        ViewBag.Nombre = usuario.Nombre;
         return View("Listo");
     }
 
-    // ============ La pregunta de más (solo si dejó floja la tarea que más tiempo le come) ============
+    // La pregunta de más (solo si dejó floja la tarea que más tiempo le come)
     public IActionResult UnaMas()
     {
         string idTexto = HttpContext.Session.GetString("IdUsuarioNuevo");
@@ -120,27 +83,7 @@ public class FormularioController : Controller
         {
             return RedirectToAction("Acceso", "Home");
         }
-        BD bd = new BD();
-        FormulariosEmpleado formulario = bd.TraerFormularioEmpleado(int.Parse(idTexto));
-
-        // Si tocó tareas, elige entre esas; si no, entre las más comunes
-        List<string> opciones = new List<string>();
-        if (formulario != null && !DatosIA.EsFloja(formulario.Tareas))
-        {
-            // Las tareas se guardan juntas separadas por ";"
-            opciones = Funciones.Separar(formulario.Tareas, ";");
-        }
-        if (opciones.Count < 2)
-        {
-            opciones.Clear();
-            opciones.Add("Responder mensajes o mails");
-            opciones.Add("Armar presupuestos o cotizaciones");
-            opciones.Add("Pasar o cargar datos a planillas");
-            opciones.Add("Armar reportes o resúmenes");
-            opciones.Add("Atender y responder dudas de clientes");
-            opciones.Add("Organizar la agenda, turnos o pedidos");
-        }
-        ViewBag.Opciones = opciones;
+        ViewBag.Opciones = LogicaFormulario.OpcionesUnaMas(int.Parse(idTexto));
         ViewBag.Nombre = HttpContext.Session.GetString("NombreNuevo");
         return View();
     }
@@ -153,20 +96,7 @@ public class FormularioController : Controller
         {
             return RedirectToAction("Acceso", "Home");
         }
-        string tarea = Opcion;
-        if (!DatosIA.EsFloja(Otra))
-        {
-            tarea = Funciones.Limpiar(Otra);
-        }
-        if (!DatosIA.EsFloja(tarea))
-        {
-            if (!DatosIA.EsFloja(Detalle))
-            {
-                tarea = tarea + ": " + Funciones.Limpiar(Detalle);
-            }
-            BD bd = new BD();
-            bd.ActualizarTareaConcreta(int.Parse(idTexto), DatosIA.Recortar(tarea, 500));
-        }
+        LogicaFormulario.GuardarUnaMas(int.Parse(idTexto), Opcion, Otra, Detalle);
         return Terminar();
     }
 
@@ -182,29 +112,5 @@ public class FormularioController : Controller
         HttpContext.Session.Remove("IdUsuarioNuevo");
         HttpContext.Session.Remove("NombreNuevo");
         return View("Listo");
-    }
-
-    // Un campo opcional que no completó llega en null: lo guardamos vacío
-    private string Texto(string valor)
-    {
-        return Funciones.Limpiar(valor);
-    }
-
-    // Junta las casillas tildadas en un solo texto: "Con ejemplos prácticos; Directo al grano"
-    private string Juntar(string[] opciones)
-    {
-        string texto = "";
-        if (opciones != null)
-        {
-            foreach (string opcion in opciones)
-            {
-                if (texto != "")
-                {
-                    texto = texto + "; ";
-                }
-                texto = texto + opcion;
-            }
-        }
-        return texto;
     }
 }

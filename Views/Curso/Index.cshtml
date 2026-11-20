@@ -2,9 +2,10 @@
 @{
     ViewData["Title"] = "Cursos";
 }
-
-<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+}
 
 <div class="pagina-curso">
 
@@ -24,7 +25,7 @@
             <p>La IA arma un curso para todo el rango con lo que contó cada persona, y nivela a cada uno: cada persona arranca en la unidad que le corresponde.</p>
         </section>
 
-        @if (ViewBag.Mensaje != null)
+        @if (ViewBag.Mensaje != "")
         {
             <p class="aviso">@ViewBag.Mensaje</p>
         }
@@ -55,7 +56,7 @@
                                     <input type="text" id="Tema-@grupo.Rango.IdRango" name="Tema" maxlength="300" placeholder="Ej.: automatizar tareas cotidianas con IA" />
                                     <label for="Categoria-@grupo.Rango.IdRango">Categoría</label>
                                     <select id="Categoria-@grupo.Rango.IdRango" name="Categoria">
-                                        @foreach (string categoria in Cursos.Categorias)
+                                        @foreach (string categoria in ViewBag.Categorias)
                                         {
                                             <option value="@categoria">@categoria</option>
                                         }
@@ -101,7 +102,7 @@
                                 {
                                     <span class="estado-grupo">Sin formulario</span>
                                 }
-                                else if (grupo.EstaSinAsignar(miembro.IdUsuario))
+                                else if (miembro.SinAsignar)
                                 {
                                     <form method="post" action='@Url.Action("Sumar", "Curso")' onsubmit="mostrarCarga()">
                                         <input type="hidden" name="IdCurso" value="@grupo.Curso.IdCurso" />
@@ -111,11 +112,10 @@
                                 }
                                 else if (miembro.IdCurso > 0)
                                 {
-                                    string actividad = miembro.Actividad();
                                     <span class="estado-grupo">@miembro.Progreso% · ⚡ @miembro.XP XP</span>
-                                    @if (actividad != "")
+                                    @if (miembro.TextoActividad != "")
                                     {
-                                        <span class="estado-grupo estado-quieto">⏸ @actividad</span>
+                                        <span class="estado-grupo estado-quieto">⏸ @miembro.TextoActividad</span>
                                     }
                                 }
                             </div>
@@ -141,17 +141,6 @@
     </div>
 </div>
 
-<script>
-    function mostrarCarga() {
-        document.getElementById("carga").style.display = "flex";
-    }
-    window.onpageshow = function () {
-        document.getElementById("carga").style.display = "none";
-    };
-    // Muestra u oculta el tema y la categoría según si el curso es público
-    function mostrarPublico(idRango, publico) {
-        const caja = document.getElementById("publico-" + idRango);
-        caja.style.display = publico ? "block" : "none";
-        document.getElementById("Tema-" + idRango).required = publico;
-    }
-</script>
+@section Scripts {
+    <script src="~/js/curso.js" asp-append-version="true"></script>
+}

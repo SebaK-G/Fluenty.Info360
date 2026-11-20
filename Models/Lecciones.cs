@@ -16,6 +16,9 @@ public class Lecciones
     // Si Intentos es 0 todavía no la rindió (y Nota queda en 0)
     public int Nota { get; set; }
     public int Intentos { get; set; }
+    // Para mostrar el camino (los arma LogicaCurso): el ícono del círculo y si la persona la puede abrir
+    public string Icono { get; set; }
+    public bool SePuedeHacer { get; set; }
 
     // El estado con el que arranca cada lección cuando alguien se suma a un curso:
     // las unidades de antes de donde arranca quedan como "YaSabe", la primera lección de su unidad "Disponible"

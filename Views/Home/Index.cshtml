@@ -2,8 +2,9 @@
 @{
     ViewData["Title"] = "Home";
 }
-
-<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+}
 
 <div class="panel-principal">
 
@@ -198,12 +199,3 @@
         <div class="barra-carga"><span></span></div>
     </div>
 </div>
-
-<script>
-    function mostrarCarga() {
-        document.getElementById("carga").style.display = "flex";
-    }
-    window.onpageshow = function () {
-        document.getElementById("carga").style.display = "none";
-    };
-</script>

@@ -103,4 +103,60 @@ public static class Funciones
         }
         return false;
     }
+
+    // Pasa "2,5", "2.5", "15.000" o "$ 15.000,50" a número. Si no es un número, devuelve -1 (y la validación lo rechaza).
+    // Se arma a mano, cifra por cifra, para que funcione igual en cualquier compu
+    // (en algunas la coma es el decimal y en otras es el punto).
+    public static decimal LeerNumero(string texto)
+    {
+        texto = Funciones.Limpiar(texto).Replace("$", "").Replace(" ", "");
+        // Cuántos puntos tiene: el largo del texto menos el largo sin los puntos
+        int puntos = texto.Length - texto.Replace(".", "").Length;
+        if (texto.IndexOf(",") >= 0)
+        {
+            // Con coma: la coma es el decimal y los puntos son de miles ("15.000,50")
+            texto = texto.Replace(".", "").Replace(",", ".");
+        }
+        else if (puntos > 1 || (puntos == 1 && texto.Length - texto.IndexOf(".") == 4))
+        {
+            // Varios puntos, o uno solo con 3 cifras después: son de miles ("1.500.000", "15.000")
+            texto = texto.Replace(".", "");
+        }
+        if (texto == "")
+        {
+            return -1;
+        }
+
+        decimal numero = 0;
+        decimal divisor = 1;
+        bool despuesDelPunto = false;
+        for (int i = 0; i < texto.Length; i++)
+        {
+            string caracter = texto.Substring(i, 1);
+            if (caracter == ".")
+            {
+                if (despuesDelPunto)
+                {
+                    return -1; // dos puntos decimales: no es un número
+                }
+                despuesDelPunto = true;
+            }
+            else
+            {
+                // La posición en "0123456789" es justo el valor de la cifra ("7" está en la posición 7)
+                int cifra = "0123456789".IndexOf(caracter);
+                if (cifra < 0)
+                {
+                    return -1; // una letra u otro símbolo
+                }
+                numero = numero * 10 + cifra;
+                if (despuesDelPunto)
+                {
+                    divisor = divisor * 10;
+                }
+            }
+        }
+        // "2.5" se leyó como 25 con divisor 10: 25 / 10 = 2,5
+        return numero / divisor;
+    }
 }

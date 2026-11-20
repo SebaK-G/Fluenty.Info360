@@ -351,3 +351,16 @@
         width: 1200px;
     }
 }
+
+/* La lista de chats y los mensajes van dentro de un div (así asistente.js les agrega los nuevos) */
+.items-chats {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.historial-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}

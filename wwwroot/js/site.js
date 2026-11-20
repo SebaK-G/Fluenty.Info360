@@ -1,34 +1,43 @@
-﻿function mostrarFormulario(tipo) {
-    var login = document.getElementById('form-login');
-    var registro = document.getElementById('form-registro');
-    // Solo la pantalla de acceso tiene estos formularios: en las demás no hacemos nada
-    if (login == null || registro == null) {
-        return;
-    }
-    if (tipo === 'login') {
-        login.hidden = false;
-        registro.hidden = true;
-    } else {
-        login.hidden = true;
-        registro.hidden = false;
+// Funciones que usan varias pantallas. Este archivo lo carga _Layout.cshtml en todas las páginas.
+
+// Muestra el cartel de "cargando" mientras la IA trabaja.
+// Las pantallas que lo usan tienen un <div id="carga">. Si mandan un texto, se muestra en id="texto-carga".
+function mostrarCarga(texto) {
+    document.getElementById("carga").style.display = "flex";
+    let textoCarga = document.getElementById("texto-carga");
+    if (texto != undefined && textoCarga != null) {
+        textoCarga.innerHTML = texto;
     }
 }
-window.onload = function () {
-mostrarFormulario('login');
+
+function ocultarCarga() {
+    let carga = document.getElementById("carga");
+    if (carga != null) {
+        carga.style.display = "none";
+    }
+}
+
+// Si la persona vuelve con el botón "atrás" del navegador, la página se muestra como la dejó:
+// por eso cerramos el cartel de carga cada vez que la página se vuelve a mostrar.
+window.onpageshow = function () {
+    ocultarCarga();
 };
 
-// Formularios: pinta de azul la opción elegida (le pone la clase "elegida" a su label).
-// Cuando se toca un radio, se despinta el resto del mismo grupo.
-document.addEventListener('change', function (evento) {
-    var input = evento.target;
-    if (input.closest == null || input.closest('.eleccion') == null) {
-        return;
-    }
-    if (input.type === 'radio') {
-        var grupo = document.querySelectorAll('input[name="' + input.name + '"]');
-        for (var i = 0; i < grupo.length; i++) {
-            grupo[i].closest('.eleccion').classList.remove('elegida');
+// Formularios: pinta de azul las opciones elegidas (los <label class="eleccion"> con un radio o checkbox adentro).
+// Cada input llama a esta función cuando cambia (onchange).
+function pintarElecciones() {
+    let opciones = document.getElementsByClassName("eleccion");
+    for (let i = 0; i < opciones.length; i++) {
+        let input = opciones[i].getElementsByTagName("input")[0];
+        if (input.checked) {
+            opciones[i].className = "eleccion elegida";
+        } else {
+            opciones[i].className = "eleccion";
         }
     }
-    input.closest('.eleccion').classList.toggle('elegida', input.checked);
-});
+}
+
+// Desactiva un botón (por ejemplo, para que no se mande dos veces un formulario mientras carga)
+function desactivarBoton(idBoton) {
+    document.getElementById(idBoton).disabled = true;
+}

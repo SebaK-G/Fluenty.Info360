@@ -2,9 +2,10 @@
 @{
     ViewData["Title"] = "Crea tu curso con IA";
 }
-
-<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
+}
 
 <div class="pagina-curso">
 
@@ -22,6 +23,11 @@
             <h1>Contanos sobre tu equipo</h1>
             <p>La IA va a usar estas respuestas en todos los cursos que genere para tu empresa. Lo completás una sola vez.</p>
         </section>
+
+        @if (ViewBag.Error != "")
+        {
+            <p class="aviso">@ViewBag.Error</p>
+        }
 
         <form method="post" action='@Url.Action("FormularioEmpresa", "Curso")'>
 
@@ -54,7 +60,7 @@
                     <div class="opciones">
                         @foreach (Herramientas herramienta in ViewBag.Herramientas)
                         {
-                            <label class="eleccion"><input type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                            <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
                         }
                     </div>
                 </div>

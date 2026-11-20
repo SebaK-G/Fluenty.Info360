@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Fluenty.Info360.Models;
 
@@ -6,106 +5,48 @@ namespace Fluenty.Info360.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    public HomeController(ILogger<HomeController> logger){
-        _logger = logger;
-    }
-    public IActionResult Privacy(){
-        return View();
-    }
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error(){
         return View();
     }
 
-    // Sprint 2: el mismo Home para todos los rangos.
+    // Sprint 2: el mismo Home para todos los rangos (la lógica está en Models/LogicaHome.cs).
     // Si tiene rangos abajo, ve los números de su gente; si tiene un curso, ve su avance, XP y racha.
     public IActionResult Index(){
         // Si no hay nadie logueado, lo mandamos al login
-        if (HttpContext.Session.GetString("IdEmpresa") == null){
+        if (HttpContext.Session.GetString("IdUsuario") == null){
             return RedirectToAction("Acceso");
         }
-        int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
         int idUsuario = int.Parse(HttpContext.Session.GetString("IdUsuario"));
+        int idEmpresa = int.Parse(HttpContext.Session.GetString("IdEmpresa"));
+        int idRango = int.Parse(HttpContext.Session.GetString("IdRango"));
+        bool esDueno = HttpContext.Session.GetString("TipoUsuario") == "Empleador";
         BD bd = new BD();
 
         ViewBag.Nombre = HttpContext.Session.GetString("Nombre");
         ViewBag.NombreEmpresa = bd.TraerNombreEmpresa(idEmpresa);
-        ViewBag.EsDueno = HttpContext.Session.GetString("TipoUsuario") == "Empleador";
+        ViewBag.EsDueno = esDueno;
         ViewBag.MesesRestantes = bd.TraerMesesRestantesPlan();
 
-        // ----- Su gente: las personas de los rangos que tiene abajo -----
-        List<Rangos> rangos = bd.TraerRangosEmpresa(idEmpresa);
-        List<int> idsDeAbajo = new List<int>();
-        string idRangoTexto = HttpContext.Session.GetString("IdRango");
-        if (idRangoTexto != null && idRangoTexto != ""){
-            foreach (Rangos rango in Arbol.Debajo(rangos, int.Parse(idRangoTexto))){
-                idsDeAbajo.Add(rango.IdRango);
-            }
-        }
-        ViewBag.Gestiona = idsDeAbajo.Count > 0;
-        ViewBag.CantidadRangos = idsDeAbajo.Count;
+        // Su gente: las personas de los rangos que tiene abajo
+        ResumenEquipo resumen = LogicaHome.ArmarResumen(idEmpresa, idRango);
+        ViewBag.Gestiona = resumen.CantidadRangos > 0;
+        ViewBag.CantidadRangos = resumen.CantidadRangos;
+        ViewBag.CantidadPersonas = resumen.CantidadPersonas;
+        ViewBag.EnCapacitacion = resumen.EnCapacitacion;
+        ViewBag.EsperandoCurso = resumen.EsperandoCurso;
+        ViewBag.CantidadCursos = resumen.CantidadCursos;
+        ViewBag.Quietos = resumen.Quietos;
+        ViewBag.Actividades = resumen.Actividades;
 
-        int personas = 0;
-        int enCapacitacion = 0;
-        int esperando = 0;
-        List<int> cursos = new List<int>();
-        // Los que tienen curso y no avanzan (no empezaron o hace una semana que no hacen nada)
-        List<string> quietos = new List<string>();
-        foreach (EmpleadoCurso miembro in bd.TraerMiembrosEmpresa(idEmpresa)){
-            if (Funciones.EstaEnLista(idsDeAbajo, miembro.IdRango)){
-                personas++;
-                if (miembro.EstadoCurso == "Confirmado"){
-                    enCapacitacion++;
-                    if (!Funciones.EstaEnLista(cursos, miembro.IdCurso)){
-                        cursos.Add(miembro.IdCurso);
-                    }
-                    if (miembro.Actividad() != ""){
-                        quietos.Add(miembro.Nombre + " " + miembro.Apellido + ": " + miembro.Actividad().ToLower());
-                    }
-                }
-                else if (miembro.TieneFormulario){
-                    esperando++;
-                }
-            }
-        }
-        ViewBag.CantidadPersonas = personas;
-        ViewBag.EnCapacitacion = enCapacitacion;
-        ViewBag.EsperandoCurso = esperando;
-        ViewBag.CantidadCursos = cursos.Count;
-        ViewBag.Quietos = quietos;
-
-        // Actividades recientes: los últimos 5 cursos asignados en sus rangos
-        List<string> actividades = new List<string>();
-        foreach (ActividadCurso actividad in bd.TraerActividadesEmpresa(idEmpresa)){
-            if (actividades.Count < 5 && Funciones.EstaEnLista(idsDeAbajo, actividad.IdRango)){
-                actividades.Add("Curso \"" + actividad.Titulo + "\" asignado a " + actividad.Nombre + " " + actividad.Apellido);
-            }
-        }
-        ViewBag.Actividades = actividades;
-
-        // ----- Sus cursos (el que le asignó su rango de arriba y los que sume después) -----
+        // Sus cursos (el que le asignó su rango de arriba y los que sumó después)
         Usuarios yo = bd.TraerEmpleado(idUsuario);
         ViewBag.XP = yo.XP;
         ViewBag.Racha = yo.Racha;
-        List<CursoInscripto> misCursos = bd.TraerCursosUsuario(idUsuario);
-        foreach (CursoInscripto curso in misCursos){
-            // La próxima lección para hacer en cada curso (null si ya lo terminó)
-            curso.Proxima = null;
-            foreach (Lecciones leccion in bd.TraerLeccionesUsuario(curso.IdCurso, idUsuario)){
-                if (leccion.Estado == "Disponible" && curso.Proxima == null){
-                    curso.Proxima = leccion;
-                }
-            }
-        }
-        ViewBag.MisCursos = misCursos;
+        ViewBag.MisCursos = LogicaHome.TraerMisCursos(idUsuario);
 
+        ViewBag.Menu = Menu.Armar(idUsuario, idRango, esDueno);
         return View();
-    }
-
-    // El panel del empleado ahora es el mismo Home
-    public IActionResult PanelEmpleado(){
-        return RedirectToAction("Index");
     }
 
     // Cerrar sesión: borra todo lo guardado en Session y vuelve a la Landing
@@ -122,28 +63,26 @@ public class HomeController : Controller
         return View();
     }
 
-      [HttpPost]
+    [HttpPost]
     public IActionResult Login(string Email, string Contrasena){
-        BD bd = new BD();
-        Usuarios usuario = bd.Login(Email, Contrasena);
-        if (usuario != null){
-            HttpContext.Session.SetString("Nombre", usuario.Nombre);
-            HttpContext.Session.SetString("Email", usuario.Email);
-            HttpContext.Session.SetString("IdEmpresa", usuario.IdEmpresa.ToString());
-
-            HttpContext.Session.SetString("IdUsuario", usuario.IdUsuario.ToString());
-
-            // El Rol dice si es el dueño ("Empleador") o alguien de un rango ("Empleado")
-            HttpContext.Session.SetString("TipoUsuario", usuario.Rol);
-            // Sprint 2: su rango en el árbol decide qué puede ver
-            string idRango = "";
-            if (usuario.IdRango > 0){
-                idRango = usuario.IdRango.ToString();
-            }
-            HttpContext.Session.SetString("IdRango", idRango);
-            return RedirectToAction("Index");
+        if (Funciones.EstaVacio(Email) || Funciones.EstaVacio(Contrasena)){
+            ViewBag.Mensaje = "Completá el email y la contraseña";
+            return View("Acceso");
         }
-        ViewBag.Mensaje = "Email o contraseña incorrectos";
-        return View("Acceso");
+        BD bd = new BD();
+        Usuarios usuario = bd.Login(Funciones.Limpiar(Email), Contrasena);
+        if (usuario == null){
+            ViewBag.Mensaje = "Email o contraseña incorrectos";
+            return View("Acceso");
+        }
+        HttpContext.Session.SetString("Nombre", usuario.Nombre);
+        HttpContext.Session.SetString("Email", usuario.Email);
+        HttpContext.Session.SetString("IdEmpresa", usuario.IdEmpresa.ToString());
+        HttpContext.Session.SetString("IdUsuario", usuario.IdUsuario.ToString());
+        // El Rol dice si es el dueño ("Empleador") o alguien de un rango ("Empleado")
+        HttpContext.Session.SetString("TipoUsuario", usuario.Rol);
+        // Sprint 2: su rango en el árbol decide qué puede ver
+        HttpContext.Session.SetString("IdRango", usuario.IdRango.ToString());
+        return RedirectToAction("Index");
     }
 }

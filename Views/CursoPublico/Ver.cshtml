@@ -1,12 +1,12 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = ViewBag.Curso.Titulo;
-    List<Lecciones> lecciones = ViewBag.Lecciones;
 }
-
-<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/explorar.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/explorar.css" asp-append-version="true" />
+}
 
 <div class="pagina-curso">
 
@@ -29,7 +29,7 @@
                 <div class="tarjeta-curso">
                     <div class="etiquetas-publico">
                         <span class="etiqueta-categoria">🌎 @(ViewBag.Curso.Categoria != "" ? ViewBag.Curso.Categoria : "Curso público")</span>
-                        <span class="etiqueta-nivel">@CursoPublico.NombreNivel(ViewBag.Curso.Nivel)</span>
+                        <span class="etiqueta-nivel">@ViewBag.NombreNivel</span>
                     </div>
                     <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
                     <p>@ViewBag.Curso.Descripcion</p>
@@ -63,12 +63,9 @@
                                 </span>
                             </summary>
                             <ol class="lecciones-temario">
-                                @foreach (Lecciones leccion in lecciones)
+                                @foreach (Lecciones leccion in unidad.Lecciones)
                                 {
-                                    if (leccion.NumeroUnidad == unidad.Numero)
-                                    {
-                                        <li>@leccion.Titulo</li>
-                                    }
+                                    <li>@leccion.Titulo</li>
                                 }
                             </ol>
                         </details>
@@ -84,6 +81,10 @@
                     <div><strong>@ViewBag.Inscriptos</strong><span>@(ViewBag.Inscriptos == 1 ? "persona" : "personas")</span></div>
                 </div>
 
+                @if (ViewBag.Error != "")
+                {
+                    <p class="texto-inscribirse">@ViewBag.Error</p>
+                }
                 @if (ViewBag.YaInscripto)
                 {
                     <p class="texto-inscribirse">✓ Ya tenés este curso.</p>
@@ -92,9 +93,9 @@
                 else if (ViewBag.TieneFormulario)
                 {
                     <p class="texto-inscribirse">Arrancás en la unidad que va con tu experiencia con la IA, y cada lección se arma con ejemplos de tu trabajo.</p>
-                    <form method="post" action='@Url.Action("Inscribirse", "CursoPublico")' onsubmit="this.querySelector('input[type=submit]').disabled = true;">
+                    <form method="post" action='@Url.Action("Inscribirse", "CursoPublico")' onsubmit="desactivarBoton('boton-inscribirse')">
                         <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
-                        <input class="boton-home grande-home" type="submit" value="Inscribirme gratis" />
+                        <input class="boton-home grande-home" type="submit" id="boton-inscribirse" value="Inscribirme gratis" />
                     </form>
                 }
                 else

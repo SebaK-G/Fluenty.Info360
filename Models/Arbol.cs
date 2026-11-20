@@ -46,30 +46,6 @@ public static class Arbol
         return resultado;
     }
 
-    public static bool TieneRangosAbajo(List<Rangos> todos, int idRango)
-    {
-        foreach (Rangos rango in todos)
-        {
-            if (rango.IdRangoPadre == idRango)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static bool EstaDebajo(List<Rangos> todos, int idRangoDeArriba, int idRango)
-    {
-        foreach (Rangos rango in Debajo(todos, idRangoDeArriba))
-        {
-            if (rango.IdRango == idRango)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // Recorre la lista desde el principio y, por cada rango, agrega al final a los que dependen de él.
     // Como los hijos se agregan al final, primero quedan todos los de un nivel y después los del siguiente.
     // (La base es un árbol, sin ciclos, así que en algún momento no quedan más hijos y el while termina.)

@@ -1,13 +1,11 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Asistente";
-    List<Chats> chats = ViewBag.Chats;
-    List<MensajesChat> mensajes = ViewBag.Mensajes;
-    int idChat = ViewBag.Chat == null ? 0 : ViewBag.Chat.IdChat;
 }
-
-<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/asistente.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/asistente.css" asp-append-version="true" />
+}
 
 <div class="pagina-asistente">
 
@@ -24,146 +22,104 @@
         <!-- ===== Izquierda: los chats de la persona ===== -->
         <aside class="lista-chats">
             <a class="boton-home nuevo-chat" href='@Url.Action("Index", "Asistente", new { IdChat = 0 })'>+ Nuevo chat</a>
-            @if (chats.Count == 0)
+            @if (ViewBag.Chats.Count == 0)
             {
-                <p class="sin-chats">Tus conversaciones van a aparecer acá.</p>
+                <p class="sin-chats" id="sin-chats">Tus conversaciones van a aparecer acá.</p>
             }
-            @foreach (Chats item in chats)
-            {
-                <a class="item-chat @(item.IdChat == idChat ? "chat-abierto" : "")" href='@Url.Action("Index", "Asistente", new { IdChat = item.IdChat })'>
-                    <span class="titulo-chat">@item.Titulo</span>
-                    <small>@item.FechaUltimo.ToString("dd/MM HH:mm")</small>
-                </a>
-            }
+            <!-- asistente.js agrega acá arriba el chat nuevo cuando se manda la primera pregunta -->
+            <div class="items-chats" id="lista-chats">
+                @foreach (Chats item in ViewBag.Chats)
+                {
+                    <a class="item-chat @(item.IdChat == ViewBag.IdChat ? "chat-abierto" : "")" href='@Url.Action("Index", "Asistente", new { IdChat = item.IdChat })'>
+                        <span class="titulo-chat">@item.Titulo</span>
+                        <small>@item.FechaUltimo.ToString("dd/MM HH:mm")</small>
+                    </a>
+                }
+            </div>
         </aside>
 
         <!-- ===== Derecha: el chat abierto ===== -->
         <section class="chat">
 
             <div class="cabecera-chat">
-                <h1>@(ViewBag.Chat == null ? "Nuevo chat" : ViewBag.Chat.Titulo)</h1>
-                @if (ViewBag.Chat != null)
-                {
-                    <form method="post" action='@Url.Action("Borrar", "Asistente")' onsubmit="return confirm('¿Borrar este chat y todos sus mensajes?');">
-                        <input type="hidden" name="IdChat" value="@idChat" />
-                        <input class="boton-borrar-chat" type="submit" value="Borrar chat" />
-                    </form>
-                }
+                <h1 id="titulo-chat">@(ViewBag.Chat == null ? "Nuevo chat" : ViewBag.Chat.Titulo)</h1>
+                <!-- En un chat nuevo no se ve: asistente.js lo muestra cuando se crea el chat -->
+                <form method="post" action='@Url.Action("Borrar", "Asistente")' id="form-borrar" style="display: @(ViewBag.IdChat == 0 ? "none" : "block")" onsubmit="return confirmarBorrado()">
+                    <input type="hidden" name="IdChat" id="IdChatBorrar" value="@ViewBag.IdChat" />
+                    <input class="boton-borrar-chat" type="submit" value="Borrar chat" />
+                </form>
             </div>
 
             <div class="mensajes" id="mensajes">
-                @if (mensajes.Count == 0)
-                {
-                    <!-- Chat nuevo: saludo y preguntas para arrancar -->
-                    <div class="bienvenida-chat">
-                        <div class="avatar-ia grande">✦</div>
-                        <h2>¡Hola, @ViewBag.Nombre! ¿En qué te ayudo?</h2>
-                        <p>Preguntame cómo usar la IA en tu trabajo. Conozco tus tareas y tus cursos, así que te respondo con ejemplos tuyos.</p>
-                        <div class="sugerencias">
-                            @foreach (string sugerencia in ViewBag.Sugerencias)
-                            {
-                                <button type="button" class="sugerencia" onclick="usarSugerencia(this)">@sugerencia</button>
-                            }
-                        </div>
-                    </div>
-                }
-                @foreach (MensajesChat mensaje in mensajes)
-                {
-                    if (mensaje.Rol == "IA")
+                <!-- Los mensajes del chat. asistente.js agrega acá abajo la pregunta y la respuesta nuevas -->
+                <div class="historial-chat" id="historial">
+                    @if (ViewBag.Mensajes.Count == 0)
                     {
-                        <div class="fila-mensaje de-ia">
-                            <div class="avatar-ia">✦</div>
-                            <div class="burbuja">
-                                <!-- Cada renglón del mensaje es un párrafo (así se respetan los saltos de línea) -->
-                                @foreach (string parrafo in Funciones.Separar(mensaje.Texto, "\n"))
+                        <!-- Chat nuevo: saludo y preguntas para arrancar -->
+                        <div class="bienvenida-chat" id="bienvenida">
+                            <div class="avatar-ia grande">✦</div>
+                            <h2>¡Hola, @ViewBag.Nombre! ¿En qué te ayudo?</h2>
+                            <p>Preguntame cómo usar la IA en tu trabajo. Conozco tus tareas y tus cursos, así que te respondo con ejemplos tuyos.</p>
+                            <div class="sugerencias">
+                                @for (int i = 0; i < ViewBag.Sugerencias.Count; i++)
                                 {
-                                    <p>@parrafo</p>
+                                    <button type="button" class="sugerencia" id="sugerencia-@i" onclick="usarSugerencia(@i)">@ViewBag.Sugerencias[i]</button>
                                 }
                             </div>
                         </div>
                     }
-                    else
+                    @foreach (MensajesChat mensaje in ViewBag.Mensajes)
                     {
-                        <div class="fila-mensaje de-persona">
-                            <div class="burbuja">
-                                @foreach (string parrafo in Funciones.Separar(mensaje.Texto, "\n"))
-                                {
-                                    <p>@parrafo</p>
-                                }
+                        if (mensaje.Rol == "IA")
+                        {
+                            <div class="fila-mensaje de-ia">
+                                <div class="avatar-ia">✦</div>
+                                <div class="burbuja">
+                                    <!-- Cada renglón del mensaje es un párrafo (así se respetan los saltos de línea) -->
+                                    @foreach (string parrafo in mensaje.Parrafos)
+                                    {
+                                        <p>@parrafo</p>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="fila-mensaje de-persona">
+                                <div class="burbuja">
+                                    @foreach (string parrafo in mensaje.Parrafos)
+                                    {
+                                        <p>@parrafo</p>
+                                    }
+                                </div>
+                            </div>
+                        }
                     }
-                }
-
+                </div>
                 <!-- Se muestran al mandar, mientras la IA responde -->
-                <div class="fila-mensaje de-persona oculto" id="mi-pregunta">
+                <div class="fila-mensaje de-persona" id="mi-pregunta" style="display: none">
                     <div class="burbuja"><p id="texto-mi-pregunta"></p></div>
                 </div>
-                <div class="fila-mensaje de-ia oculto" id="escribiendo">
+                <div class="fila-mensaje de-ia" id="escribiendo" style="display: none">
                     <div class="avatar-ia">✦</div>
                     <div class="burbuja"><p class="puntitos"><span></span><span class="puntito-2"></span><span class="puntito-3"></span></p></div>
                 </div>
             </div>
 
-            @if (ViewBag.Error != null)
-            {
-                <p class="error-chat">@ViewBag.Error</p>
-            }
+            <p class="error-chat" id="error-chat" style="display: none"></p>
 
-            <form class="escribir" id="form-chat" method="post" action='@Url.Action("Enviar", "Asistente")' onsubmit="return enviar();">
-                <input type="hidden" name="IdChat" value="@idChat" />
-                <textarea id="texto" name="Texto" aria-label="Tu pregunta" rows="1" maxlength="2000" placeholder="Escribí tu pregunta..." onkeydown="teclaEnter(event)" oninput="ajustarAlto()">@ViewBag.Borrador</textarea>
-                <input class="boton-home" id="boton-enviar" type="submit" value="Enviar" />
-            </form>
-            <p class="restantes-chat">Te quedan @(ViewBag.Restantes > 0 ? ViewBag.Restantes : 0) preguntas por hoy · La IA puede equivocarse: revisá lo importante.</p>
+            <!-- La pregunta se manda con fetch (asistente.js), sin recargar la página -->
+            <div class="escribir">
+                <input type="hidden" id="IdChat" value="@ViewBag.IdChat" />
+                <textarea id="texto" aria-label="Tu pregunta" rows="1" maxlength="2000" placeholder="Escribí tu pregunta..." onkeydown="teclaEnter(event)" oninput="ajustarAlto()"></textarea>
+                <input class="boton-home" id="boton-enviar" type="button" value="Enviar" onclick="enviar()" />
+            </div>
+            <p class="restantes-chat">Te quedan <span id="restantes">@ViewBag.Restantes</span> preguntas por hoy · La IA puede equivocarse: revisá lo importante.</p>
 
         </section>
     </main>
 </div>
 
-<script>
-    // Que se vea el último mensaje: baja la página hasta el final
-    window.scrollTo(0, document.body.scrollHeight);
-
-    // Al mandar: se muestra la pregunta y los puntitos hasta que llegue la respuesta
-    function enviar() {
-        var texto = document.getElementById("texto").value.trim();
-        if (texto == "") {
-            return false;
-        }
-        var bienvenida = document.querySelector(".bienvenida-chat");
-        if (bienvenida != null) {
-            bienvenida.style.display = "none";
-        }
-        document.getElementById("texto-mi-pregunta").textContent = texto;
-        document.getElementById("mi-pregunta").classList.remove("oculto");
-        document.getElementById("escribiendo").classList.remove("oculto");
-        document.getElementById("boton-enviar").disabled = true;
-        window.scrollTo(0, document.body.scrollHeight);
-        return true;
-    }
-
-    // Enter manda, Shift + Enter hace un salto de línea
-    function teclaEnter(evento) {
-        if (evento.key == "Enter" && !evento.shiftKey) {
-            evento.preventDefault();
-            if (enviar()) {
-                document.getElementById("form-chat").submit();
-            }
-        }
-    }
-
-    // El cuadro de texto crece mientras se escribe (hasta un máximo)
-    function ajustarAlto() {
-        var texto = document.getElementById("texto");
-        texto.style.height = "auto";
-        texto.style.height = Math.min(texto.scrollHeight, 160) + "px";
-    }
-
-    function usarSugerencia(boton) {
-        var texto = document.getElementById("texto");
-        texto.value = boton.textContent;
-        ajustarAlto();
-        texto.focus();
-    }
-</script>
+@section Scripts {
+    <script src="~/js/asistente.js" asp-append-version="true"></script>
+}

@@ -2,9 +2,10 @@
 @{
     ViewData["Title"] = "Sumate a tu equipo";
 }
-
-<link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/completar.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/completar.css" asp-append-version="true" />
+}
 
 <div class="pagina-completar">
 
@@ -31,7 +32,7 @@
             </ol>
         </section>
 
-        @if (ViewBag.Mensaje != null)
+        @if (ViewBag.Mensaje != "")
         {
             <p class="mensaje-completar">@ViewBag.Mensaje</p>
         }
@@ -114,14 +115,14 @@
                 <div class="campo">
                     <p class="pregunta-campo">¿Qué cosas te llevan más tiempo en la semana? <span>(tocá las que hagas)</span></p>
                     <div class="opciones">
-                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Responder mensajes o mails" /> Responder mensajes o mails</label>
-                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Armar presupuestos o cotizaciones" /> Armar presupuestos</label>
-                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Pasar o cargar datos a planillas" /> Pasar datos a planillas</label>
-                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Armar reportes o resúmenes" /> Armar reportes o resúmenes</label>
-                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Atender y responder dudas de clientes" /> Atender clientes</label>
-                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Escribir textos, avisos o publicaciones" /> Escribir textos o publicaciones</label>
-                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Organizar la agenda, turnos o pedidos" /> Organizar agenda, turnos o pedidos</label>
-                        <label class="eleccion"><input type="checkbox" name="Tareas" value="Buscar información" /> Buscar información</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Responder mensajes o mails" /> Responder mensajes o mails</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Armar presupuestos o cotizaciones" /> Armar presupuestos</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Pasar o cargar datos a planillas" /> Pasar datos a planillas</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Armar reportes o resúmenes" /> Armar reportes o resúmenes</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Atender y responder dudas de clientes" /> Atender clientes</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Escribir textos, avisos o publicaciones" /> Escribir textos o publicaciones</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Organizar la agenda, turnos o pedidos" /> Organizar agenda, turnos o pedidos</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Buscar información" /> Buscar información</label>
                     </div>
                     <input class="otro" type="text" name="OtraTarea" maxlength="80" placeholder="Otra (opcional)" />
                 </div>
@@ -137,7 +138,7 @@
                     <div class="opciones">
                         @foreach (Herramientas herramienta in ViewBag.Herramientas)
                         {
-                            <label class="eleccion"><input type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                            <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
                         }
                     </div>
                 </div>
@@ -145,9 +146,9 @@
                 <div class="campo">
                     <p class="pregunta-campo">¿En tu trabajo manejás datos de clientes? <span>(nombres, teléfonos, cuentas, pedidos)</span></p>
                     <div class="opciones">
-                        <label class="eleccion"><input type="radio" name="DatosClientes" value="Sí, todo el tiempo" required /> Sí, todo el tiempo</label>
-                        <label class="eleccion"><input type="radio" name="DatosClientes" value="A veces" /> A veces</label>
-                        <label class="eleccion"><input type="radio" name="DatosClientes" value="No" /> No</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="Sí, todo el tiempo" required /> Sí, todo el tiempo</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="A veces" /> A veces</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="No" /> No</label>
                     </div>
                 </div>
             </section>
@@ -166,49 +167,49 @@
                 <div class="campo">
                     <p class="pregunta-campo">¿Usaste alguna vez una IA como ChatGPT o Gemini?</p>
                     <div class="opciones opciones-columna">
-                        <label class="eleccion"><input type="radio" name="NivelIA" value="1" required /> Nunca la usé</label>
-                        <label class="eleccion"><input type="radio" name="NivelIA" value="2" /> La probé alguna vez</label>
-                        <label class="eleccion"><input type="radio" name="NivelIA" value="3" /> La uso a veces para cosas simples</label>
-                        <label class="eleccion"><input type="radio" name="NivelIA" value="4" /> La uso seguido en mi trabajo</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="1" required /> Nunca la usé</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="2" /> La probé alguna vez</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="3" /> La uso a veces para cosas simples</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="4" /> La uso seguido en mi trabajo</label>
                     </div>
                 </div>
 
                 <div class="campo">
                     <p class="pregunta-campo">¿Qué tan cómodo te sentís usando la compu y el celular?</p>
                     <div class="opciones opciones-columna">
-                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me cuesta bastante, uso lo justo" required /> Me cuesta bastante, uso lo justo</label>
-                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me defiendo con lo básico" /> Me defiendo con lo básico</label>
-                        <label class="eleccion"><input type="radio" name="ComodidadTecnologia" value="Me manejo bien" /> Me manejo bien</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me cuesta bastante, uso lo justo" required /> Me cuesta bastante, uso lo justo</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me defiendo con lo básico" /> Me defiendo con lo básico</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me manejo bien" /> Me manejo bien</label>
                     </div>
                 </div>
 
                 <div class="campo">
                     <p class="pregunta-campo">¿Cuántos años tenés?</p>
                     <div class="opciones">
-                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Menos de 25 años" required /> Menos de 25</label>
-                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Entre 25 y 40 años" /> 25 a 40</label>
-                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Entre 40 y 55 años" /> 40 a 55</label>
-                        <label class="eleccion"><input type="radio" name="RangoEdad" value="Más de 55 años" /> Más de 55</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Menos de 25 años" required /> Menos de 25</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Entre 25 y 40 años" /> 25 a 40</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Entre 40 y 55 años" /> 40 a 55</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Más de 55 años" /> Más de 55</label>
                     </div>
                 </div>
 
                 <div class="campo">
                     <p class="pregunta-campo">¿Algo de la IA te preocupa? <span>(podés elegir varias)</span></p>
                     <div class="opciones">
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Que me reemplace en el trabajo" /> Que me reemplace</label>
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="No entenderla" /> No entenderla</label>
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="La privacidad de los datos" /> La privacidad de los datos</label>
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Que me dé información equivocada" /> Que se equivoque</label>
-                        <label class="eleccion"><input type="checkbox" name="PreocupacionIA" value="Que sea una pérdida de tiempo" /> Que sea una pérdida de tiempo</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que me reemplace en el trabajo" /> Que me reemplace</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="No entenderla" /> No entenderla</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="La privacidad de los datos" /> La privacidad de los datos</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que me dé información equivocada" /> Que se equivoque</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que sea una pérdida de tiempo" /> Que sea una pérdida de tiempo</label>
                     </div>
                 </div>
 
                 <div class="campo">
                     <p class="pregunta-campo">¿Cuánto tiempo por día podés dedicarle?</p>
                     <div class="opciones">
-                        <label class="eleccion"><input type="radio" name="TiempoXDia" value="5" required /> 5 minutos</label>
-                        <label class="eleccion"><input type="radio" name="TiempoXDia" value="10" /> 10 minutos</label>
-                        <label class="eleccion"><input type="radio" name="TiempoXDia" value="15" /> 15 minutos o más</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="5" required /> 5 minutos</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="10" /> 10 minutos</label>
+                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="15" /> 15 minutos o más</label>
                     </div>
                 </div>
 

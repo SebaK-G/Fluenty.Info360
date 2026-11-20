@@ -1,13 +1,12 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Explorar cursos";
-    List<CursoPublico> cursos = ViewBag.Cursos;
-    List<int> misCursos = ViewBag.MisCursos;
 }
-
-<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/explorar.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/explorar.css" asp-append-version="true" />
+}
 
 <div class="pagina-curso">
 
@@ -65,9 +64,9 @@
         </form>
 
         <!-- ===== Resultados ===== -->
-        <p class="cantidad-resultados">@cursos.Count @(cursos.Count == 1 ? "curso encontrado" : "cursos encontrados")</p>
+        <p class="cantidad-resultados">@ViewBag.Cursos.Count @(ViewBag.Cursos.Count == 1 ? "curso encontrado" : "cursos encontrados")</p>
 
-        @if (cursos.Count == 0)
+        @if (ViewBag.Cursos.Count == 0)
         {
             <div class="tarjeta-curso sin-resultados">
                 <h3>No encontramos cursos con esa búsqueda</h3>
@@ -78,7 +77,7 @@
         else
         {
             <div class="grilla-publicos">
-                @foreach (CursoPublico curso in cursos)
+                @foreach (CursoPublico curso in ViewBag.Cursos)
                 {
                     <a class="tarjeta-publico" href='@Url.Action("Ver", "CursoPublico", new { IdCurso = curso.IdCurso })'>
                         <div class="etiquetas-publico">
@@ -86,15 +85,14 @@
                             {
                                 <span class="etiqueta-categoria">@curso.Categoria</span>
                             }
-                            <span class="etiqueta-nivel">@CursoPublico.NombreNivel(curso.Nivel)</span>
+                            <span class="etiqueta-nivel">@curso.NombreNivel</span>
                         </div>
                         <h3>@curso.Titulo</h3>
-                        <!-- Si la descripción es muy larga, se muestran los primeros 140 caracteres -->
-                        <p class="descripcion-publico">@(curso.Descripcion != null && curso.Descripcion.Length > 140 ? curso.Descripcion.Substring(0, 140) + "..." : curso.Descripcion)</p>
+                        <p class="descripcion-publico">@curso.DescripcionCorta</p>
                         <div class="pie-publico">
                             <span>⏱ @(curso.DuracionHoras > 0 ? curso.DuracionHoras + " h" : "20 lecciones")</span>
                             <span>👥 @curso.Inscriptos @(curso.Inscriptos == 1 ? "persona" : "personas")</span>
-                            @if (Funciones.EstaEnLista(misCursos, curso.IdCurso))
+                            @if (curso.YaLoTiene)
                             {
                                 <span class="ya-lo-tenes">✓ Ya lo tenés</span>
                             }

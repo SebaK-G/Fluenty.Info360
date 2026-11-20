@@ -1,16 +1,11 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = ViewBag.Curso.Titulo;
-    int unidadInicial = 1;
-    string botonActivo = ViewBag.ModoAlumno ? "MiCurso" : "Cursos";
-    if (ViewBag.Asignacion != null)
-    {
-        unidadInicial = ViewBag.Asignacion.UnidadInicial;
-    }
 }
-
-<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+}
 
 <div class="pagina-curso">
 
@@ -19,27 +14,19 @@
             <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
             <span>Fluenty</span>
         </div>
-        @await Html.PartialAsync("_NavApp", botonActivo)
+        @await Html.PartialAsync("_NavApp", (string)ViewBag.BotonActivo)
     </header>
 
     <main class="contenido-curso">
 
-        @if (ViewBag.Error != null)
+        @if (ViewBag.Error != "")
         {
             <p class="aviso">@ViewBag.Error</p>
         }
 
         <!-- ===== Portada del curso ===== -->
         <div class="tarjeta-curso portada">
-            @if (ViewBag.EsInscripcionPublica)
-            {
-                <!-- Se sumó desde el buscador: el curso no es de su rango -->
-                <p class="modelo">@ViewBag.Curso.Modelo · 🌎 Curso público@(ViewBag.Curso.Categoria != "" ? " · " + ViewBag.Curso.Categoria : "")</p>
-            }
-            else
-            {
-                <p class="modelo">@ViewBag.Curso.Modelo · Rango @ViewBag.NombreRango@(ViewBag.Curso.Publico ? " · 🌎 Público · " + ViewBag.Curso.Categoria : "")</p>
-            }
+            <p class="modelo">@ViewBag.Subtitulo</p>
             <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
             <p>@ViewBag.Curso.Descripcion</p>
 
@@ -73,8 +60,7 @@
                 <div class="personas-curso">
                     @foreach (Usuarios persona in ViewBag.Personas)
                     {
-                        bool elegida = ViewBag.Asignacion != null && persona.IdUsuario == ViewBag.Asignacion.IdUsuario;
-                        <a class="chip-persona @(elegida ? "chip-elegida" : "")" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso, IdUsuario = persona.IdUsuario })'>@persona.Nombre @persona.Apellido</a>
+                        <a class="chip-persona @(persona.Elegida ? "chip-elegida" : "")" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso, IdUsuario = persona.IdUsuario })'>@persona.Nombre @persona.Apellido</a>
                     }
                 </div>
             </div>
@@ -83,7 +69,7 @@
         @if (ViewBag.Asignacion != null)
         {
             <div class="tarjeta-curso nivelacion">
-                <p><strong>🎯 @(ViewBag.ModoAlumno ? "Arrancás" : ViewBag.NombreEmpleado + " arranca") en la Unidad @unidadInicial</strong></p>
+                <p><strong>🎯 @ViewBag.TextoArranque</strong></p>
                 <p>@ViewBag.Asignacion.MotivoNivel</p>
             </div>
         }
@@ -91,64 +77,43 @@
         <!-- ===== El camino: unidades y lecciones ===== -->
         @foreach (Unidades unidad in ViewBag.Unidades)
         {
-            string claseUnidad = "unidad unidad-color-" + unidad.Numero;
-            string etiqueta = "";
-            if (unidad.Numero < unidadInicial)
-            {
-                claseUnidad = "unidad unidad-sabida";
-                etiqueta = "Ya lo sabe";
-            }
-            if (unidad.Numero == unidadInicial)
-            {
-                etiqueta = "Arranca acá";
-            }
-
-            <section class="@claseUnidad" id="unidad-@unidad.Numero">
+            <section class="@unidad.Clase" id="unidad-@unidad.Numero">
                 <div class="encabezado-unidad">
                     <p class="numero-unidad">Unidad @unidad.Numero</p>
                     <h2>@unidad.Titulo</h2>
                     <p>@unidad.Objetivo</p>
-                    @if (etiqueta != "")
+                    @if (unidad.Etiqueta != "")
                     {
-                        <span class="etiqueta-unidad">@etiqueta</span>
+                        <span class="etiqueta-unidad">@unidad.Etiqueta</span>
                     }
                 </div>
 
                 <div class="camino">
-                    @foreach (Lecciones leccion in ViewBag.Lecciones)
+                    @foreach (Lecciones leccion in unidad.Lecciones)
                     {
-                        if (leccion.NumeroUnidad == unidad.Numero)
-                        {
-                            string icono = "🔒";
-                            if (leccion.Estado == "Disponible") { icono = "▶"; }
-                            if (leccion.Estado == "Completada" || leccion.Estado == "YaSabe") { icono = "✓"; }
-                            if (leccion.Numero == 5 && leccion.Estado != "Completada") { icono = "🏆"; }
-                            bool sePuedeHacer = ViewBag.ModoAlumno && (leccion.Estado == "Disponible" || leccion.Estado == "Completada");
-
-                            <div class="paso paso-@leccion.Numero">
-                                @if (sePuedeHacer)
+                        <div class="paso paso-@leccion.Numero">
+                            @if (leccion.SePuedeHacer)
+                            {
+                                <a class="circulo circulo-@leccion.Estado circulo-link" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">@leccion.Icono</a>
+                            }
+                            else
+                            {
+                                <div class="circulo circulo-@leccion.Estado">@leccion.Icono</div>
+                            }
+                            <div class="texto-paso">
+                                <p class="titulo-paso">@leccion.Titulo</p>
+                                <p class="objetivo-paso">@leccion.Objetivo</p>
+                                @if (leccion.Intentos > 0)
                                 {
-                                    <a class="circulo circulo-@leccion.Estado circulo-link" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">@icono</a>
+                                    <!-- Nota = preguntas bien a la primera; intentos = cuántas veces la terminó (o rindió) -->
+                                    <p class="nota-paso @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "nota-baja" : "")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</p>
                                 }
-                                else
+                                @if (leccion.SePuedeHacer && leccion.Estado == "Disponible")
                                 {
-                                    <div class="circulo circulo-@leccion.Estado">@icono</div>
+                                    <a class="empezar-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">Empezar lección →</a>
                                 }
-                                <div class="texto-paso">
-                                    <p class="titulo-paso">@leccion.Titulo</p>
-                                    <p class="objetivo-paso">@leccion.Objetivo</p>
-                                    @if (leccion.Intentos > 0)
-                                    {
-                                        <!-- Nota = preguntas bien a la primera; intentos = cuántas veces la terminó (o rindió) -->
-                                        <p class="nota-paso @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "nota-baja" : "")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</p>
-                                    }
-                                    @if (sePuedeHacer && leccion.Estado == "Disponible")
-                                    {
-                                        <a class="empezar-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">Empezar lección →</a>
-                                    }
-                                </div>
                             </div>
-                        }
+                        </div>
                     }
                 </div>
 
@@ -203,13 +168,3 @@
         <p>@(ViewBag.ModoAlumno ? "La IA está armando las explicaciones con ejemplos de tu trabajo." : "La IA está armando de nuevo esta unidad. El resto del curso queda igual.")</p>
     </div>
 </div>
-
-<script>
-    function mostrarCarga() {
-        document.getElementById("carga").style.display = "flex";
-    }
-    // Si vuelve para atrás, el cartel de carga se cierra
-    window.onpageshow = function () {
-        document.getElementById("carga").style.display = "none";
-    };
-</script>

@@ -9,4 +9,6 @@ public class TiposTarea
     public int PorcentajeAhorro { get; set; }
     // Un ejemplo corto de cómo ayuda la IA en esa tarea
     public string Ejemplo { get; set; }
+    // No es columna: cuántas personas del equipo marcaron esta tarea en su formulario (la cuenta LogicaCalculadora)
+    public int CantidadPersonas { get; set; }
 }

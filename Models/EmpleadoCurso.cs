@@ -1,6 +1,6 @@
 namespace Fluenty.Info360.Models;
 
-// Lo que devuelve sp_TraerMiembrosEmpresa: una persona de la empresa (menos el dueño),
+// Lo que devuelve sp_TraerMiembrosRangos: una persona de la empresa (menos el dueño),
 // su rango, si completó el formulario y su curso. Si no tiene curso, IdCurso y Progreso quedan en 0 y EstadoCurso en null.
 public class EmpleadoCurso
 {
@@ -22,6 +22,10 @@ public class EmpleadoCurso
     public int IdCurso { get; set; }
     public int Progreso { get; set; }
     public string EstadoCurso { get; set; }
+    // No vienen de la base: las arma LogicaCurso para la pantalla Cursos
+    // (si completó el formulario pero no tiene el curso de su rango, y el aviso de Actividad())
+    public bool SinAsignar { get; set; }
+    public string TextoActividad { get; set; }
 
     // Si tiene el curso confirmado y no avanza, devuelve el aviso para su responsable ("" si va bien).
     // El responsable ve si participa, nunca lo que contestó en el formulario.

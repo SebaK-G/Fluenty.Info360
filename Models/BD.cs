@@ -10,42 +10,30 @@ public class BD
     public Usuarios Login(string email, string contrasena){
         Usuarios usuario = null;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            // Solo entran usuarios activos de empresas activas (borrado lógico).
-            // La empresa del usuario es la de su rango (Usuarios -> Rangos -> Empresas)
-            string query = "SELECT Usuarios.*, Rangos.IdEmpresa FROM Usuarios INNER JOIN Rangos ON Rangos.IdRango = Usuarios.IdRango INNER JOIN Empresas ON Empresas.IdEmpresa = Rangos.IdEmpresa WHERE Usuarios.Email = @pEmail AND Usuarios.Contrasena = @pContrasena AND Usuarios.Activo = 1 AND Empresas.Activo = 1";
-            usuario = connection.QueryFirstOrDefault<Usuarios>(query, new { pEmail = email, pContrasena = contrasena });
+            string storedProcedure = "sp_Login";
+            usuario = connection.QueryFirstOrDefault<Usuarios>(storedProcedure, new { Email = email, Contrasena = contrasena }, commandType: CommandType.StoredProcedure);
         }
         return usuario;
     }
 
-    public bool ExisteUsuarioDuplicado(string email, string dni, string telefono){
+    // true si ya hay alguien con ese email, DNI o teléfono
+    public bool ExisteUsuarioRepetido(string email, string dni, string telefono){
+        int cantidad = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            // Cuenta cuántos usuarios tienen ese email, DNI o teléfono: si hay alguno, está repetido
-            string query = "SELECT COUNT(*) FROM Usuarios WHERE Email = @pEmail OR Dni = @pDni OR Telefono = @pTelefono";
-            int cantidad = connection.QueryFirstOrDefault<int>(query, new { pEmail = email, pDni = dni, pTelefono = telefono });
-            return cantidad > 0;
+            string storedProcedure = "sp_ContarUsuariosRepetidos";
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { Email = email, Dni = dni, Telefono = telefono }, commandType: CommandType.StoredProcedure);
         }
+        return cantidad > 0;
     }
 
-    // Crea el usuario y devuelve su IdUsuario (hoy lo usa el link para unirse; después, el alta desde la Landing)
-    public int Signup(Usuarios usuario){
+    // Crea el usuario y devuelve su IdUsuario
+    public int CrearUsuario(Usuarios usuario){
         int idUsuario = 0;
-        // Después del INSERT, el IdUsuario nuevo es el más alto con ese email (el email no se repite)
-        string query = "INSERT INTO Usuarios (Nombre, Apellido, Email, Dni, Telefono, Contrasena, Rol, Puesto, IdRango) VALUES (@pNombre, @pApellido, @pEmail, @pDni, @pTelefono, @pContrasena, @pRol, @pPuesto, @pIdRango); SELECT MAX(IdUsuario) FROM Usuarios WHERE Email = @pEmail";
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            idUsuario = connection.QueryFirstOrDefault<int>(query, new { pNombre = usuario.Nombre, pApellido = usuario.Apellido, pEmail = usuario.Email, pDni = usuario.Dni, pTelefono = usuario.Telefono, pContrasena = usuario.Contrasena, pRol = usuario.Rol, pPuesto = usuario.Puesto, pIdRango = usuario.IdRango });
+            string storedProcedure = "sp_CrearUsuario";
+            idUsuario = connection.QueryFirstOrDefault<int>(storedProcedure, new { Nombre = usuario.Nombre, Apellido = usuario.Apellido, Email = usuario.Email, Dni = usuario.Dni, Telefono = usuario.Telefono, Contrasena = usuario.Contrasena, Rol = usuario.Rol, Puesto = usuario.Puesto, IdRango = usuario.IdRango }, commandType: CommandType.StoredProcedure);
         }
         return idUsuario;
-    }
-
-    public int CrearEmpresa(Empresas empresa){
-        int idEmpresa = 0;
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            // Después del INSERT, el IdEmpresa nuevo es el más alto con ese CUIT
-            string query = "INSERT INTO Empresas (Nombre, Email, CantidadEmpleados, Cuit) VALUES (@pNombre, @pEmail, @pCantidadEmpleados, @pCuit); SELECT MAX(IdEmpresa) FROM Empresas WHERE Cuit = @pCuit";
-            idEmpresa = connection.QueryFirstOrDefault<int>(query, new { pNombre = empresa.Nombre, pEmail = empresa.Email, pCantidadEmpleados = empresa.CantidadEmpleados, pCuit = empresa.Cuit });
-        }
-        return idEmpresa;
     }
 
     public void AgregarFormularioEmpleado(FormulariosEmpleado formulario){
@@ -72,29 +60,40 @@ public class BD
         return meses;
     }
 
-    public int TraerPorcentajeAhorro(){
-        int porcentaje = 0;
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerPorcentajeAhorro";
-            porcentaje = connection.QueryFirstOrDefault<int>(storedProcedure, commandType: CommandType.StoredProcedure);
-        }
-        return porcentaje;
-    }
-
         // ===================== CURSOS =====================
 
-    // Todas las personas de la empresa (menos el dueño) con su rango y su curso
-    public List<EmpleadoCurso> TraerMiembrosEmpresa(int idEmpresa){
+    // La gente de varios rangos. idsRangos son los Id separados por coma, por ejemplo "2,3,5"
+    public List<EmpleadoCurso> TraerMiembrosRangos(string idsRangos){
         List<EmpleadoCurso> lista = new List<EmpleadoCurso>();
         using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerMiembrosEmpresa";
-            lista = connection.Query<EmpleadoCurso>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
+            string storedProcedure = "sp_TraerMiembrosRangos";
+            lista = connection.Query<EmpleadoCurso>(storedProcedure, new { IdsRangos = idsRangos }, commandType: CommandType.StoredProcedure).ToList();
         }
         // Si no completó el formulario, IdFormularioEmpleado viene vacío y queda en 0
         foreach (EmpleadoCurso miembro in lista){
             miembro.TieneFormulario = miembro.IdFormularioEmpleado > 0;
         }
         return lista;
+    }
+
+    // Los últimos 5 cursos asignados en esos rangos
+    public List<ActividadCurso> TraerActividadesRangos(string idsRangos){
+        List<ActividadCurso> actividades = new List<ActividadCurso>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerActividadesRangos";
+            actividades = connection.Query<ActividadCurso>(storedProcedure, new { IdsRangos = idsRangos }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return actividades;
+    }
+
+    // La próxima lección disponible de la persona en ese curso (null si ya lo terminó)
+    public Lecciones TraerProximaLeccion(int idCurso, int idUsuario){
+        Lecciones leccion = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerProximaLeccion";
+            leccion = connection.QueryFirstOrDefault<Lecciones>(storedProcedure, new { IdCurso = idCurso, IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+        }
+        return leccion;
     }
 
     public Usuarios TraerEmpleado(int idUsuario){
@@ -164,15 +163,6 @@ public class BD
         return curso;
     }
 
-    public Cursos TraerCursoPorEmpleado(int idUsuario){
-        Cursos curso = null;
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerCursoPorEmpleado";
-            curso = connection.QueryFirstOrDefault<Cursos>(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
-        }
-        return curso;
-    }
-
     // Recalcula el porcentaje de avance de esa persona en ese curso
     public void ActualizarProgreso(int idCurso, int idUsuario){
         using (SqlConnection connection = new SqlConnection(_connectionString)){
@@ -182,22 +172,6 @@ public class BD
     }
 
     // ===================== NUEVO FLUJO: link, formulario del empleador y confirmación =====================
-
-    public string TraerCodigoEmpresa(int idEmpresa){
-        string codigo = "";
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerCodigoEmpresa";
-            codigo = connection.QueryFirstOrDefault<string>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure);
-        }
-        return codigo;
-    }
-
-    public void GuardarCodigoEmpresa(int idEmpresa, string codigo){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_GuardarCodigoEmpresa";
-            connection.Execute(storedProcedure, new { IdEmpresa = idEmpresa, Codigo = codigo }, commandType: CommandType.StoredProcedure);
-        }
-    }
 
     // El link de cada rango: el rango con el nombre de su empresa
     public Rangos TraerRangoPorCodigo(string codigo){
@@ -228,15 +202,6 @@ public class BD
             string storedProcedure = "sp_BorrarCurso";
             connection.Execute(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure);
         }
-    }
-
-    public List<ActividadCurso> TraerActividadesEmpresa(int idEmpresa){
-        List<ActividadCurso> actividades = new List<ActividadCurso>();
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_TraerActividadesEmpresa";
-            actividades = connection.Query<ActividadCurso>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
-        }
-        return actividades;
     }
 
     // ===================== CURSO POR NIVELES: unidades y lecciones =====================
@@ -294,13 +259,34 @@ public class BD
 
     // Sprint 3: el buscador de cursos públicos. Texto y Categoria vacíos = todos; Nivel 0 = todos.
     // Orden: "recientes" (los últimos primero) o "populares" (los que tienen más inscriptos).
-    public List<CursoPublico> BuscarCursosPublicos(string texto, string categoria, int nivel, string orden){
+    // idUsuario = quien busca: cada curso viene con YaLoTiene en true si ya lo tiene
+    public List<CursoPublico> BuscarCursosPublicos(string texto, string categoria, int nivel, string orden, int idUsuario){
         List<CursoPublico> cursos = new List<CursoPublico>();
         using (SqlConnection connection = new SqlConnection(_connectionString)){
             string storedProcedure = "sp_BuscarCursosPublicos";
-            cursos = connection.Query<CursoPublico>(storedProcedure, new { Texto = texto, Categoria = categoria, Nivel = nivel, Orden = orden }, commandType: CommandType.StoredProcedure).ToList();
+            cursos = connection.Query<CursoPublico>(storedProcedure, new { Texto = texto, Categoria = categoria, Nivel = nivel, Orden = orden, IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure).ToList();
         }
         return cursos;
+    }
+
+    // Cuántas personas tienen el curso
+    public int ContarInscriptos(int idCurso){
+        int cantidad = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_ContarInscriptos";
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure);
+        }
+        return cantidad;
+    }
+
+    // true si la persona ya tiene el curso
+    public bool EstaInscripto(int idCurso, int idUsuario){
+        int cantidad = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_EstaInscripto";
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdCurso = idCurso, IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+        }
+        return cantidad > 0;
     }
 
     public List<Unidades> TraerUnidadesCurso(int idCurso){
@@ -377,20 +363,6 @@ public class BD
 
     // ===================== BORRADO LÓGICO =====================
 
-    public void DesactivarUsuario(int idUsuario){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_DesactivarUsuario";
-            connection.Execute(storedProcedure, new { IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
-        }
-    }
-
-    public void DesactivarEmpresa(int idEmpresa){
-        using (SqlConnection connection = new SqlConnection(_connectionString)){
-            string storedProcedure = "sp_DesactivarEmpresa";
-            connection.Execute(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure);
-        }
-    }
-
     // ===================== SPRINT 2: RANGOS =====================
 
     public List<Rangos> TraerRangosEmpresa(int idEmpresa){
@@ -402,6 +374,35 @@ public class BD
         return rangos;
     }
 
+    // Los rangos de la empresa con el nombre del rango de arriba y cuántas personas tiene cada uno
+    public List<Rangos> TraerArbolEmpresa(int idEmpresa){
+        List<Rangos> rangos = new List<Rangos>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerArbolEmpresa";
+            rangos = connection.Query<Rangos>(storedProcedure, new { IdEmpresa = idEmpresa }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return rangos;
+    }
+
+    public Rangos TraerRango(int idRango){
+        Rangos rango = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerRango";
+            rango = connection.QueryFirstOrDefault<Rangos>(storedProcedure, new { IdRango = idRango }, commandType: CommandType.StoredProcedure);
+        }
+        return rango;
+    }
+
+    // Cuántos rangos dependen directamente de este
+    public int ContarRangosAbajo(int idRango){
+        int cantidad = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_ContarRangosAbajo";
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdRango = idRango }, commandType: CommandType.StoredProcedure);
+        }
+        return cantidad;
+    }
+
     public int CrearRango(Rangos rango){
         int idRango = 0;
         using (SqlConnection connection = new SqlConnection(_connectionString)){
@@ -409,6 +410,36 @@ public class BD
             idRango = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdEmpresa = rango.IdEmpresa, Nombre = rango.Nombre, IdRangoPadre = rango.IdRangoPadre, Codigo = rango.Codigo, Tareas = rango.Tareas }, commandType: CommandType.StoredProcedure);
         }
         return idRango;
+    }
+
+    // La gente de un rango que completó el formulario
+    public List<Usuarios> TraerPersonasConFormulario(int idRango){
+        List<Usuarios> personas = new List<Usuarios>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerPersonasConFormulario";
+            personas = connection.Query<Usuarios>(storedProcedure, new { IdRango = idRango }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return personas;
+    }
+
+    // La inscripción de una persona a un curso (null si no lo tiene)
+    public Inscripciones TraerInscripcion(int idCurso, int idUsuario){
+        Inscripciones inscripcion = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerInscripcion";
+            inscripcion = connection.QueryFirstOrDefault<Inscripciones>(storedProcedure, new { IdCurso = idCurso, IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+        }
+        return inscripcion;
+    }
+
+    // Las personas del equipo que tienen el curso (sin las que se sumaron desde el buscador)
+    public List<Usuarios> TraerPersonasCurso(int idCurso){
+        List<Usuarios> personas = new List<Usuarios>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerPersonasCurso";
+            personas = connection.Query<Usuarios>(storedProcedure, new { IdCurso = idCurso }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return personas;
     }
 
     public Cursos TraerCursoPorRango(int idRango){
@@ -429,6 +460,26 @@ public class BD
             leccion = connection.QueryFirstOrDefault<LeccionUsuario>(storedProcedure, new { IdLeccion = idLeccion, IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
         }
         return leccion;
+    }
+
+    // Las versiones de una pregunta: las tarjetas con el mismo Orden en la lección de la persona
+    public List<Tarjetas> TraerVersionesTarjeta(int idLeccionXUsuario, int orden){
+        List<Tarjetas> tarjetas = new List<Tarjetas>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerVersionesTarjeta";
+            tarjetas = connection.Query<Tarjetas>(storedProcedure, new { IdLeccionXUsuario = idLeccionXUsuario, Orden = orden }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return tarjetas;
+    }
+
+    // Cuántas lecciones completó la persona en el curso
+    public int ContarLeccionesCompletadas(int idCurso, int idUsuario){
+        int cantidad = 0;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_ContarLeccionesCompletadas";
+            cantidad = connection.QueryFirstOrDefault<int>(storedProcedure, new { IdCurso = idCurso, IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+        }
+        return cantidad;
     }
 
     public List<Tarjetas> TraerTarjetas(int idLeccionXUsuario){
@@ -623,6 +674,16 @@ public class BD
         return chat;
     }
 
+    // Los últimos "cantidad" mensajes del chat, del más viejo al más nuevo
+    public List<MensajesChat> TraerUltimosMensajesChat(int idChat, int cantidad){
+        List<MensajesChat> mensajes = new List<MensajesChat>();
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerUltimosMensajesChat";
+            mensajes = connection.Query<MensajesChat>(storedProcedure, new { IdChat = idChat, Cantidad = cantidad }, commandType: CommandType.StoredProcedure).ToList();
+        }
+        return mensajes;
+    }
+
     public List<MensajesChat> TraerMensajesChat(int idChat){
         List<MensajesChat> mensajes = new List<MensajesChat>();
         using (SqlConnection connection = new SqlConnection(_connectionString)){
@@ -666,6 +727,25 @@ public class BD
             tipos = connection.Query<TiposTarea>(storedProcedure, commandType: CommandType.StoredProcedure).ToList();
         }
         return tipos;
+    }
+
+    // Un cálculo, solo si es de esa persona (null si no existe o es de otro)
+    public Calculos TraerCalculo(int idCalculo, int idUsuario){
+        Calculos calculo = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerCalculo";
+            calculo = connection.QueryFirstOrDefault<Calculos>(storedProcedure, new { IdCalculo = idCalculo, IdUsuario = idUsuario }, commandType: CommandType.StoredProcedure);
+        }
+        return calculo;
+    }
+
+    public TiposTarea TraerTipoTarea(int idTipoTarea){
+        TiposTarea tipo = null;
+        using (SqlConnection connection = new SqlConnection(_connectionString)){
+            string storedProcedure = "sp_TraerTipoTarea";
+            tipo = connection.QueryFirstOrDefault<TiposTarea>(storedProcedure, new { IdTipoTarea = idTipoTarea }, commandType: CommandType.StoredProcedure);
+        }
+        return tipo;
     }
 
     public int GuardarCalculo(Calculos calculo){

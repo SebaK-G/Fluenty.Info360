@@ -1,8 +1,9 @@
 @{
     ViewData["Title"] = "¡Listo!";
 }
-
-<link rel="stylesheet" href="~/css/mensajes.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/mensajes.css" asp-append-version="true" />
+}
 
 <div class="mensaje mensaje-chico">
     <h1>¡Gracias, @ViewBag.Nombre!</h1>

@@ -2,9 +2,10 @@
 @{
     ViewData["Title"] = "Equipo";
 }
-
-<link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+@section Estilos {
+    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+}
 
 <div class="pagina-curso">
 
@@ -29,32 +30,21 @@
             <ul class="arbol">
                 @foreach (Rangos rango in ViewBag.Arbol)
                 {
-                    string link = ViewBag.LinkBase + rango.Codigo;
-                    bool esPropio = rango.IdRango.ToString() == ViewBag.IdRangoPropio;
-                    <!-- Van por niveles (primero el nivel 1, después el 2...). La clase profundidad-N lo corre a la derecha y le da el color de su nivel (de 4 en adelante, igual que 4) -->
-                    <li class="nodo profundidad-@(rango.Profundidad > 4 ? 4 : rango.Profundidad)">
-                        <div class="caja-rango @(esPropio ? "caja-propia" : "")">
+                    <!-- Van por niveles (primero el nivel 1, después el 2...). La clase profundidad-N lo corre a la derecha y le da el color de su nivel -->
+                    <li class="nodo profundidad-@rango.NivelColor">
+                        <div class="caja-rango @(rango.EsPropio ? "caja-propia" : "")">
                             <div class="fila-rango">
                             <div class="datos-rango">
-                                <p class="nombre-rango">@rango.Nombre @(esPropio ? "(vos)" : "")</p>
+                                <p class="nombre-rango">@rango.Nombre @(rango.EsPropio ? "(vos)" : "")</p>
                                 @if (rango.Profundidad == 0)
                                 {
                                     <p class="jefe-rango">⬆ El de más arriba</p>
                                 }
                                 else
                                 {
-                                    <!-- Busca en el árbol el nombre del rango de arriba (su jefe) -->
-                                    string jefe = "";
-                                    foreach (Rangos otro in ViewBag.Arbol)
-                                    {
-                                        if (otro.IdRango == rango.IdRangoPadre)
-                                        {
-                                            jefe = otro.Nombre;
-                                        }
-                                    }
-                                    <p class="jefe-rango">Nivel @rango.Profundidad · depende de <strong>@jefe</strong></p>
+                                    <p class="jefe-rango">Nivel @rango.Profundidad · depende de <strong>@rango.NombrePadre</strong></p>
                                 }
-                                <p class="personas-rango">@ViewBag.PersonasPorRango[rango.IdRango] personas</p>
+                                <p class="personas-rango">@rango.CantidadPersonas personas</p>
                                 @if (rango.IdRangoPadre > 0 && !ViewBag.EsDueno && rango.Tareas != "")
                                 {
                                     <p class="tareas-rango">@rango.Tareas</p>
@@ -63,26 +53,31 @@
                             @if (rango.IdRangoPadre > 0)
                             {
                                 <div class="link-rango">
-                                    <input type="text" value="@link" readonly />
-                                    <a class="boton-curso" href="https://wa.me/?text=@Uri.EscapeDataString("Sumate a nuestro equipo en Fluenty como " + rango.Nombre + ": " + link)">WhatsApp</a>
+                                    <input type="text" value="@rango.Link" readonly />
+                                    <a class="boton-curso" href="@rango.LinkWhatsApp">WhatsApp</a>
                                 </div>
                             }
                             </div>
                             @if (rango.IdRangoPadre > 0 && ViewBag.EsDueno)
                             {
-                                <!-- Qué hace la gente de este rango: si alguien llena mal su formulario, la IA usa esto -->
-                                <form class="tareas-form" method="post" action='@Url.Action("GuardarTareas", "Equipo")'>
-                                    <input type="hidden" name="IdRango" value="@rango.IdRango" />
+                                <!-- Qué hace la gente de este rango: si alguien llena mal su formulario, la IA usa esto.
+                                     El botón guarda con fetch (wwwroot/js/equipo.js), sin recargar la página. -->
+                                <div class="tareas-form">
                                     <label for="Tareas-@rango.IdRango">¿Qué hace la gente de este rango?</label>
                                     <div class="fila-tareas">
-                                        <input type="text" id="Tareas-@rango.IdRango" name="Tareas" maxlength="300" value="@rango.Tareas" placeholder="Ej.: atienden clientes por WhatsApp, arman presupuestos y cargan las ventas" />
-                                        <input class="boton-curso" type="submit" value="Guardar" />
+                                        <input type="text" id="Tareas-@rango.IdRango" maxlength="300" value="@rango.Tareas" placeholder="Ej.: atienden clientes por WhatsApp, arman presupuestos y cargan las ventas" />
+                                        <input class="boton-curso" type="button" value="Guardar" onclick="guardarTareas(@rango.IdRango)" />
                                     </div>
                                     @if (rango.Tareas == "")
                                     {
-                                        <p class="falta-tareas">⚠️ Completalo: si alguien de este rango llena mal su formulario, la IA arma el curso con esto.</p>
+                                        <p class="falta-tareas" id="Mensaje-@rango.IdRango">⚠️ Completalo: si alguien de este rango llena mal su formulario, la IA arma el curso con esto.</p>
                                     }
-                                </form>
+                                    else
+                                    {
+                                        <!-- Acá aparece "Guardado ✓" cuando se guarda -->
+                                        <span class="falta-tareas" id="Mensaje-@rango.IdRango"></span>
+                                    }
+                                </div>
                             }
                         </div>
                     </li>
@@ -96,6 +91,10 @@
             <section class="tarjeta-curso">
                 <h2>Agregar un rango</h2>
                 <p class="ayuda-sprint2">Por ejemplo: "Gerente" abajo de Dueño, y "Vendedor" abajo de Gerente.</p>
+                @if (ViewBag.Error != "")
+                {
+                    <p class="falta-tareas">@ViewBag.Error</p>
+                }
                 <form class="form-rango" method="post" action='@Url.Action("Crear", "Equipo")'>
                     <div class="campo-curso">
                         <label for="Nombre">Nombre del rango</label>
@@ -110,7 +109,7 @@
                         <select id="IdRangoPadre" name="IdRangoPadre">
                             @foreach (Rangos rango in ViewBag.Arbol)
                             {
-                                <option value="@rango.IdRango">@(new string('—', rango.Profundidad)) @rango.Nombre</option>
+                                <option value="@rango.IdRango">@rango.Sangria @rango.Nombre</option>
                             }
                         </select>
                     </div>
@@ -120,3 +119,7 @@
         }
     </main>
 </div>
+
+@section Scripts {
+    <script src="~/js/equipo.js" asp-append-version="true"></script>
+}
