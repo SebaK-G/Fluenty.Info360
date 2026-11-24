@@ -1,182 +1,181 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = ViewBag.Leccion.Titulo;
-}
-@section Estilos {
-    <link rel="stylesheet" href="~/css/leccion.css" asp-append-version="true" />
+    // La lección ocupa toda la pantalla: sin el encabezado de la app
+    ViewData["SinEncabezado"] = true;
 }
 
-<div class="reproductor">
+<main class="pagina-leccion">
 
     <!-- ===== Barra de arriba: salir, progreso, XP y pedidos a la IA que quedan hoy ===== -->
     <header class="barra-leccion">
-        <a class="cerrar-leccion" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })' title="Salir de la lección">✕</a>
-        <div class="progreso-leccion"><span id="relleno"></span></div>
-        <span class="xp-leccion">⚡&nbsp;@ViewBag.XP</span>
-        <span class="xp-leccion">🔥&nbsp;@ViewBag.Racha</span>
-        <span class="xp-leccion" title="Pedidos a la IA que te quedan hoy">🤖&nbsp;<span id="pedidos">@ViewBag.PedidosRestantes</span></span>
+        <a href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })' title="Salir de la lección">✕</a>
+        <div class="barra"><span id="relleno"></span></div>
+        <span>⚡&nbsp;@ViewBag.XP</span>
+        <span>🔥&nbsp;@ViewBag.Racha</span>
+        <span title="Pedidos a la IA que te quedan hoy">🤖&nbsp;<span id="pedidos">@ViewBag.PedidosRestantes</span></span>
     </header>
 
-    <p class="contexto-leccion">Unidad @ViewBag.Leccion.NumeroUnidad · @(ViewBag.EsExamen ? "Examen de la unidad" : "Lección " + ViewBag.Leccion.Numero)</p>
-    <h1 class="titulo-leccion">@ViewBag.Leccion.Titulo</h1>
+    <span class="subtitulo">Unidad @ViewBag.Leccion.NumeroUnidad · @(ViewBag.EsExamen ? "Examen de la unidad" : "Lección " + ViewBag.Leccion.Numero)</span>
+    <h1>@ViewBag.Leccion.Titulo</h1>
 
     @if (ViewBag.EsExamen)
     {
-        <p class="aviso-leccion">🏆 Este es el examen de la unidad. Para pasar a la siguiente necesitás contestar bien a la primera al menos el 70% de las preguntas. Si no llegás, lo volvés a rendir con preguntas nuevas.</p>
+        <p class="aviso">🏆 Este es el examen de la unidad. Para pasar a la siguiente necesitás contestar bien a la primera al menos el 70% de las preguntas. Si no llegás, lo volvés a rendir con preguntas nuevas.</p>
     }
     @if (ViewBag.Mensaje != "")
     {
-        <p class="aviso-leccion aviso-falta">@ViewBag.Mensaje</p>
+        <p class="aviso">@ViewBag.Mensaje</p>
     }
 
     <!-- Para leccion.js: cuántas tarjetas hay y en cuál arranca -->
     <input type="hidden" id="total-tarjetas" value="@ViewBag.Tarjetas.Count" />
     <input type="hidden" id="tarjeta-inicial" value="@ViewBag.TarjetaInicial" />
 
-    <!-- ===== Las tarjetas: se ve una sola por vez ===== -->
+    <!-- ===== Las tarjetas: se ve una sola por vez (leccion.js le saca la clase "oculto" a la que toca) ===== -->
     @foreach (Tarjetas tarjeta in ViewBag.Tarjetas)
     {
-        <section class="tarjeta-leccion tipo-@tarjeta.Tipo" id="tarjeta-@tarjeta.Orden">
+        <section class="tarjeta oculto" id="tarjeta-@tarjeta.Orden">
             <!-- Los datos de la tarjeta que usa leccion.js -->
             <input type="hidden" id="id-tarjeta-@tarjeta.Orden" value="@tarjeta.IdTarjeta" />
-            <input type="hidden" id="tipo-@tarjeta.Orden" value="@tarjeta.Tipo" />
             <input type="hidden" id="resuelta-@tarjeta.Orden" value="@(tarjeta.Resuelta ? "si" : "no")" />
             <input type="hidden" id="leer-@tarjeta.Orden" value="@tarjeta.TextoParaLeer" />
 
             @if (tarjeta.Tipo == "gancho")
             {
-                <p class="etiqueta-tarjeta">💡 Para arrancar</p>
-                <h2 class="titulo-tarjeta" id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
-                <p class="texto-tarjeta" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
+                <span class="etiqueta azul">💡 Para arrancar</span>
+                <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
+                <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
             }
             else if (tarjeta.Tipo == "explicacion")
             {
-                <p class="etiqueta-tarjeta">📘 La idea</p>
-                <h2 class="titulo-tarjeta" id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
+                <span class="etiqueta azul">📘 La idea</span>
+                <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 @if (tarjeta.ParaQue != "")
                 {
-                    <p class="para-que">🎯 <strong>¿Para qué te sirve?</strong> @tarjeta.ParaQue</p>
+                    <p class="destacado">🎯 <strong>¿Para qué te sirve?</strong> @tarjeta.ParaQue</p>
                 }
-                <p class="texto-tarjeta" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
+                <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
                 @if (tarjeta.Ejemplo != "")
                 {
-                    <div class="ejemplo-pasos">
-                        <p class="titulo-ejemplo">👣 Ejemplo paso a paso</p>
+                    <div class="caja separado">
+                        <strong>👣 Ejemplo paso a paso</strong>
                         @foreach (string paso in tarjeta.PasosEjemplo)
                         {
-                            <p class="paso-ejemplo">@paso</p>
+                            <p>@paso</p>
                         }
                     </div>
                 }
             }
             else if (tarjeta.Tipo == "comparacion")
             {
-                <p class="etiqueta-tarjeta">🧠 Pensalo así</p>
-                <h2 class="titulo-tarjeta" id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
-                <blockquote class="comparacion texto-tarjeta" id="texto-@tarjeta.Orden">@tarjeta.Texto</blockquote>
+                <span class="etiqueta azul">🧠 Pensalo así</span>
+                <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
+                <p class="destacado texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
             }
             else if (tarjeta.Tipo == "historia")
             {
-                <p class="etiqueta-tarjeta">📖 Una historia</p>
-                <h2 class="titulo-tarjeta" id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
-                <p class="texto-tarjeta historia" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
+                <span class="etiqueta azul">📖 Una historia</span>
+                <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
+                <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
             }
             else if (tarjeta.Tipo == "chat")
             {
-                <p class="etiqueta-tarjeta">👀 Mirá cómo se hace</p>
-                <h2 class="titulo-tarjeta" id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
-                <p class="texto-tarjeta" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
-                <div class="chats">
-                    <div class="chat chat-malo">
-                        <p class="titulo-chat">❌ Así no</p>
-                        <p class="globo-vos">@tarjeta.PedidoMalo</p>
-                        <p class="globo-ia">@tarjeta.RespuestaMala</p>
+                <span class="etiqueta azul">👀 Mirá cómo se hace</span>
+                <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
+                <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
+                <div class="grilla-2 separado">
+                    <div class="caja">
+                        <strong>❌ Así no</strong>
+                        <p class="globo globo-vos">@tarjeta.PedidoMalo</p>
+                        <p class="globo globo-ia">@tarjeta.RespuestaMala</p>
                     </div>
-                    <div class="chat chat-bueno">
-                        <p class="titulo-chat">✅ Así sí</p>
-                        <p class="globo-vos">@tarjeta.PedidoBueno</p>
+                    <div class="caja">
+                        <strong>✅ Así sí</strong>
+                        <p class="globo globo-vos">@tarjeta.PedidoBueno</p>
                         <input type="hidden" id="pedido-bueno-@tarjeta.Orden" value="@tarjeta.PedidoBueno" />
-                        <button type="button" class="ayuda boton-copiar" id="copiar-@tarjeta.Orden" onclick="copiar(@tarjeta.Orden)">📋 Copiar este pedido para usarlo</button>
-                        <p class="globo-ia">@tarjeta.RespuestaBuena</p>
+                        <button type="button" class="boton-chico separado" id="copiar-@tarjeta.Orden" onclick="copiar(@tarjeta.Orden)">📋 Copiar este pedido para usarlo</button>
+                        <p class="globo globo-ia">@tarjeta.RespuestaBuena</p>
                     </div>
                 </div>
             }
             else if (tarjeta.EsDePregunta)
             {
-                <p class="etiqueta-tarjeta">@tarjeta.Etiqueta</p>
-                <h2 class="titulo-tarjeta" id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
-                <p class="texto-tarjeta" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
-                <p class="globo-ia globo-solo contexto-pregunta" id="contexto-@tarjeta.Orden" style="@(tarjeta.Contexto == "" ? "display:none" : "")">@tarjeta.Contexto</p>
-                <div class="opciones-leccion">
-                    <button type="button" class="opcion-leccion" id="opcion-@tarjeta.Orden-A" onclick="responder(@tarjeta.Orden, 'A')" @(tarjeta.Resuelta ? "disabled" : "")>@tarjeta.OpcionA</button>
-                    <button type="button" class="opcion-leccion" id="opcion-@tarjeta.Orden-B" onclick="responder(@tarjeta.Orden, 'B')" @(tarjeta.Resuelta ? "disabled" : "")>@tarjeta.OpcionB</button>
-                    <button type="button" class="opcion-leccion" id="opcion-@tarjeta.Orden-C" onclick="responder(@tarjeta.Orden, 'C')" @(tarjeta.Resuelta ? "disabled" : "") style="@(tarjeta.OpcionC == "" ? "display:none" : "")">@tarjeta.OpcionC</button>
+                <span class="etiqueta azul">@tarjeta.Etiqueta</span>
+                <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
+                <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
+                <p class="globo globo-ia @(tarjeta.Contexto == "" ? "oculto" : "")" id="contexto-@tarjeta.Orden">@tarjeta.Contexto</p>
+                <div>
+                    <button type="button" class="opcion" id="opcion-@tarjeta.Orden-A" onclick="responder(@tarjeta.Orden, 'A')" @(tarjeta.Resuelta ? "disabled" : "")>@tarjeta.OpcionA</button>
+                    <button type="button" class="opcion" id="opcion-@tarjeta.Orden-B" onclick="responder(@tarjeta.Orden, 'B')" @(tarjeta.Resuelta ? "disabled" : "")>@tarjeta.OpcionB</button>
+                    <button type="button" class="opcion @(tarjeta.OpcionC == "" ? "oculto" : "")" id="opcion-@tarjeta.Orden-C" onclick="responder(@tarjeta.Orden, 'C')" @(tarjeta.Resuelta ? "disabled" : "")>@tarjeta.OpcionC</button>
                 </div>
-                <div class="devolucion-opcion @(tarjeta.Resuelta ? "visible" : "")" id="devolucion-@tarjeta.Orden">
-                    <p class="veredicto" id="veredicto-@tarjeta.Orden">@(tarjeta.Resuelta ? "✅ Esta ya la contestaste bien." : "")</p>
+                <div class="caja devolucion @(tarjeta.Resuelta ? "" : "oculto")" id="devolucion-@tarjeta.Orden">
+                    <strong id="veredicto-@tarjeta.Orden">@(tarjeta.Resuelta ? "✅ Esta ya la contestaste bien." : "")</strong>
                     <p id="explicacion-@tarjeta.Orden">@(tarjeta.Resuelta ? tarjeta.Explicacion : "")</p>
-                    <div class="reexplicacion" id="reexplicacion-@tarjeta.Orden" style="display:none"></div>
-                    <button type="button" class="boton-leccion boton-otra" id="otra-@tarjeta.Orden" onclick="otraPregunta(@tarjeta.Orden)">Probar con otra pregunta del mismo tema</button>
+                    <p class="destacado oculto" id="reexplicacion-@tarjeta.Orden"></p>
+                    <button type="button" class="boton separado" id="otra-@tarjeta.Orden" onclick="otraPregunta(@tarjeta.Orden)">Probar con otra pregunta del mismo tema</button>
                 </div>
             }
             else if (tarjeta.Tipo == "practica")
             {
-                <p class="etiqueta-tarjeta">✍️ Probalo vos</p>
-                <h2 class="titulo-tarjeta" id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
-                <p class="texto-tarjeta" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
+                <span class="etiqueta azul">✍️ Probalo vos</span>
+                <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
+                <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
                 @if (tarjeta.Explicacion != "")
                 {
-                    <p class="pista">💬 Pista: @tarjeta.Explicacion</p>
+                    <p class="destacado">💬 Pista: @tarjeta.Explicacion</p>
                 }
                 <textarea id="respuesta-@tarjeta.Orden" rows="5" maxlength="800" placeholder="Escribí acá tu pedido a la IA..." @(tarjeta.Resuelta ? "disabled" : "")></textarea>
-                <button type="button" class="boton-leccion" id="corregir-@tarjeta.Orden" onclick="practicar(@tarjeta.Orden)" style="@(tarjeta.Resuelta ? "display:none" : "")">Corregir mi respuesta</button>
-                <p class="intentos-practica" id="intentos-@tarjeta.Orden">@(tarjeta.Intentos > 0 ? "Intentos: " + tarjeta.Intentos : "")</p>
-                <div class="devolucion-practica @(tarjeta.Resuelta ? "aprobada" : "")" id="devolucion-@tarjeta.Orden" style="@(tarjeta.Resuelta ? "" : "display:none")">
-                    <p class="veredicto" id="veredicto-@tarjeta.Orden">@(tarjeta.Resuelta ? "✅ ¡Aprobado!" : "")</p>
+                <button type="button" class="boton boton-verde boton-grande separado @(tarjeta.Resuelta ? "oculto" : "")" id="corregir-@tarjeta.Orden" onclick="practicar(@tarjeta.Orden)">Corregir mi respuesta</button>
+                <p class="ayuda" id="intentos-@tarjeta.Orden">@(tarjeta.Intentos > 0 ? "Intentos: " + tarjeta.Intentos : "")</p>
+                <div class="caja devolucion @(tarjeta.Resuelta ? "aprobada" : "oculto")" id="devolucion-@tarjeta.Orden">
+                    <strong id="veredicto-@tarjeta.Orden">@(tarjeta.Resuelta ? "✅ ¡Aprobado!" : "")</strong>
                     <p id="texto-devolucion-@tarjeta.Orden">@(tarjeta.Resuelta ? "Este ejercicio ya lo tenías aprobado." : "")</p>
-                    <div class="ejemplo-practica" id="ejemplo-@tarjeta.Orden" style="display:none">
-                        <p class="titulo-ejemplo">👀 Así lo haría alguien que ya sabe (reescribilo con tus palabras):</p>
-                        <p class="globo-vos" id="texto-ejemplo-@tarjeta.Orden"></p>
+                    <div class="oculto" id="ejemplo-@tarjeta.Orden">
+                        <strong>👀 Así lo haría alguien que ya sabe (reescribilo con tus palabras):</strong>
+                        <p class="globo globo-vos" id="texto-ejemplo-@tarjeta.Orden"></p>
                     </div>
                 </div>
             }
             else if (tarjeta.Tipo == "cierre")
             {
-                <p class="etiqueta-tarjeta">🚀 Mañana en el laburo</p>
-                <h2 class="titulo-tarjeta" id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
-                <p class="accion-manana">@tarjeta.Texto</p>
+                <span class="etiqueta azul">🚀 Mañana en el laburo</span>
+                <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
+                <p class="destacado texto-grande">@tarjeta.Texto</p>
                 <form method="post" action='@Url.Action("Completar", "Leccion")' onsubmit="mostrarCarga('Calculando tu nota...')">
                     <input type="hidden" name="IdLeccion" value="@ViewBag.Leccion.IdLeccion" />
-                    <input class="boton-leccion boton-terminar" type="submit" value='@(ViewBag.Leccion.Estado == "Completada" ? "Terminar (ya la habías hecho)" : (ViewBag.EsExamen ? "Entregar examen" : "Terminar lección"))' />
+                    <input class="boton boton-verde boton-grande" type="submit" value='@(ViewBag.Leccion.Estado == "Completada" ? "Terminar (ya la habías hecho)" : (ViewBag.EsExamen ? "Entregar examen" : "Terminar lección"))' />
                 </form>
             }
 
             <!-- Ayudas para entender: escuchar, más simple, otro ejemplo -->
-            <div class="ayudas-tarjeta">
-                <button type="button" class="ayuda" onclick="escuchar(@tarjeta.Orden)">🔊 Escuchar</button>
+            <div class="separado">
+                <button type="button" class="boton-chico" onclick="escuchar(@tarjeta.Orden)">🔊 Escuchar</button>
                 @if (!ViewBag.EsExamen && (tarjeta.Tipo == "gancho" || tarjeta.Tipo == "explicacion" || tarjeta.Tipo == "comparacion" || tarjeta.Tipo == "historia"))
                 {
-                    <button type="button" class="ayuda" onclick="reexplicar(@tarjeta.Orden, 'simple')">🤷 Explicamelo más simple</button>
-                    <button type="button" class="ayuda" onclick="reexplicar(@tarjeta.Orden, 'ejemplo')">🔁 Dame otro ejemplo</button>
+                    <button type="button" class="boton-chico" onclick="reexplicar(@tarjeta.Orden, 'simple')">🤷 Explicamelo más simple</button>
+                    <button type="button" class="boton-chico" onclick="reexplicar(@tarjeta.Orden, 'ejemplo')">🔁 Dame otro ejemplo</button>
                 }
             </div>
-            <p class="mensaje-ayuda" id="mensaje-@tarjeta.Orden" style="display:none"></p>
+            <p class="aviso oculto" id="mensaje-@tarjeta.Orden"></p>
         </section>
     }
 
+    <p class="titulo-pagina centrado separado" id="aviso-siguiente">Para seguir, primero resolvé esta tarjeta 🙂</p>
+
     <!-- ===== Botones de abajo ===== -->
-    <footer class="navegacion-leccion">
-        <div class="botones-navegacion">
-            <button type="button" id="atras" class="boton-secundario" onclick="anterior()">Atrás</button>
-            <button type="button" id="siguiente" class="boton-leccion" onclick="siguiente()">Continuar</button>
+    <footer class="navegacion">
+        <div class="fila">
+            <button type="button" id="atras" class="boton boton-borde" onclick="anterior()">Atrás</button>
+            <button type="button" id="siguiente" class="boton boton-verde" onclick="siguiente()">Continuar</button>
         </div>
     </footer>
-    <p class="aviso-siguiente" id="aviso-siguiente">Para seguir, primero resolvé esta tarjeta 🙂</p>
-</div>
+</main>
 
 <!-- Mientras la IA responde -->
 <div id="carga" class="fondo-carga">
-    <div class="caja-carga">
+    <div class="tarjeta">
         <p class="puntitos"><span></span><span class="puntito-2"></span><span class="puntito-3"></span></p>
         <p id="texto-carga">Un segundo...</p>
     </div>

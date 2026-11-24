@@ -37,7 +37,7 @@ Los cursos se hacen en **lecciones cortas estilo Duolingo**, con tarjetas, pregu
 
 - ASP.NET Core MVC (.NET 9) con C#
 - SQL Server con Stored Procedures, usando Dapper (`Query`, `QueryFirstOrDefault` y `Execute`)
-- HTML, CSS y JavaScript (con `fetch` para las acciones que no recargan la página)
+- HTML, CSS (un solo `style.css`, sin Bootstrap) y JavaScript (con `fetch` para las acciones que no recargan la página)
 - IA: Groq, llamado por solicitudes HTTP desde `Services/GroqService.cs`
 
 ## Cómo está organizado
@@ -45,7 +45,8 @@ Los cursos se hacen en **lecciones cortas estilo Duolingo**, con tarjetas, pregu
 - `Controllers/`: cada controller lee la sesión, llama a la lógica de su pantalla y arma los ViewBag (o devuelve un objeto para `fetch`).
 - `Models/`: las clases de cada tabla, `BD.cs` (todas las llamadas a los Stored Procedures) y una clase de lógica por pantalla (`LogicaEquipo`, `LogicaCurso`, `LogicaLeccion`, etc.).
 - `Services/`: la conexión con la IA (`GroqService`) y el armado de las lecciones (`GeneradorLecciones`).
-- `Views/`: solo muestran lo que llega por ViewBag. El CSS de cada pantalla va en el `<head>` del `_Layout` con `@section Estilos`.
+- `Views/`: solo muestran lo que llega por ViewBag. El encabezado y el menú están una sola vez, en `Shared/_Layout.cshtml`.
+- `wwwroot/css/style.css`: un solo archivo de estilos para toda la app. Arriba están las piezas que se repiten en todas las pantallas (encabezado, tarjetas, botones, chips, grillas, formularios) y al final lo poquito que es propio de cada pantalla.
 - `wwwroot/js/`: un archivo de JavaScript por pantalla, y `site.js` con lo que usan varias.
 - `ScriptFluentySprint2.sql`: la base de datos completa (tablas, datos de prueba y Stored Procedures).
 

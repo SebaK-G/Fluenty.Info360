@@ -8,7 +8,7 @@
     - Todos ven Explorar (el buscador de cursos públicos) y Asistente (el chat con la IA), sprint 3.
     - El rango más bajo ve Home, Mi curso, Explorar, Asistente y Salir.
 *@
-<nav class="nav-app">
+<nav class="menu">
     <a href='@Url.Action("Index", "Home")' class='@(Model == "Home" ? "activo" : "")'>Home</a>
     @if (ViewBag.Menu.EsDueno || ViewBag.Menu.Gestiona)
     {

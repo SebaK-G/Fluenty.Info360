@@ -66,7 +66,7 @@ function mostrarRespuesta(data, texto) {
 
     // La pregunta quedó guardada en el chat (aunque la IA haya fallado)
     if (data.pregunta != null) {
-        let html = '<div class="fila-mensaje de-persona"><div class="burbuja">';
+        let html = '<div class="mensaje mensaje-mio"><div class="burbuja">';
         data.pregunta.forEach(parrafo => {
             html = html + "<p>" + parrafo + "</p>";
         });
@@ -78,7 +78,7 @@ function mostrarRespuesta(data, texto) {
     }
 
     if (data.ok) {
-        let html = '<div class="fila-mensaje de-ia"><div class="avatar-ia">✦</div><div class="burbuja">';
+        let html = '<div class="mensaje mensaje-ia"><div class="avatar-ia">✦</div><div class="burbuja">';
         data.respuesta.forEach(parrafo => {
             html = html + "<p>" + parrafo + "</p>";
         });
@@ -101,7 +101,7 @@ function mostrarRespuesta(data, texto) {
             sinChats.style.display = "none";
         }
         let lista = document.getElementById("lista-chats");
-        lista.innerHTML = '<a class="item-chat chat-abierto" href="/Asistente/Index?IdChat=' + data.idChat + '"><span class="titulo-chat">' + data.tituloChat + '</span><small>Ahora</small></a>' + lista.innerHTML;
+        lista.innerHTML = '<a class="item-chat activo" href="/Asistente/Index?IdChat=' + data.idChat + '"><strong>' + data.tituloChat + '</strong><p class="ayuda">Ahora</p></a>' + lista.innerHTML;
     }
     if (data.restantes != undefined) {
         document.getElementById("restantes").innerHTML = data.restantes;

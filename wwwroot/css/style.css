@@ -1,0 +1,1399 @@
+/* =====================================================================
+   FLUENTY · style.css
+   Un solo archivo de estilos para toda la app.
+   Primero van las piezas que se repiten en todas las pantallas
+   (encabezado, tarjetas, botones, etiquetas...) y al final lo poquito
+   que tiene cada pantalla y no se repite en otra.
+
+   Índice
+    1. Base
+    2. Encabezado y menú
+    3. Página y título de página
+    4. Tarjetas y cajas
+    5. Botones
+    6. Subtítulos, botones chicos y etiquetas
+    7. Grillas y filas
+    8. Textos chicos y avisos
+    9. Formularios
+   10. Números destacados (datos)
+   11. Barra de progreso
+   12. Cartel de carga
+   13. Pantallas: Acceso, Equipo, Curso, Explorar, Asistente,
+       Calculadora, Lección, Landing
+   14. Celular (una sola media query)
+   ===================================================================== */
+
+
+/* ===== 1. BASE ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    /* El ancho incluye el padding y el borde: así un input con width 100% no se pasa */
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #172333;
+    /* Fondo azul degradado de toda la app; fixed hace que quede quieto al bajar */
+    background: linear-gradient(to bottom, #1f3144, #035b99);
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+p {
+    line-height: 1.5;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* Cuadros de texto y listas: todos iguales en toda la app */
+input,
+select,
+textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: 15px;
+    color: #172333;
+    background-color: #f8fafc;
+    border: 1px solid #c4d0de;
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border: 1px solid #0668c6;
+    background-color: #ffffff;
+}
+
+/* Los radio y checkbox no se estiran */
+input[type="radio"],
+input[type="checkbox"] {
+    width: auto;
+}
+
+textarea {
+    resize: vertical;
+}
+
+label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* ===== 2. ENCABEZADO Y MENÚ (igual en todas las pantallas) ===== */
+
+.encabezado {
+    background-color: #ffffff;
+    margin: 12px;
+    padding: 12px 30px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #172333;
+    text-decoration: none;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Cada botón del menú es redondeado y azul */
+.menu a {
+    display: inline-block;
+    background-color: #0b1ca6;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 9px 18px;
+    border-radius: 20px;
+}
+
+.menu a:hover,
+.menu .activo {
+    background-color: #075b99;
+}
+
+.menu .salir {
+    background-color: #ffffff;
+    color: #d90000;
+    border: 2px solid #d90000;
+    padding: 7px 16px;
+}
+
+.menu .salir:hover {
+    background-color: #d90000;
+    color: #ffffff;
+}
+
+/* Texto del lado derecho cuando no hay menú (formulario para sumarse) */
+.encabezado .ayuda {
+    font-weight: bold;
+}
+
+
+/* ===== 3. PÁGINA Y TÍTULO DE PÁGINA ===== */
+
+/* La columna central de cada pantalla. gap separa las tarjetas sin poner margin en cada una */
+.pagina {
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto 50px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Para formularios y mensajes cortos */
+.pagina-angosta {
+    max-width: 760px;
+}
+
+/* Título blanco sobre el fondo azul: subtítulo + h1 + texto */
+.titulo-pagina {
+    color: #ffffff;
+}
+
+.titulo-pagina p {
+    color: #d6e4f5;
+    max-width: 720px;
+}
+
+.volver {
+    color: #d6e4f5;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.volver:hover {
+    color: #ffffff;
+}
+
+
+/* ===== 4. TARJETAS Y CAJAS ===== */
+
+/* La caja blanca que se usa en todas las pantallas */
+.tarjeta {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 22px 26px;
+    animation: aparecer 0.5s ease;
+}
+
+.tarjeta p {
+    color: #44546a;
+}
+
+/* Una caja gris adentro de una tarjeta */
+.caja {
+    background-color: #f1f5f9;
+    border-radius: 12px;
+    padding: 14px 18px;
+}
+
+/* Tarjeta azul para lo más importante (mis cursos, nivelación, resultado) */
+.tarjeta-azul {
+    background: linear-gradient(135deg, #0b1ca6, #075b99);
+    color: #ffffff;
+}
+
+.tarjeta-azul p {
+    color: #ffffff;
+}
+
+/* Caja azul transparente adentro de una tarjeta azul */
+.tarjeta-azul .caja {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Toda la tarjeta es un link: sube un poquito al pasar el mouse */
+.tarjeta-curso {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #172333;
+    text-decoration: none;
+    position: relative;
+    top: 0;
+    /* El borde blanco hace que al pintarlo de celeste la tarjeta no cambie de tamaño */
+    border: 2px solid #ffffff;
+}
+
+.tarjeta-curso:hover {
+    top: -2px;
+    border: 2px solid #8fd3ff;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* ===== 5. BOTONES (sirven para <a>, <button> e <input type="submit">) ===== */
+
+.boton {
+    display: inline-block;
+    width: auto;
+    background-color: #0b1ca6;
+    color: #ffffff;
+    border: 2px solid #0b1ca6;
+    border-radius: 10px;
+    padding: 9px 20px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.boton:hover {
+    background-color: #075b99;
+    border: 2px solid #075b99;
+}
+
+/* Botón secundario: blanco con borde */
+.boton-borde {
+    background-color: #ffffff;
+    color: #0b1ca6;
+}
+
+.boton-borde:hover {
+    background-color: #e8f1fc;
+    color: #0b1ca6;
+}
+
+.boton-rojo {
+    background-color: #ffffff;
+    color: #d90000;
+    border: 2px solid #d90000;
+}
+
+.boton-rojo:hover {
+    background-color: #d90000;
+    border: 2px solid #d90000;
+    color: #ffffff;
+}
+
+.boton-verde {
+    background-color: #1fae5b;
+    border: 2px solid #1fae5b;
+}
+
+.boton-verde:hover {
+    background-color: #178a48;
+    border: 2px solid #178a48;
+}
+
+/* Ocupa todo el ancho */
+.boton-grande {
+    display: block;
+    width: 100%;
+    padding: 13px 20px;
+    font-size: 17px;
+}
+
+/* Botón que todavía no se puede tocar */
+.boton[disabled],
+.boton[disabled]:hover,
+.boton-apagado,
+.boton-apagado:hover {
+    background-color: #c4d0de;
+    border: 2px solid #c4d0de;
+    color: #44546a;
+    cursor: default;
+}
+
+
+/* ===== 6. SUBTÍTULOS, BOTONES CHICOS Y ETIQUETAS ===== */
+
+/* Texto chiquito en mayúscula arriba de un título */
+.subtitulo {
+    display: inline-block;
+    background-color: #8fd3ff;
+    color: #172333;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+/* Botón chico redondeado que se puede tocar (categorías, personas, opciones de formulario).
+   inline-block: se acomodan como palabras y bajan de renglón solos */
+.boton-chico {
+    display: inline-block;
+    background-color: #eef4fa;
+    color: #0b1ca6;
+    border: 2px solid #eef4fa;
+    border-radius: 20px;
+    padding: 6px 14px;
+    margin: 0 6px 8px 0;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.boton-chico:hover {
+    border: 2px solid #8fd3ff;
+}
+
+/* El botón chico elegido */
+.boton-chico.activo {
+    background-color: #0b1ca6;
+    border: 2px solid #0b1ca6;
+    color: #ffffff;
+}
+
+/* Etiqueta de estado (no se toca). La segunda clase le cambia el color */
+.etiqueta {
+    display: inline-block;
+    background-color: #eef4fa;
+    color: #44546a;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin: 2px 4px 2px 0;
+}
+
+.etiqueta.verde {
+    background-color: #e9f8ef;
+    color: #146c3a;
+}
+
+.etiqueta.naranja {
+    background-color: #fff4e5;
+    color: #8a4b00;
+}
+
+.etiqueta.azul {
+    background-color: #e8f1fc;
+    color: #0668c6;
+}
+
+
+/* ===== 7. GRILLAS Y FILAS ===== */
+
+/* fr = una parte del espacio libre. 1fr 1fr = dos columnas iguales */
+.grilla-2,
+.grilla-3,
+.grilla-4,
+.grilla-2-1 {
+    display: grid;
+    gap: 14px;
+    /* Si la grilla es más alta que su contenido, las filas quedan arriba y no se estiran */
+    align-content: start;
+}
+
+.grilla-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.grilla-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.grilla-4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+/* Una columna ancha y una angosta */
+.grilla-2-1 {
+    grid-template-columns: 2fr 1fr;
+}
+
+/* Cosas en fila: una a la izquierda y otra a la derecha */
+.fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+/* Un renglón de una lista, con una línea abajo */
+.renglon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e3e9f1;
+}
+
+.renglon:last-child {
+    border-bottom: none;
+}
+
+/* Varios botones juntos; si no entran, bajan */
+.botones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+/* Si los botones están en una fila, no necesitan aire arriba */
+.fila .botones {
+    margin-top: 0;
+}
+
+.centrado {
+    text-align: center;
+    justify-content: center;
+}
+
+/* Cosas una abajo de la otra, separadas */
+.columna {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Un cuadro de texto con su botón al lado */
+.input-boton {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.mitad {
+    width: 45%;
+}
+
+/* Un poco de aire arriba */
+.separado {
+    margin-top: 14px;
+}
+
+
+/* ===== 8. TEXTOS CHICOS Y AVISOS ===== */
+
+.ayuda {
+    font-size: 13px;
+    color: #5b6b80;
+}
+
+.tarjeta .ayuda {
+    color: #5b6b80;
+}
+
+.titulo-pagina .ayuda,
+.tarjeta-azul .ayuda {
+    color: #d6e4f5;
+}
+
+.aviso {
+    background-color: #fff4e5;
+    color: #8a4b00;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+}
+
+.error {
+    color: #c0392b;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/* ===== 9. FORMULARIOS ===== */
+
+/* Una pregunta: el texto arriba y el cuadro abajo */
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.campo:last-child {
+    margin-bottom: 0;
+}
+
+.opcional {
+    font-weight: normal;
+    color: #5b6b80;
+}
+
+/* Las opciones para tocar son botones chicos con un radio o checkbox adentro (site.js les pone "activo") */
+.eleccion {
+    font-weight: normal;
+    color: #172333;
+    background-color: #f8fafc;
+    border: 2px solid #dce4ee;
+}
+
+/* Opciones una abajo de la otra */
+.en-columna .boton-chico {
+    display: block;
+    margin-right: 0;
+    border-radius: 12px;
+}
+
+/* El encabezado de cada paso: el número en un cuadrado y el título al lado */
+.encabezado-paso {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #e3e9f1;
+}
+
+.numero-paso {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0b1ca6, #2f8cff);
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: bold;
+    /* flex para centrar el número adentro del cuadrado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ===== 10. NÚMEROS DESTACADOS ===== */
+
+/* Un número grande con su texto abajo (estadísticas, XP, racha...) */
+.dato {
+    background-color: #eef4fa;
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align: center;
+}
+
+.dato strong {
+    display: block;
+    font-size: 26px;
+    color: #0b1ca6;
+}
+
+.dato span {
+    font-size: 13px;
+    color: #44546a;
+}
+
+.tarjeta-azul .dato {
+    background-color: #ffffff;
+}
+
+
+/* ===== 11. BARRA DE PROGRESO ===== */
+
+/* Una caja gris con un span verde adentro. El ancho del verde lo pone Razor o JS */
+.barra {
+    height: 12px;
+    background-color: #e3e9f1;
+    border-radius: 10px;
+    margin: 8px 0;
+}
+
+.barra span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(to right, #1fae5b, #4cd787);
+    border-radius: 10px;
+}
+
+.tarjeta-azul .barra {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+/* ===== 12. CARTEL DE CARGA (site.js lo muestra con style.display = "flex") ===== */
+
+.fondo-carga {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 30;
+    background-color: rgba(23, 35, 51, 0.87);
+    align-items: center;
+    justify-content: center;
+}
+
+.fondo-carga .tarjeta {
+    width: 90%;
+    max-width: 440px;
+    text-align: center;
+}
+
+/* La barrita que va y viene */
+.barra-carga span {
+    width: 30%;
+    animation: ir-y-venir 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes ir-y-venir {
+    from {
+        margin-left: 0%;
+    }
+    to {
+        margin-left: 70%;
+    }
+}
+
+/* Los tres puntitos de "escribiendo..." */
+.puntitos {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    padding: 6px 0;
+}
+
+.puntitos span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: #8a96a6;
+    animation: puntito 1s infinite;
+}
+
+.puntitos .puntito-2 {
+    animation-delay: 0.2s;
+}
+
+.puntitos .puntito-3 {
+    animation-delay: 0.4s;
+}
+
+@keyframes puntito {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+
+
+/* =====================================================================
+   13. LO PROPIO DE CADA PANTALLA
+   ===================================================================== */
+
+/* ----- Acceso: tarjeta con el formulario a la izquierda y un panel azul a la derecha ----- */
+
+/* La tarjeta no tiene padding: cada mitad tiene el suyo, así el panel azul llega al borde */
+.acceso {
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+}
+
+.acceso > div {
+    padding: 30px;
+}
+
+
+/* ----- Equipo: el árbol de rangos ----- */
+
+.arbol {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Cada rango tiene un borde a la izquierda; cuanto más abajo, más corrido y más claro */
+.rango {
+    border-left: 8px solid #0b2a9e;
+}
+
+.nivel-1 {
+    margin-left: 40px;
+    border-left: 8px solid #0b2a9e;
+}
+
+.nivel-2 {
+    margin-left: 80px;
+    border-left: 8px solid #0668c6;
+}
+
+.nivel-3 {
+    margin-left: 120px;
+    border-left: 8px solid #2f8cff;
+}
+
+.nivel-4 {
+    margin-left: 160px;
+    border-left: 8px solid #8fd3ff;
+}
+
+/* El rango de la persona que mira */
+.rango-propio {
+    background-color: #e8f1fc;
+    border: 2px solid #0668c6;
+    border-left: 8px solid #0668c6;
+}
+
+
+/* ----- Curso: unidades de colores y el camino de lecciones ----- */
+
+/* Un color por unidad. Se usan en el curso y en la landing */
+.color-1 {
+    background-color: #58cc02;
+}
+
+.color-2 {
+    background-color: #1cb0f6;
+}
+
+.color-3 {
+    background-color: #ce82ff;
+}
+
+.color-4 {
+    background-color: #ff9600;
+}
+
+.color-sabida {
+    background-color: #8a96a6;
+}
+
+.encabezado-unidad {
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 18px 22px;
+    /* relative: la etiqueta de la esquina se ubica respecto de este cuadro */
+    position: relative;
+}
+
+.encabezado-unidad p {
+    color: #ffffff;
+}
+
+.encabezado-unidad .etiqueta {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    background-color: #ffffff;
+    color: #172333;
+}
+
+.camino {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Cada lección: el círculo y el texto al lado */
+.paso {
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+/* El zigzag: cada lección más o menos corrida */
+.paso-2,
+.paso-4 {
+    margin-left: 12%;
+}
+
+.paso-3 {
+    margin-left: 22%;
+}
+
+.circulo {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background-color: #d0d7e1;
+    /* El borde de abajo más oscuro le da efecto de botón 3D */
+    border-bottom: 5px solid #a9b4c2;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* El estado viene del modelo: circulo-@leccion.Estado */
+.circulo-Disponible {
+    background-color: #58cc02;
+    border-bottom: 5px solid #46a302;
+    animation: latir 1.6s infinite;
+}
+
+.circulo-Completada {
+    background-color: #ffc800;
+    border-bottom: 5px solid #d9a800;
+}
+
+.circulo-YaSabe {
+    background-color: #8a96a6;
+    border-bottom: 5px solid #6b7686;
+}
+
+@keyframes latir {
+    0% {
+        background-color: #58cc02;
+    }
+    50% {
+        background-color: #8ee04e;
+    }
+    100% {
+        background-color: #58cc02;
+    }
+}
+
+.empezar {
+    font-weight: bold;
+    color: #1fae5b;
+    text-decoration: none;
+}
+
+
+/* ----- Explorar: temario que se abre y cierra solo (<details>) ----- */
+
+.temario {
+    border: 1px solid #dce4ee;
+    border-radius: 12px;
+    margin-top: 10px;
+}
+
+.temario summary {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    cursor: pointer;
+}
+
+/* [open] = el <details> que está abierto */
+.temario[open] summary {
+    background-color: #e8f1fc;
+    border-radius: 12px 12px 0 0;
+}
+
+.temario ol {
+    padding: 12px 14px 12px 60px;
+    color: #44546a;
+    line-height: 1.8;
+}
+
+/* Número adentro de un círculo */
+.numero {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #0b1ca6;
+    color: #ffffff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* sticky: la caja para inscribirse queda pegada arriba mientras bajás */
+.fija {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+}
+
+
+/* ----- Asistente: lista de chats a la izquierda y el chat a la derecha ----- */
+
+.asistente {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.item-chat {
+    display: block;
+    color: #172333;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 8px;
+}
+
+.item-chat:hover,
+.item-chat.activo {
+    background-color: #e8f1fc;
+}
+
+.mensajes {
+    padding: 14px 4px;
+    margin: 14px 0;
+    border-top: 1px solid #e3e9f1;
+    border-bottom: 1px solid #e3e9f1;
+}
+
+/* Cada mensaje es una fila flex: los míos se van a la derecha */
+.mensaje {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.mensaje-mio {
+    justify-content: flex-end;
+    padding-left: 25%;
+}
+
+.mensaje-ia {
+    padding-right: 20%;
+}
+
+.burbuja {
+    background-color: #f1f5f9;
+    border-radius: 4px 16px 16px 16px;
+    padding: 10px 14px;
+}
+
+.burbuja p {
+    margin-bottom: 6px;
+}
+
+.burbuja p:last-child {
+    margin-bottom: 0;
+}
+
+.mensaje-mio .burbuja {
+    background-color: #0b1ca6;
+    border-radius: 16px 4px 16px 16px;
+}
+
+.mensaje-mio .burbuja p {
+    color: #ffffff;
+}
+
+.avatar-ia {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #0b1ca6;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ----- Calculadora ----- */
+
+.numero-grande {
+    font-size: 54px;
+    font-weight: bold;
+    line-height: 1.1;
+}
+
+.numero-grande span {
+    font-size: 18px;
+}
+
+/* La tabla de cálculos guardados: cada renglón es una grilla de 6 columnas */
+.tabla .renglon {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 80px;
+}
+
+.renglon.activo {
+    background-color: #e8f1fc;
+    border-radius: 10px;
+    padding-left: 10px;
+}
+
+
+/* ----- Lección: una tarjeta por vez, letra grande ----- */
+
+.pagina-leccion {
+    width: 92%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px 0 120px 0;
+}
+
+.pagina-leccion h1 {
+    color: #ffffff;
+    font-size: 26px;
+}
+
+.pagina-leccion .tarjeta {
+    border-radius: 22px;
+}
+
+.pagina-leccion .tarjeta h2 {
+    font-size: 26px;
+}
+
+/* Texto grande para leer cómodo */
+.texto-grande {
+    font-size: 19px;
+}
+
+.tarjeta .texto-grande {
+    color: #2b3a4f;
+}
+
+/* Barra de arriba: X, progreso y números */
+.barra-leccion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ffffff;
+    font-weight: bold;
+    padding-bottom: 14px;
+}
+
+.barra-leccion .barra {
+    width: 100%;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.barra-leccion a {
+    color: #a9bad0;
+    font-size: 22px;
+    text-decoration: none;
+}
+
+/* Una cita resaltada (comparación, pista, para qué sirve) */
+.destacado {
+    background-color: #fff8e6;
+    border-left: 6px solid #f5a623;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 12px 0;
+}
+
+/* Globos de chat de la tarjeta "Mirá cómo se hace" */
+.globo {
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-top: 8px;
+}
+
+.globo-vos {
+    background-color: #0b1ca6;
+    color: #ffffff;
+}
+
+.tarjeta .globo-vos {
+    color: #ffffff;
+}
+
+.globo-ia {
+    background-color: #f1f5f9;
+}
+
+/* Las opciones de una pregunta: botones grandes uno abajo del otro */
+.opcion {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: 17px;
+    color: #172333;
+    background-color: #ffffff;
+    border: 2px solid #dce4ee;
+    border-bottom: 4px solid #dce4ee;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.opcion:hover {
+    border-color: #2f8cff;
+}
+
+.opcion.bien {
+    background-color: #e9f8ef;
+    border-color: #1fae5b;
+    font-weight: bold;
+}
+
+.opcion.mal {
+    background-color: #fdeeee;
+    border-color: #e74c3c;
+}
+
+/* La respuesta de la IA después de contestar */
+.devolucion {
+    margin-top: 14px;
+}
+
+.devolucion.aprobada {
+    background-color: #e9f8ef;
+}
+
+/* Botones de abajo, pegados al borde de la pantalla */
+.navegacion {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #0d1726;
+    border-top: 1px solid #26395a;
+    padding: 14px 0;
+}
+
+.navegacion .fila {
+    width: 92%;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.navegacion .boton-verde {
+    width: 70%;
+}
+
+/* Pantalla de festejo al terminar la lección */
+.medalla {
+    width: 110px;
+    height: 110px;
+    margin: 30px auto 14px auto;
+    border-radius: 50%;
+    background-color: #ffc800;
+    border-bottom: 8px solid #d9a800;
+    font-size: 50px;
+    font-weight: bold;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: saltar 0.8s ease;
+}
+
+.medalla-error {
+    background-color: #8a96a6;
+    border-bottom: 8px solid #6b7686;
+}
+
+@keyframes saltar {
+    0% {
+        transform: scale(0.4);
+    }
+    70% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+/* ----- Landing ----- */
+
+/* Cada sección ocupa todo el ancho; .pagina centra el contenido adentro */
+.seccion {
+    padding: 50px 0;
+    background-color: #f3f6fb;
+}
+
+.seccion-blanca {
+    background-color: #ffffff;
+}
+
+/* El mismo degradado azul de la app */
+.seccion-oscura {
+    background: linear-gradient(to bottom, #1f3144, #035b99);
+}
+
+.seccion .pagina {
+    margin: 0 auto;
+}
+
+.seccion h2 {
+    font-size: 30px;
+    max-width: 700px;
+}
+
+.portada h1 {
+    font-size: 52px;
+    line-height: 1.1;
+}
+
+.resaltado {
+    color: #8fd3ff;
+}
+
+/* Listas con un tilde en vez del puntito */
+.lista-tilde {
+    list-style-type: "✓  ";
+    padding-left: 22px;
+    line-height: 1.9;
+}
+
+.lista-cruz {
+    list-style-type: "✕  ";
+    color: #5b6b80;
+}
+
+.pie {
+    background-color: #0d1726;
+    color: #a9bad0;
+    padding: 30px 0;
+}
+
+.pie a {
+    color: #ffffff;
+}
+
+
+/* ----- Para esconder algo desde el HTML o desde JavaScript -----
+   Va al final a propósito: si dos reglas empatan, gana la de más abajo,
+   así .oculto le gana al display de cualquier otra clase (.mensaje, .campo...) */
+
+.oculto {
+    display: none;
+}
+
+
+/* ===== 14. CELULAR: hasta 800px todo pasa a una columna ===== */
+
+@media (max-width: 800px) {
+    .encabezado {
+        flex-direction: column;
+        padding: 12px 16px;
+    }
+
+    /* El menú pasa a block y cada botón es inline-block: se acomodan como palabras centradas */
+    .menu {
+        display: block;
+        text-align: center;
+    }
+
+    .menu a {
+        margin: 3px 1px;
+    }
+
+    .pagina {
+        width: 94%;
+        margin-top: 16px;
+    }
+
+    .grilla-2,
+    .grilla-3,
+    .grilla-4,
+    .grilla-2-1,
+    .asistente,
+    .tabla .renglon {
+        grid-template-columns: 1fr;
+    }
+
+    .fila,
+    .renglon {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .mitad {
+        width: 100%;
+    }
+
+    .nivel-1 {
+        margin-left: 10px;
+    }
+
+    .nivel-2 {
+        margin-left: 20px;
+    }
+
+    .nivel-3 {
+        margin-left: 30px;
+    }
+
+    .nivel-4 {
+        margin-left: 40px;
+    }
+
+    .paso-2,
+    .paso-3,
+    .paso-4 {
+        margin-left: 0%;
+    }
+
+    .encabezado-unidad .etiqueta {
+        position: static;
+        margin-top: 8px;
+    }
+
+    .fija {
+        position: static;
+    }
+
+    .mensaje-mio {
+        padding-left: 10%;
+    }
+
+    .mensaje-ia {
+        padding-right: 0;
+    }
+
+    .portada h1 {
+        font-size: 38px;
+    }
+
+    .navegacion .fila {
+        flex-direction: row;
+    }
+}

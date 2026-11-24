@@ -1,170 +1,155 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = ViewBag.Curso.Titulo;
-}
-@section Estilos {
-    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+    ViewData["Activo"] = ViewBag.BotonActivo;
 }
 
-<div class="pagina-curso">
+<main class="pagina">
 
-    <header class="encabezado-app">
-        <div class="logo-app">
-            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-            <span>Fluenty</span>
-        </div>
-        @await Html.PartialAsync("_NavApp", (string)ViewBag.BotonActivo)
-    </header>
+    @if (ViewBag.Error != "")
+    {
+        <p class="aviso">@ViewBag.Error</p>
+    }
 
-    <main class="contenido-curso">
+    <!-- ===== Portada del curso ===== -->
+    <section class="tarjeta">
+        <span class="subtitulo">@ViewBag.Subtitulo</span>
+        <h1>@ViewBag.Curso.Titulo</h1>
+        <p>@ViewBag.Curso.Descripcion</p>
 
-        @if (ViewBag.Error != "")
-        {
-            <p class="aviso">@ViewBag.Error</p>
-        }
-
-        <!-- ===== Portada del curso ===== -->
-        <div class="tarjeta-curso portada">
-            <p class="modelo">@ViewBag.Subtitulo</p>
-            <h1 class="titulo-curso">@ViewBag.Curso.Titulo</h1>
-            <p>@ViewBag.Curso.Descripcion</p>
-
+        <div class="grilla-3 separado">
             @if (ViewBag.ModoAlumno)
             {
-                <div class="medallas medallas-curso">
-                    <div class="medalla"><span class="icono-medalla">⚡</span><strong>@ViewBag.XP</strong><p>XP</p></div>
-                    <div class="medalla"><span class="icono-medalla">🔥</span><strong>@ViewBag.Racha</strong><p>días de racha</p></div>
-                    <div class="medalla"><span class="icono-medalla">📈</span><strong>@ViewBag.Asignacion.Progreso%</strong><p>completado</p></div>
-                </div>
+                <div class="dato"><strong>⚡ @ViewBag.XP</strong><span>XP</span></div>
+                <div class="dato"><strong>🔥 @ViewBag.Racha</strong><span>días de racha</span></div>
+                <div class="dato"><strong>@ViewBag.Asignacion.Progreso%</strong><span>completado</span></div>
             }
             else
             {
-                <div class="datos-curso">
-                    <div><strong>4</strong><span>unidades</span></div>
-                    <div><strong>20</strong><span>lecciones</span></div>
-                    <div><strong>@ViewBag.Personas.Count</strong><span>personas</span></div>
-                </div>
+                <div class="dato"><strong>4</strong><span>unidades</span></div>
+                <div class="dato"><strong>20</strong><span>lecciones</span></div>
+                <div class="dato"><strong>@ViewBag.Personas.Count</strong><span>personas</span></div>
             }
-
-            <h3>Lo que vas a lograr</h3>
-            <p class="objetivos">@ViewBag.Curso.Objetivos</p>
         </div>
 
-        <!-- ===== Responsable: de quién se mira el camino ===== -->
-        @if (!ViewBag.ModoAlumno)
-        {
-            <div class="tarjeta-curso">
-                <h3>El camino de cada persona</h3>
-                <p class="ayuda-sprint2">El curso es el mismo para todo el rango; cada uno arranca donde le corresponde.</p>
-                <div class="personas-curso">
-                    @foreach (Usuarios persona in ViewBag.Personas)
-                    {
-                        <a class="chip-persona @(persona.Elegida ? "chip-elegida" : "")" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso, IdUsuario = persona.IdUsuario })'>@persona.Nombre @persona.Apellido</a>
-                    }
-                </div>
-            </div>
-        }
+        <h3 class="separado">Lo que vas a lograr</h3>
+        <p>@ViewBag.Curso.Objetivos</p>
+    </section>
 
-        @if (ViewBag.Asignacion != null)
-        {
-            <div class="tarjeta-curso nivelacion">
-                <p><strong>🎯 @ViewBag.TextoArranque</strong></p>
-                <p>@ViewBag.Asignacion.MotivoNivel</p>
-            </div>
-        }
-
-        <!-- ===== El camino: unidades y lecciones ===== -->
-        @foreach (Unidades unidad in ViewBag.Unidades)
-        {
-            <section class="@unidad.Clase" id="unidad-@unidad.Numero">
-                <div class="encabezado-unidad">
-                    <p class="numero-unidad">Unidad @unidad.Numero</p>
-                    <h2>@unidad.Titulo</h2>
-                    <p>@unidad.Objetivo</p>
-                    @if (unidad.Etiqueta != "")
-                    {
-                        <span class="etiqueta-unidad">@unidad.Etiqueta</span>
-                    }
-                </div>
-
-                <div class="camino">
-                    @foreach (Lecciones leccion in unidad.Lecciones)
-                    {
-                        <div class="paso paso-@leccion.Numero">
-                            @if (leccion.SePuedeHacer)
-                            {
-                                <a class="circulo circulo-@leccion.Estado circulo-link" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">@leccion.Icono</a>
-                            }
-                            else
-                            {
-                                <div class="circulo circulo-@leccion.Estado">@leccion.Icono</div>
-                            }
-                            <div class="texto-paso">
-                                <p class="titulo-paso">@leccion.Titulo</p>
-                                <p class="objetivo-paso">@leccion.Objetivo</p>
-                                @if (leccion.Intentos > 0)
-                                {
-                                    <!-- Nota = preguntas bien a la primera; intentos = cuántas veces la terminó (o rindió) -->
-                                    <p class="nota-paso @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "nota-baja" : "")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</p>
-                                }
-                                @if (leccion.SePuedeHacer && leccion.Estado == "Disponible")
-                                {
-                                    <a class="empezar-leccion" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">Empezar lección →</a>
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
-
-                @if (!ViewBag.ModoAlumno && ViewBag.Curso.Estado == "Borrador")
+    <!-- ===== Responsable: de quién se mira el camino ===== -->
+    @if (!ViewBag.ModoAlumno)
+    {
+        <section class="tarjeta">
+            <h2>El camino de cada persona</h2>
+            <p class="ayuda">El curso es el mismo para todo el rango; cada uno arranca donde le corresponde.</p>
+            <div class="separado">
+                @foreach (Usuarios persona in ViewBag.Personas)
                 {
-                    <!-- Rehacer solo esta unidad con un pedido para la IA -->
-                    <form class="rehacer-unidad" method="post" action='@Url.Action("RehacerUnidad", "Curso")' onsubmit="mostrarCarga()">
-                        <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
-                        <input type="hidden" name="NumeroUnidad" value="@unidad.Numero" />
-                        <label for="Pedido-@unidad.Numero">¿Querés cambiar la unidad @unidad.Numero? Contale a la IA qué cambiar:</label>
-                        <div class="fila-rehacer">
-                            <textarea id="Pedido-@unidad.Numero" name="Pedido" rows="2" maxlength="300" required placeholder="Ej.: que sea más difícil, con más ejemplos de Excel"></textarea>
-                            <input class="boton-curso" type="submit" value="Rehacer unidad @unidad.Numero" />
-                        </div>
-                    </form>
+                    <a class="boton-chico @(persona.Elegida ? "activo" : "")" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso, IdUsuario = persona.IdUsuario })'>@persona.Nombre @persona.Apellido</a>
                 }
-            </section>
-        }
+            </div>
+        </section>
+    }
 
-        <div class="centrado">
+    @if (ViewBag.Asignacion != null)
+    {
+        <section class="tarjeta tarjeta-azul">
+            <p><strong>🎯 @ViewBag.TextoArranque</strong></p>
+            <p>@ViewBag.Asignacion.MotivoNivel</p>
+        </section>
+    }
+
+    <!-- ===== El camino: unidades y lecciones ===== -->
+    @foreach (Unidades unidad in ViewBag.Unidades)
+    {
+        <!-- unidad.Clase es color-1, color-2... o color-sabida si ya la sabe -->
+        <section class="encabezado-unidad @unidad.Clase" id="unidad-@unidad.Numero">
+            <p class="ayuda">UNIDAD @unidad.Numero</p>
+            <h2>@unidad.Titulo</h2>
+            <p>@unidad.Objetivo</p>
+            @if (unidad.Etiqueta != "")
+            {
+                <span class="etiqueta">@unidad.Etiqueta</span>
+            }
+        </section>
+
+        <section class="tarjeta">
+            <div class="camino">
+                @foreach (Lecciones leccion in unidad.Lecciones)
+                {
+                    <div class="paso paso-@leccion.Numero">
+                        @if (leccion.SePuedeHacer)
+                        {
+                            <a class="circulo circulo-@leccion.Estado" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">@leccion.Icono</a>
+                        }
+                        else
+                        {
+                            <div class="circulo circulo-@leccion.Estado">@leccion.Icono</div>
+                        }
+                        <div>
+                            <h3>@leccion.Titulo</h3>
+                            <p class="ayuda">@leccion.Objetivo</p>
+                            @if (leccion.Intentos > 0)
+                            {
+                                <!-- Nota = preguntas bien a la primera; intentos = cuántas veces la terminó (o rindió) -->
+                                <span class="etiqueta @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "naranja" : "verde")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</span>
+                            }
+                            @if (leccion.SePuedeHacer && leccion.Estado == "Disponible")
+                            {
+                                <a class="empezar" href='@Url.Action("Index", "Leccion", new { IdLeccion = leccion.IdLeccion })' onclick="mostrarCarga()">Empezar lección →</a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
             @if (!ViewBag.ModoAlumno && ViewBag.Curso.Estado == "Borrador")
             {
-                <p class="aviso">Este curso es un borrador: el rango todavía no lo ve. Revisalo y confirmalo para que les llegue a todos.</p>
-                <div class="botones">
-                    <form method="post" action='@Url.Action("Descartar", "Curso")'>
-                        <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
-                        <input class="boton-curso boton-rojo" type="submit" value="Descartar y volver a generar" />
-                    </form>
-                    <form method="post" action='@Url.Action("Confirmar", "Curso")'>
-                        <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
-                        <input class="boton-curso grande" type="submit" value="Confirmar curso" />
-                    </form>
-                </div>
+                <!-- Rehacer solo esta unidad con un pedido para la IA -->
+                <form class="campo caja separado" method="post" action='@Url.Action("RehacerUnidad", "Curso")' onsubmit="mostrarCarga()">
+                    <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
+                    <input type="hidden" name="NumeroUnidad" value="@unidad.Numero" />
+                    <label for="Pedido-@unidad.Numero">¿Querés cambiar la unidad @unidad.Numero? Contale a la IA qué cambiar:</label>
+                    <div class="input-boton">
+                        <textarea id="Pedido-@unidad.Numero" name="Pedido" rows="2" maxlength="300" required placeholder="Ej.: que sea más difícil, con más ejemplos de Excel"></textarea>
+                        <input class="boton" type="submit" value="Rehacer unidad @unidad.Numero" />
+                    </div>
+                </form>
             }
-            else if (!ViewBag.ModoAlumno)
-            {
-                <a class="boton-curso" href='@Url.Action("Index", "Curso")'>Volver a cursos</a>
-            }
-            else
-            {
-                <a class="boton-curso" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
-            }
-        </div>
-    </main>
-</div>
+        </section>
+    }
+
+    <section class="tarjeta centrado">
+        @if (!ViewBag.ModoAlumno && ViewBag.Curso.Estado == "Borrador")
+        {
+            <p class="aviso">Este curso es un borrador: el rango todavía no lo ve. Revisalo y confirmalo para que les llegue a todos.</p>
+            <div class="botones centrado">
+                <form method="post" action='@Url.Action("Descartar", "Curso")'>
+                    <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
+                    <input class="boton boton-rojo" type="submit" value="Descartar y volver a generar" />
+                </form>
+                <form method="post" action='@Url.Action("Confirmar", "Curso")'>
+                    <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
+                    <input class="boton" type="submit" value="Confirmar curso" />
+                </form>
+            </div>
+        }
+        else if (!ViewBag.ModoAlumno)
+        {
+            <a class="boton" href='@Url.Action("Index", "Curso")'>Volver a cursos</a>
+        }
+        else
+        {
+            <a class="boton" href='@Url.Action("Index", "Home")'>Volver al inicio</a>
+        }
+    </section>
+</main>
 
 <!-- Pantalla de carga: mientras la IA rehace una unidad o arma una lección -->
 <div id="carga" class="fondo-carga">
-    <div class="tarjeta-curso caja-carga">
+    <div class="tarjeta">
         <h2>@(ViewBag.ModoAlumno ? "Preparando tu lección" : "Rehaciendo la unidad")</h2>
-        <div class="barra"><div class="barra-relleno animada"></div></div>
+        <div class="barra barra-carga"><span></span></div>
         <p>@(ViewBag.ModoAlumno ? "La IA está armando las explicaciones con ejemplos de tu trabajo." : "La IA está armando de nuevo esta unidad. El resto del curso queda igual.")</p>
     </div>
 </div>

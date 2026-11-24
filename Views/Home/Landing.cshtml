@@ -1,331 +1,262 @@
 @{
-	Layout = "_LayoutLanding";
-	ViewData["Title"] = "Capacitación en IA a la medida de cada rol";
+    ViewData["Title"] = "Capacitación en IA a la medida de cada rol";
+}
+@* El encabezado lo arma _Layout; acá solo mandamos los links del lado derecho *@
+@section Encabezado {
+    <nav class="menu">
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#funcionalidades">Funcionalidades</a>
+        <a href="#cursos">Los cursos</a>
+        <a href="#preguntas">Preguntas</a>
+        <a class="salir" href="/Home/Acceso">Ingresar</a>
+    </nav>
 }
 
+<main>
 
-	<!-- ===== Encabezado fijo ===== -->
-	<header class="encabezado">
-		<a class="marca" href="/Home/Landing">
-			<img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-			<span>Fluenty</span>
-		</a>
-		<nav>
-			<ul>
-				<li><a href="#como-funciona">Cómo funciona</a></li>
-				<li><a href="#funcionalidades">Funcionalidades</a></li>
-				<li><a href="#cursos">Los cursos</a></li>
-				<li><a href="#preguntas">Preguntas</a></li>
-			</ul>
-		</nav>
-		<a class="boton boton-chico" href="/Home/Acceso">Ingresar</a>
-	</header>
+    <!-- ===== Inicio ===== -->
+    <section class="seccion seccion-oscura" id="inicio">
+        <div class="pagina">
+            <div class="grilla-2">
+                <div class="titulo-pagina portada">
+                    <span class="subtitulo">Capacitación en IA para empresas</span>
+                    <h1>Tu equipo, <span class="resaltado">fluido en IA.</span></h1>
+                    <p>Contanos de qué va tu empresa, tus empleados nos cuentan de qué va su trabajo y Fluenty arma un curso para cada uno: corto, práctico y directo al punto.</p>
+                    <div class="botones">
+                        <a class="boton boton-borde" href="/Home/Acceso">Empezar ahora</a>
+                        <a class="boton" href="#como-funciona">Ver cómo funciona</a>
+                    </div>
+                    <p class="separado">✓ Sin cursos genéricos · ✓ Sin horas de video · ✓ Un curso por cada rol</p>
+                </div>
 
-	<main>
+                <!-- Vista previa de un curso: usa las mismas clases que el camino de verdad (Curso/Ver) -->
+                <div class="tarjeta">
+                    <p class="ayuda">Curso de Martina · Analista contable</p>
+                    <h3>Unidad 2 · Automatizar reportes</h3>
+                    <div class="barra"><span style="width: 45%"></span></div>
+                    <div class="camino separado">
+                        <div class="paso paso-1"><div class="circulo circulo-Completada">✓</div><strong>Qué es un prompt</strong></div>
+                        <div class="paso paso-2"><div class="circulo circulo-Completada">✓</div><strong>Pedir un resumen</strong></div>
+                        <div class="paso paso-3"><div class="circulo circulo-Disponible">▶</div><strong>Armar un reporte</strong></div>
+                        <div class="paso paso-4"><div class="circulo">🔒</div><strong>Revisar los datos</strong></div>
+                    </div>
+                    <div class="fila separado">
+                        <span class="etiqueta azul">⚡ 120 XP</span>
+                        <span class="etiqueta naranja">🔥 Racha de 4 días</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-		<!-- ===== Inicio ===== -->
-		<section id="inicio" class="seccion-oscura">
-			<div class="contenido hero">
-				<div class="hero-texto">
-					<p class="etiqueta">Capacitación en IA para empresas</p>
-					<h1>Tu equipo, <span class="resaltado">fluido en IA.</span></h1>
-					<p class="bajada">
-						Contanos de qué va tu empresa, tus empleados nos cuentan de qué va su trabajo
-						y Fluenty arma un curso para cada uno: corto, práctico y directo al punto.
-					</p>
-					<div class="botones">
-						<a class="boton" href="/Home/Acceso">Empezar ahora</a>
-						<a class="boton boton-borde" href="#como-funciona">Ver cómo funciona</a>
-					</div>
-					<ul class="ventajas">
-						<li>✓ Sin cursos genéricos</li>
-						<li>✓ Sin horas de video</li>
-						<li>✓ Un curso por cada rol</li>
-					</ul>
-				</div>
+    <!-- ===== El problema ===== -->
+    <section class="seccion" id="problema">
+        <div class="pagina">
+            <div>
+                <span class="subtitulo">El problema</span>
+                <h2>Los cursos de IA son para todo el mundo. Por eso no son para nadie.</h2>
+                <p>Un contador, un diseñador y un vendedor no usan la IA de la misma forma, pero terminan viendo el mismo curso. Fluenty parte al revés: primero entiende tu empresa y el puesto de cada persona, y recién después genera el contenido.</p>
+            </div>
+            <div class="grilla-2">
+                <article class="tarjeta">
+                    <h3>Un curso genérico</h3>
+                    <ul class="lista-tilde lista-cruz">
+                        <li>El mismo contenido para todos los puestos</li>
+                        <li>Horas de video que nadie termina</li>
+                        <li>Ejemplos que no tienen nada que ver con tu empresa</li>
+                        <li>No sabés quién aprendió y quién no</li>
+                    </ul>
+                </article>
+                <article class="tarjeta tarjeta-azul">
+                    <h3>Un curso de Fluenty</h3>
+                    <ul class="lista-tilde">
+                        <li>Un curso distinto para cada rol</li>
+                        <li>Lecciones cortas que entran en cualquier momento</li>
+                        <li>Ejercicios sacados del trabajo real de cada persona</li>
+                        <li>Seguís el avance de todo el equipo</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
 
-				<!-- Vista previa de un curso, armada solo con HTML y CSS -->
-				<div class="hero-visual">
-					<div class="mock">
-						<div class="mock-barra">
-							<span></span><span></span><span></span>
-						</div>
-						<div class="mock-encabezado">
-							<p class="mock-chico">Curso de Martina · Analista contable</p>
-							<h3>Unidad 2 · Automatizar reportes</h3>
-							<div class="barra-progreso"><span class="progreso-45"></span></div>
-						</div>
-						<ol class="camino">
-							<li class="leccion completada izquierda"><span>✓</span><p>Qué es un prompt</p></li>
-							<li class="leccion completada centro"><span>✓</span><p>Pedir un resumen</p></li>
-							<li class="leccion disponible derecha"><span>3</span><p>Armar un reporte</p></li>
-							<li class="leccion bloqueada centro"><span>4</span><p>Revisar los datos</p></li>
-							<li class="leccion bloqueada izquierda"><span>5</span><p>Práctica final</p></li>
-						</ol>
-						<div class="mock-pie">
-							<p>⚡ 120 XP</p>
-							<p>🔥 Racha de 4 días</p>
-						</div>
-					</div>
-					<p class="globo globo-arriba">Curso listo en segundos</p>
-					<p class="globo globo-abajo">+20 XP</p>
-				</div>
-			</div>
-		</section>
+    <!-- ===== Cómo funciona ===== -->
+    <section class="seccion seccion-blanca" id="como-funciona">
+        <div class="pagina">
+            <div>
+                <span class="subtitulo">Cómo funciona</span>
+                <h2>De la primera pregunta al primer curso, en cuatro pasos.</h2>
+            </div>
+            <div class="grilla-4">
+                <article class="caja">
+                    <span class="numero-paso">1</span>
+                    <h3 class="separado">Contanos sobre tu empresa</h3>
+                    <p class="ayuda">Respondés un cuestionario sobre tu rubro, tus procesos y las herramientas que ya usan.</p>
+                </article>
+                <article class="caja">
+                    <span class="numero-paso">2</span>
+                    <h3 class="separado">Invitá a tu equipo</h3>
+                    <p class="ayuda">Compartís un solo link. Cada empleado se registra y cuenta cómo es su rol en el día a día.</p>
+                </article>
+                <article class="caja">
+                    <span class="numero-paso">3</span>
+                    <h3 class="separado">La IA arma los cursos</h3>
+                    <p class="ayuda">Con esa información, la IA genera un curso completo para cada persona. Vos lo revisás y lo confirmás.</p>
+                </article>
+                <article class="caja">
+                    <span class="numero-paso">4</span>
+                    <h3 class="separado">Medí el avance</h3>
+                    <p class="ayuda">Seguís el progreso de todo el equipo desde tu panel y ves quién avanza y quién se trabó.</p>
+                </article>
+            </div>
+        </div>
+    </section>
 
-		<!-- ===== El problema ===== -->
-		<section id="problema" class="seccion-clara">
-			<div class="contenido">
-				<p class="etiqueta etiqueta-clara">El problema</p>
-				<h2>Los cursos de IA son para todo el mundo. Por eso no son para nadie.</h2>
-				<p class="texto-centrado">
-					Un contador, un diseñador y un vendedor no usan la IA de la misma forma,
-					pero terminan viendo el mismo curso. Fluenty parte al revés: primero entiende
-					tu empresa y el puesto de cada persona, y recién después genera el contenido.
-				</p>
+    <!-- ===== Funcionalidades ===== -->
+    <section class="seccion seccion-oscura" id="funcionalidades">
+        <div class="pagina">
+            <div class="titulo-pagina">
+                <span class="subtitulo">Funcionalidades</span>
+                <h2>Todo lo que necesitás para capacitar a tu equipo.</h2>
+            </div>
+            <div class="grilla-2">
+                <article class="tarjeta tarjeta-azul">
+                    <span class="numero-paso">✦</span>
+                    <h2 class="separado">Cursos generados por IA para cada rol</h2>
+                    <p>El curso de un analista no se parece al de alguien de atención al cliente, porque su trabajo tampoco se parece. La IA arma cada curso con ejemplos de la empresa y del puesto de cada persona.</p>
+                </article>
+                <div class="grilla-2">
+                    <article class="tarjeta">
+                        <h3>☰ Cuestionarios</h3>
+                        <p class="ayuda">Preguntas pensadas para entender tu negocio y cada puesto en detalle.</p>
+                    </article>
+                    <article class="tarjeta">
+                        <h3>↗ Seguimiento</h3>
+                        <p class="ayuda">El progreso de cada empleado y de cada curso, en un solo lugar.</p>
+                    </article>
+                    <article class="tarjeta">
+                        <h3>✓ Exámenes</h3>
+                        <p class="ayuda">Comprobá que el equipo realmente entiende, y no que solo pasa de pantalla.</p>
+                    </article>
+                    <article class="tarjeta">
+                        <h3>🔗 Un solo link</h3>
+                        <p class="ayuda">Nada de cargar empleados a mano: cada uno se suma desde el link de tu empresa.</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
 
-				<div class="comparacion">
-					<article class="tarjeta tarjeta-gris">
-						<h3>Un curso genérico</h3>
-						<ul class="lista-cruz">
-							<li>El mismo contenido para todos los puestos</li>
-							<li>Horas de video que nadie termina</li>
-							<li>Ejemplos que no tienen nada que ver con tu empresa</li>
-							<li>No sabés quién aprendió y quién no</li>
-						</ul>
-					</article>
-					<article class="tarjeta tarjeta-destacada">
-						<h3>Un curso de Fluenty</h3>
-						<ul class="lista-check">
-							<li>Un curso distinto para cada rol</li>
-							<li>Lecciones cortas que entran en cualquier momento</li>
-							<li>Ejercicios sacados del trabajo real de cada persona</li>
-							<li>Seguís el avance de todo el equipo</li>
-						</ul>
-					</article>
-				</div>
-			</div>
-		</section>
+    <!-- ===== Los cursos ===== -->
+    <section class="seccion" id="cursos">
+        <div class="pagina">
+            <div class="grilla-2">
+                <div>
+                    <span class="subtitulo">Los cursos</span>
+                    <h2>Lecciones cortas, progreso visible. Como aprender un idioma.</h2>
+                    <p>Cada curso tiene 4 unidades de 5 lecciones. Explica lo justo y necesario: cada tema se presenta, se entiende y se practica.</p>
+                    <ul class="lista-tilde separado">
+                        <li>Explicaciones breves que van directo al concepto</li>
+                        <li>Ejercicios para fijar lo que acabás de aprender</li>
+                        <li>Prácticas con situaciones reales del puesto</li>
+                        <li>Si alguien ya sabe un tema, arranca más adelante</li>
+                    </ul>
+                    <p class="destacado">El objetivo no es depender de una sola herramienta: los cursos enseñan a hacerle buenas preguntas a ChatGPT, Gemini o la IA que use tu empresa.</p>
+                </div>
+                <!-- Las mismas unidades de colores que tiene cada curso -->
+                <div class="grilla-2">
+                    <div class="encabezado-unidad color-1"><p>UNIDAD 1</p><h3>Primeros pasos</h3><div class="barra"><span style="width: 100%"></span></div></div>
+                    <div class="encabezado-unidad color-2"><p>UNIDAD 2</p><h3>Usarla en tu tarea</h3><div class="barra"><span style="width: 40%"></span></div></div>
+                    <div class="encabezado-unidad color-3"><p>UNIDAD 3</p><h3>Automatizar</h3><div class="barra"><span style="width: 0%"></span></div></div>
+                    <div class="encabezado-unidad color-4"><p>UNIDAD 4</p><h3>Nivel experto</h3><div class="barra"><span style="width: 0%"></span></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-		<!-- ===== Cómo funciona ===== -->
-		<section id="como-funciona" class="seccion-blanca">
-			<div class="contenido">
-				<p class="etiqueta etiqueta-clara">Cómo funciona</p>
-				<h2>De la primera pregunta al primer curso, en cuatro pasos.</h2>
+    <!-- ===== Para quién ===== -->
+    <section class="seccion seccion-blanca" id="para-quien">
+        <div class="pagina">
+            <div>
+                <span class="subtitulo">Para quién</span>
+                <h2>Pensado para los dos lados.</h2>
+            </div>
+            <div class="grilla-2">
+                <article class="caja">
+                    <h3>Si sos empleador</h3>
+                    <ul class="lista-tilde">
+                        <li>Capacitás a todo el equipo sin armar contenido vos mismo</li>
+                        <li>Cada curso tiene que ver con tu empresa, no con una genérica</li>
+                        <li>Sabés en todo momento cómo va cada persona</li>
+                        <li>Revisás cada curso antes de que le llegue al empleado</li>
+                    </ul>
+                </article>
+                <article class="caja">
+                    <h3>Si sos empleado</h3>
+                    <ul class="lista-tilde">
+                        <li>Aprendés solo lo que te sirve para tu trabajo</li>
+                        <li>Lecciones cortas que entran en cualquier momento del día</li>
+                        <li>Practicás con ejemplos de tu propio puesto</li>
+                        <li>Salís sabiendo usar la IA, no solo habiendo escuchado de ella</li>
+                    </ul>
+                </article>
+            </div>
+            <p class="ayuda">
+                Lo que viene:
+                <span class="etiqueta">Favoritos</span>
+                <span class="etiqueta">Comentarios y estrellas</span>
+                <span class="etiqueta">Perfil con avatar</span>
+            </p>
+        </div>
+    </section>
 
-				<ol class="pasos">
-					<li class="paso">
-						<span class="numero">1</span>
-						<h3>Contanos sobre tu empresa</h3>
-						<p>Respondés un cuestionario sobre tu rubro, tus procesos y las herramientas que ya usan.</p>
-					</li>
-					<li class="paso">
-						<span class="numero">2</span>
-						<h3>Invitá a tu equipo</h3>
-						<p>Compartís un solo link. Cada empleado se registra y cuenta cómo es su rol en el día a día.</p>
-					</li>
-					<li class="paso">
-						<span class="numero">3</span>
-						<h3>La IA arma los cursos</h3>
-						<p>Con esa información, la IA genera un curso completo para cada persona. Vos lo revisás y lo confirmás.</p>
-					</li>
-					<li class="paso">
-						<span class="numero">4</span>
-						<h3>Medí el avance</h3>
-						<p>Seguís el progreso de todo el equipo desde tu panel y ves quién avanza y quién se trabó.</p>
-					</li>
-				</ol>
-			</div>
-		</section>
+    <!-- ===== Preguntas ===== -->
+    <section class="seccion" id="preguntas">
+        <div class="pagina">
+            <div>
+                <span class="subtitulo">Preguntas frecuentes</span>
+                <h2>Lo que más nos preguntan.</h2>
+            </div>
+            <div class="grilla-2">
+                <article class="tarjeta">
+                    <h3>¿Mis empleados necesitan saber de IA para empezar?</h3>
+                    <p>No. Los cursos arrancan desde cero y suben de nivel según lo que cada rol necesita.</p>
+                </article>
+                <article class="tarjeta">
+                    <h3>¿Cuánto tarda en estar listo un curso?</h3>
+                    <p>Apenas un empleado completa su cuestionario, la IA genera su curso en segundos.</p>
+                </article>
+                <article class="tarjeta">
+                    <h3>¿Puedo ver cómo le va a cada empleado?</h3>
+                    <p>Sí. Desde tu panel ves el avance de cada persona y de todo el equipo.</p>
+                </article>
+                <article class="tarjeta">
+                    <h3>¿Los cursos sirven solo para una herramienta de IA?</h3>
+                    <p>No. Enseñan a usar la IA en general y a consultarle a ChatGPT, Gemini u otras.</p>
+                </article>
+            </div>
+        </div>
+    </section>
 
-		<!-- ===== Funcionalidades ===== -->
-		<section id="funcionalidades" class="seccion-oscura">
-			<div class="contenido">
-				<p class="etiqueta">Funcionalidades</p>
-				<h2>Todo lo que necesitás para capacitar a tu equipo.</h2>
+    <!-- ===== Llamado final ===== -->
+    <section class="seccion seccion-oscura" id="empezar">
+        <div class="pagina titulo-pagina centrado">
+            <h2>Tu equipo puede empezar hoy.</h2>
+            <p>Completá el cuestionario de tu empresa, compartí el link y en minutos tenés los primeros cursos.</p>
+            <div class="botones centrado">
+                <a class="boton boton-borde" href="/Home/Acceso">Ingresar a mi cuenta</a>
+                <a class="boton" href="mailto:contacto@fluenty.com">Hablar con nosotros</a>
+            </div>
+        </div>
+    </section>
+</main>
 
-				<div class="grilla-funciones">
-					<article class="funcion funcion-grande">
-						<span class="icono">✦</span>
-						<h3>Cursos generados por IA para cada rol</h3>
-						<p>
-							El curso de un analista no se parece al de alguien de atención al cliente,
-							porque su trabajo tampoco se parece. La IA arma cada curso con ejemplos
-							de la empresa y del puesto de cada persona.
-						</p>
-					</article>
-					<div class="funciones-chicas">
-						<article class="funcion">
-							<span class="icono">☰</span>
-							<h3>Cuestionarios para empresa y empleados</h3>
-							<p>Preguntas pensadas para entender tu negocio y cada puesto en detalle.</p>
-						</article>
-						<article class="funcion">
-							<span class="icono">↗</span>
-							<h3>Panel de seguimiento</h3>
-							<p>El progreso de cada empleado y de cada curso, en un solo lugar.</p>
-						</article>
-						<article class="funcion">
-							<span class="icono">✓</span>
-							<h3>Exámenes organizados por vos</h3>
-							<p>Comprobá que el equipo realmente entiende, y no que solo pasa de pantalla.</p>
-						</article>
-						<article class="funcion">
-							<span class="icono">🔗</span>
-							<h3>Un solo link para tu equipo</h3>
-							<p>Nada de cargar empleados a mano: cada uno se suma desde el link de tu empresa.</p>
-						</article>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- ===== Los cursos ===== -->
-		<section id="cursos" class="seccion-clara">
-			<div class="contenido cursos">
-				<div class="cursos-texto">
-					<p class="etiqueta etiqueta-clara">Los cursos</p>
-					<h2>Lecciones cortas, progreso visible. Como aprender un idioma.</h2>
-					<p class="texto-cursos">
-						Cada curso tiene 4 unidades de 5 lecciones. Explica lo justo y necesario:
-						cada tema se presenta, se entiende y se practica.
-					</p>
-					<ul class="lista-check">
-						<li>Explicaciones breves que van directo al concepto</li>
-						<li>Ejercicios para fijar lo que acabás de aprender</li>
-						<li>Prácticas con situaciones reales del puesto</li>
-						<li>Si alguien ya sabe un tema, arranca más adelante</li>
-					</ul>
-					<p class="nota">
-						El objetivo no es depender de una sola herramienta: los cursos enseñan a hacerle
-						buenas preguntas a ChatGPT, Gemini o la IA que use tu empresa.
-					</p>
-				</div>
-
-				<div class="unidades">
-					<article class="unidad unidad-1">
-						<p class="unidad-numero">Unidad 1</p>
-						<h3>Primeros pasos</h3>
-						<div class="puntos"><span class="lleno"></span><span class="lleno"></span><span class="lleno"></span><span class="lleno"></span><span class="lleno"></span></div>
-					</article>
-					<article class="unidad unidad-2">
-						<p class="unidad-numero">Unidad 2</p>
-						<h3>Usarla en tu tarea</h3>
-						<div class="puntos"><span class="lleno"></span><span class="lleno"></span><span></span><span></span><span></span></div>
-					</article>
-					<article class="unidad unidad-3">
-						<p class="unidad-numero">Unidad 3</p>
-						<h3>Automatizar</h3>
-						<div class="puntos"><span></span><span></span><span></span><span></span><span></span></div>
-					</article>
-					<article class="unidad unidad-4">
-						<p class="unidad-numero">Unidad 4</p>
-						<h3>Nivel experto</h3>
-						<div class="puntos"><span></span><span></span><span></span><span></span><span></span></div>
-					</article>
-				</div>
-			</div>
-		</section>
-
-		<!-- ===== Para quién ===== -->
-		<section id="para-quien" class="seccion-blanca">
-			<div class="contenido">
-				<p class="etiqueta etiqueta-clara">Para quién</p>
-				<h2>Pensado para los dos lados.</h2>
-
-				<div class="comparacion">
-					<article class="tarjeta tarjeta-borde">
-						<h3>Si sos empleador</h3>
-						<ul class="lista-check">
-							<li>Capacitás a todo el equipo sin armar contenido vos mismo</li>
-							<li>Cada curso tiene que ver con tu empresa, no con una genérica</li>
-							<li>Sabés en todo momento cómo va cada persona</li>
-							<li>Revisás cada curso antes de que le llegue al empleado</li>
-						</ul>
-					</article>
-					<article class="tarjeta tarjeta-borde">
-						<h3>Si sos empleado</h3>
-						<ul class="lista-check">
-							<li>Aprendés solo lo que te sirve para tu trabajo</li>
-							<li>Lecciones cortas que entran en cualquier momento del día</li>
-							<li>Practicás con ejemplos de tu propio puesto</li>
-							<li>Salís sabiendo usar la IA, no solo habiendo escuchado de ella</li>
-						</ul>
-					</article>
-				</div>
-
-				<div class="proximamente">
-					<p>Lo que viene:</p>
-					<ul>
-						<li>Buscador de cursos</li>
-						<li>Favoritos</li>
-						<li>Comentarios y estrellas</li>
-						<li>Perfil con avatar</li>
-						<li>Asistente de IA</li>
-					</ul>
-				</div>
-			</div>
-		</section>
-
-		<!-- ===== Preguntas ===== -->
-		<section id="preguntas" class="seccion-clara">
-			<div class="contenido">
-				<p class="etiqueta etiqueta-clara">Preguntas frecuentes</p>
-				<h2>Lo que más nos preguntan.</h2>
-
-				<div class="grilla-preguntas">
-					<article class="pregunta">
-						<h3>¿Mis empleados necesitan saber de IA para empezar?</h3>
-						<p>No. Los cursos arrancan desde cero y suben de nivel según lo que cada rol necesita.</p>
-					</article>
-					<article class="pregunta">
-						<h3>¿Cuánto tarda en estar listo un curso?</h3>
-						<p>Apenas un empleado completa su cuestionario, la IA genera su curso en segundos.</p>
-					</article>
-					<article class="pregunta">
-						<h3>¿Puedo ver cómo le va a cada empleado?</h3>
-						<p>Sí. Desde tu panel ves el avance de cada persona y de todo el equipo.</p>
-					</article>
-					<article class="pregunta">
-						<h3>¿Los cursos sirven solo para una herramienta de IA?</h3>
-						<p>No. Enseñan a usar la IA en general y a consultarle a ChatGPT, Gemini u otras.</p>
-					</article>
-				</div>
-			</div>
-		</section>
-
-		<!-- ===== Llamado final ===== -->
-		<section id="empezar">
-			<div class="contenido llamado">
-				<h2>Tu equipo puede empezar hoy.</h2>
-				<p>Completá el cuestionario de tu empresa, compartí el link y en minutos tenés los primeros cursos.</p>
-				<div class="botones">
-					<a class="boton boton-blanco" href="/Home/Acceso">Ingresar a mi cuenta</a>
-					<a class="boton boton-borde" href="mailto:contacto@fluenty.com">Hablar con nosotros</a>
-				</div>
-			</div>
-		</section>
-
-	</main>
-
-	<!-- ===== Pie ===== -->
-	<footer class="pie">
-		<div class="contenido pie-contenido">
-			<div>
-				<a class="marca marca-clara" href="/Home/Landing">
-					<img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-					<span>Fluenty</span>
-				</a>
-				<p>Capacitación en IA a la medida de cada rol.</p>
-			</div>
-			<nav>
-				<ul>
-					<li><a href="#como-funciona">Cómo funciona</a></li>
-					<li><a href="#funcionalidades">Funcionalidades</a></li>
-					<li><a href="#cursos">Los cursos</a></li>
-				</ul>
-			</nav>
-			<p>Contacto: <a href="mailto:contacto@fluenty.com">contacto@fluenty.com</a></p>
-		</div>
-		<p class="derechos">© 2026 Fluenty. Todos los derechos reservados.</p>
-	</footer>
+<!-- ===== Pie ===== -->
+<footer class="pie">
+    <div class="pagina">
+        <div class="fila">
+            <p>© 2026 Fluenty · Capacitación en IA a la medida de cada rol.</p>
+            <p>Contacto: <a href="mailto:contacto@fluenty.com">contacto@fluenty.com</a></p>
+        </div>
+    </div>
+</footer>

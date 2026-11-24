@@ -1,106 +1,94 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Explorar cursos";
-}
-@section Estilos {
-    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/explorar.css" asp-append-version="true" />
+    ViewData["Activo"] = "Explorar";
 }
 
-<div class="pagina-curso">
+<main class="pagina">
 
-    <header class="encabezado-app">
-        <div class="logo-app">
-            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-            <span>Fluenty</span>
-        </div>
-        @await Html.PartialAsync("_NavApp", "Explorar")
-    </header>
+    <section class="titulo-pagina">
+        <span class="subtitulo">🌎 Cursos públicos</span>
+        <h1>Explorá cursos</h1>
+        <p>Cursos que armaron otros equipos y dejaron abiertos para todos. Al inscribirte, la IA arma cada lección con ejemplos de tu trabajo.</p>
+    </section>
 
-    <main class="contenido-curso">
-
-        <div class="titulo-sprint2">
-            <span class="etiqueta-sprint2">🌎 Cursos públicos</span>
-            <h1>Explorá cursos</h1>
-            <p>Cursos que armaron otros equipos y dejaron abiertos para todos. Al inscribirte, la IA arma cada lección con ejemplos de tu trabajo.</p>
-        </div>
-
-        <!-- ===== Buscador ===== -->
-        <form class="tarjeta-curso buscador" method="get" action='@Url.Action("Buscar", "CursoPublico")'>
-            <div class="fila-buscador">
-                <label class="campo-buscar">
-                    <span>Buscar</span>
-                    <input type="text" name="Texto" value="@ViewBag.Texto" placeholder="Ej.: Excel, mails, atención al cliente" />
-                </label>
-                <label>
-                    <span>Nivel</span>
-                    <select name="Nivel">
-                        <option value="0">Todos</option>
-                        <option value="1" selected="@(ViewBag.Nivel == 1)">Principiante</option>
-                        <option value="3" selected="@(ViewBag.Nivel == 3)">Intermedio</option>
-                        <option value="4" selected="@(ViewBag.Nivel == 4)">Avanzado</option>
-                    </select>
-                </label>
-                <label>
-                    <span>Ordenar</span>
-                    <select name="Orden">
-                        <option value="recientes">Más nuevos</option>
-                        <option value="populares" selected="@(ViewBag.Orden == "populares")">Más elegidos</option>
-                    </select>
-                </label>
+    <!-- ===== Buscador ===== -->
+    <form class="tarjeta" method="get" action='@Url.Action("Buscar", "CursoPublico")'>
+        <div class="grilla-4">
+            <div class="campo">
+                <label for="Texto">Buscar</label>
+                <input type="text" id="Texto" name="Texto" value="@ViewBag.Texto" placeholder="Ej.: Excel, mails, atención al cliente" />
+            </div>
+            <div class="campo">
+                <label for="Nivel">Nivel</label>
+                <select id="Nivel" name="Nivel">
+                    <option value="0">Todos</option>
+                    <option value="1" selected="@(ViewBag.Nivel == 1)">Principiante</option>
+                    <option value="3" selected="@(ViewBag.Nivel == 3)">Intermedio</option>
+                    <option value="4" selected="@(ViewBag.Nivel == 4)">Avanzado</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="Orden">Ordenar</label>
+                <select id="Orden" name="Orden">
+                    <option value="recientes">Más nuevos</option>
+                    <option value="populares" selected="@(ViewBag.Orden == "populares")">Más elegidos</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>&nbsp;</label>
                 <input type="hidden" name="Categoria" value="@ViewBag.Categoria" />
-                <input class="boton-home" type="submit" value="Buscar cursos" />
+                <input class="boton" type="submit" value="Buscar cursos" />
             </div>
+        </div>
+        <!-- Categorías: cada botón vuelve a buscar con esa categoría -->
+        <div class="separado">
+            <a class="boton-chico @(ViewBag.Categoria == "" ? "activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>Todas</a>
+            @foreach (string categoria in ViewBag.Categorias)
+            {
+                <a class="boton-chico @(ViewBag.Categoria == categoria ? "activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Categoria = categoria, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>@categoria</a>
+            }
+        </div>
+    </form>
 
-            <!-- Categorías: cada chip vuelve a buscar con esa categoría -->
-            <div class="chips-categorias">
-                <a class="chip-categoria @(ViewBag.Categoria == "" ? "chip-activa" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>Todas</a>
-                @foreach (string categoria in ViewBag.Categorias)
-                {
-                    <a class="chip-categoria @(ViewBag.Categoria == categoria ? "chip-activa" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Categoria = categoria, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>@categoria</a>
-                }
+    <!-- ===== Resultados ===== -->
+    <p class="titulo-pagina">@ViewBag.Cursos.Count @(ViewBag.Cursos.Count == 1 ? "curso encontrado" : "cursos encontrados")</p>
+
+    @if (ViewBag.Cursos.Count == 0)
+    {
+        <section class="tarjeta centrado">
+            <h3>No encontramos cursos con esa búsqueda</h3>
+            <p>Probá con otra palabra o sacá los filtros.</p>
+            <div class="botones centrado">
+                <a class="boton" href='@Url.Action("Buscar", "CursoPublico")'>Ver todos los cursos</a>
             </div>
-        </form>
-
-        <!-- ===== Resultados ===== -->
-        <p class="cantidad-resultados">@ViewBag.Cursos.Count @(ViewBag.Cursos.Count == 1 ? "curso encontrado" : "cursos encontrados")</p>
-
-        @if (ViewBag.Cursos.Count == 0)
-        {
-            <div class="tarjeta-curso sin-resultados">
-                <h3>No encontramos cursos con esa búsqueda</h3>
-                <p>Probá con otra palabra o sacá los filtros.</p>
-                <a class="boton-home" href='@Url.Action("Buscar", "CursoPublico")'>Ver todos los cursos</a>
-            </div>
-        }
-        else
-        {
-            <div class="grilla-publicos">
-                @foreach (CursoPublico curso in ViewBag.Cursos)
-                {
-                    <a class="tarjeta-publico" href='@Url.Action("Ver", "CursoPublico", new { IdCurso = curso.IdCurso })'>
-                        <div class="etiquetas-publico">
-                            @if (curso.Categoria != "")
-                            {
-                                <span class="etiqueta-categoria">@curso.Categoria</span>
-                            }
-                            <span class="etiqueta-nivel">@curso.NombreNivel</span>
-                        </div>
-                        <h3>@curso.Titulo</h3>
-                        <p class="descripcion-publico">@curso.DescripcionCorta</p>
-                        <div class="pie-publico">
-                            <span>⏱ @(curso.DuracionHoras > 0 ? curso.DuracionHoras + " h" : "20 lecciones")</span>
-                            <span>👥 @curso.Inscriptos @(curso.Inscriptos == 1 ? "persona" : "personas")</span>
-                            @if (curso.YaLoTiene)
-                            {
-                                <span class="ya-lo-tenes">✓ Ya lo tenés</span>
-                            }
-                        </div>
-                    </a>
-                }
-            </div>
-        }
-
-    </main>
-</div>
+        </section>
+    }
+    else
+    {
+        <div class="grilla-3">
+            @foreach (CursoPublico curso in ViewBag.Cursos)
+            {
+                <a class="tarjeta tarjeta-curso" href='@Url.Action("Ver", "CursoPublico", new { IdCurso = curso.IdCurso })'>
+                    <div>
+                        @if (curso.Categoria != "")
+                        {
+                            <span class="etiqueta azul">@curso.Categoria</span>
+                        }
+                        <span class="etiqueta">@curso.NombreNivel</span>
+                    </div>
+                    <h3>@curso.Titulo</h3>
+                    <p>@curso.DescripcionCorta</p>
+                    <p class="ayuda">
+                        ⏱ @(curso.DuracionHoras > 0 ? curso.DuracionHoras + " h" : "20 lecciones") ·
+                        👥 @curso.Inscriptos @(curso.Inscriptos == 1 ? "persona" : "personas")
+                    </p>
+                    @if (curso.YaLoTiene)
+                    {
+                        <span class="etiqueta verde">✓ Ya lo tenés</span>
+                    }
+                </a>
+            }
+        </div>
+    }
+</main>

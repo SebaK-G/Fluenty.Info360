@@ -1,20 +1,35 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Fluenty</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    @* Cada pantalla suma acá su propio CSS con @section Estilos *@
-    @await RenderSectionAsync("Estilos", required: false)
+    @* Un solo archivo de estilos para toda la app *@
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
 </head>
 <body>
-    <div class="contenedor">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    @* El encabezado es el mismo en todas las pantallas (menos en la lección).
+       Si hay alguien logueado, a la derecha va el menú; si no, lo que mande la vista en @section Encabezado *@
+    @if (ViewData["SinEncabezado"] == null)
+    {
+        <header class="encabezado">
+            <a class="logo" href="/">
+                <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+                <span>Fluenty</span>
+            </a>
+            @if (ViewBag.Menu != null)
+            {
+                @await Html.PartialAsync("_NavApp", (string)ViewData["Activo"])
+            }
+            else
+            {
+                @await RenderSectionAsync("Encabezado", required: false)
+            }
+        </header>
+    }
+
+    @RenderBody()
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

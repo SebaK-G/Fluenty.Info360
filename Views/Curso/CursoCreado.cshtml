@@ -1,31 +1,18 @@
 @{
     ViewData["Title"] = "Curso creado";
-}
-@section Estilos {
-    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
+    ViewData["Activo"] = "Cursos";
 }
 
-<div class="pagina-curso">
-
-    <header class="encabezado-app">
-        <div class="logo-app">
-            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-            <span>Fluenty</span>
+<main class="pagina pagina-angosta">
+    <section class="tarjeta centrado">
+        <div class="medalla">✓</div>
+        <p>Ya podés ver el seguimiento de tus empleados</p>
+        <h1>El curso fue creado sin problemas</h1>
+        <h3>"@ViewBag.Titulo"</h3>
+        <div class="botones centrado">
+            <a class="boton boton-borde" href='@Url.Action("Index", "Home")'>Volver</a>
+            <a class="boton" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.IdCurso })'>Ver curso</a>
+            <a class="boton" href='@Url.Action("Index", "Empleados")'>Ver empleados</a>
         </div>
-        @await Html.PartialAsync("_NavApp", "Cursos")
-    </header>
-
-    <main class="contenido-curso">
-        <div class="tarjeta-curso resultado">
-            <p class="tilde">✓</p>
-            <p>Ya puede ver el seguimiento de sus empleados</p>
-            <h1>El curso fue creado sin problemas</h1>
-            <p class="subtitulo-oscuro">"@ViewBag.Titulo"</p>
-            <div class="botones">
-                <a class="boton-curso" href='@Url.Action("Index", "Home")'>Volver</a>
-                <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.IdCurso })'>Ver curso</a>
-                <a class="boton-curso" href='@Url.Action("Index", "Empleados")'>Ver empleados</a>
-            </div>
-        </div>
-    </main>
-</div>
+    </section>
+</main>

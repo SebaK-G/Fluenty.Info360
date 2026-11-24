@@ -1,12 +1,14 @@
 @{
     ViewData["Title"] = "¡Listo!";
 }
-@section Estilos {
-    <link rel="stylesheet" href="~/css/mensajes.css" asp-append-version="true" />
-}
 
-<div class="mensaje mensaje-chico">
-    <h1>¡Gracias, @ViewBag.Nombre!</h1>
-    <p>Tu cuenta ya está creada. Iniciá sesión con tu email y tu contraseña.</p>
-    <a class="boton" href='@Url.Action("Acceso", "Home")'>Iniciar sesión</a>
-</div>
+<main class="pagina pagina-angosta">
+    <section class="tarjeta centrado">
+        <div class="medalla">✓</div>
+        <h1>¡Gracias, @ViewBag.Nombre!</h1>
+        <p>Tu cuenta ya está creada. Iniciá sesión con tu email y tu contraseña.</p>
+        <div class="botones centrado">
+            <a class="boton" href='@Url.Action("Acceso", "Home")'>Iniciar sesión</a>
+        </div>
+    </section>
+</main>

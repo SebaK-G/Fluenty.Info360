@@ -2,230 +2,218 @@
 @{
     ViewData["Title"] = "Sumate a tu equipo";
 }
-@section Estilos {
-    <link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/completar.css" asp-append-version="true" />
+@section Encabezado {
+    <p class="ayuda">⏱ Te lleva 2 minutos</p>
 }
 
-<div class="pagina-completar">
+<main class="pagina pagina-angosta">
 
-    <header class="encabezado-invitar">
-        <div class="logo-invitar">
-            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-            <span>Fluenty</span>
+    <section class="titulo-pagina">
+        <span class="subtitulo">Invitación de @ViewBag.Rango.NombreEmpresa</span>
+        <h1>Sumate como @ViewBag.Rango.Nombre</h1>
+        <p>No es un curso para volverte experto en IA: es para que <strong>tardes menos en lo que más te aburre de tu trabajo</strong>. Lecciones de 5 minutos, con ejemplos de lo que hacés vos.</p>
+
+        <!-- Los 3 pasos: cada uno lleva a su parte del formulario -->
+        <div class="separado">
+            <a class="boton-chico" href="#paso-1">1 · Tu cuenta</a>
+            <a class="boton-chico" href="#paso-2">2 · Tu trabajo</a>
+            <a class="boton-chico" href="#paso-3">3 · Vos y la IA</a>
         </div>
-        <p class="tiempo-invitar">⏱ Te lleva 2 minutos</p>
-    </header>
+    </section>
 
-    <main class="contenido-completar">
+    @if (ViewBag.Mensaje != "")
+    {
+        <p class="aviso">@ViewBag.Mensaje</p>
+    }
 
-        <section class="titulo-completar">
-            <p class="etiqueta-completar">Invitación de @ViewBag.Rango.NombreEmpresa</p>
-            <h1>Sumate como @ViewBag.Rango.Nombre</h1>
-            <p>No es un curso para volverte experto en IA: es para que <strong>tardes menos en lo que más te aburre de tu trabajo</strong>. Lecciones de 5 minutos, con ejemplos de lo que hacés vos.</p>
+    <form class="columna" action='@Url.Action("Unirse", "Formulario")' method="POST">
+        <input type="hidden" name="Codigo" value="@ViewBag.Rango.Codigo" />
 
-            <!-- Los 3 pasos: cada uno lleva a su parte del formulario -->
-            <ol class="pasos-completar">
-                <li><a href="#paso-1"><span>1</span> Tu cuenta</a></li>
-                <li><a href="#paso-2"><span>2</span> Tu trabajo</a></li>
-                <li><a href="#paso-3"><span>3</span> Vos y la IA</a></li>
-            </ol>
+        <!-- ===================== PASO 1: TU CUENTA ===================== -->
+        <section class="tarjeta" id="paso-1">
+            <div class="encabezado-paso">
+                <span class="numero-paso">1</span>
+                <div>
+                    <p class="ayuda">Paso 1 de 3</p>
+                    <h2>Tu cuenta</h2>
+                </div>
+            </div>
+
+            <div class="grilla-2">
+                <div class="campo">
+                    <label for="Nombre">Nombre</label>
+                    <input type="text" id="Nombre" name="Nombre" maxlength="50" required placeholder="Ej.: Martina" />
+                </div>
+                <div class="campo">
+                    <label for="Apellido">Apellido</label>
+                    <input type="text" id="Apellido" name="Apellido" maxlength="50" required placeholder="Ej.: Gómez" />
+                </div>
+                <div class="campo">
+                    <label for="Email">Correo electrónico</label>
+                    <input type="email" id="Email" name="Email" maxlength="100" required placeholder="Ej.: martina@mail.com" />
+                </div>
+                <div class="campo">
+                    <label for="Dni">DNI</label>
+                    <input type="text" id="Dni" name="Dni" maxlength="10" required placeholder="Sin puntos" />
+                </div>
+                <div class="campo">
+                    <label for="Telefono">Teléfono</label>
+                    <input type="tel" id="Telefono" name="Telefono" maxlength="20" required placeholder="Ej.: 1155556666" />
+                </div>
+                <div class="campo">
+                    <label for="Contrasena">Contraseña</label>
+                    <input type="password" id="Contrasena" name="Contrasena" maxlength="50" required placeholder="Creá una contraseña" />
+                </div>
+            </div>
         </section>
 
-        @if (ViewBag.Mensaje != "")
-        {
-            <p class="mensaje-completar">@ViewBag.Mensaje</p>
-        }
-
-        <form action='@Url.Action("Unirse", "Formulario")' method="POST">
-            <input type="hidden" name="Codigo" value="@ViewBag.Rango.Codigo" />
-
-            <!-- ===================== PASO 1: TU CUENTA ===================== -->
-            <section class="tarjeta-completar" id="paso-1">
-                <div class="encabezado-paso">
-                    <span class="numero-paso">1</span>
-                    <div>
-                        <p class="de-pasos">Paso 1 de 3</p>
-                        <h2>Tu cuenta</h2>
-                    </div>
+        <!-- ===================== PASO 2: TU TRABAJO ===================== -->
+        <section class="tarjeta" id="paso-2">
+            <div class="encabezado-paso">
+                <span class="numero-paso">2</span>
+                <div>
+                    <p class="ayuda">Paso 2 de 3</p>
+                    <h2>Tu trabajo</h2>
+                    <p class="ayuda">De acá salen los ejemplos de tu curso. Casi todo es tocar opciones.</p>
                 </div>
-
-                <div class="grilla-campos">
-                    <div class="campo">
-                        <label for="Nombre">Nombre</label>
-                        <input type="text" id="Nombre" name="Nombre" maxlength="50" required placeholder="Ej.: Martina" />
-                    </div>
-                    <div class="campo">
-                        <label for="Apellido">Apellido</label>
-                        <input type="text" id="Apellido" name="Apellido" maxlength="50" required placeholder="Ej.: Gómez" />
-                    </div>
-                    <div class="campo">
-                        <label for="Email">Correo electrónico</label>
-                        <input type="email" id="Email" name="Email" maxlength="100" required placeholder="Ej.: martina@mail.com" />
-                    </div>
-                    <div class="campo">
-                        <label for="Dni">DNI</label>
-                        <input type="text" id="Dni" name="Dni" maxlength="10" required placeholder="Sin puntos" />
-                    </div>
-                    <div class="campo">
-                        <label for="Telefono">Teléfono</label>
-                        <input type="tel" id="Telefono" name="Telefono" maxlength="20" required placeholder="Ej.: 1155556666" />
-                    </div>
-                    <div class="campo">
-                        <label for="Contrasena">Contraseña</label>
-                        <input type="password" id="Contrasena" name="Contrasena" maxlength="50" required placeholder="Creá una contraseña" />
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===================== PASO 2: TU TRABAJO ===================== -->
-            <section class="tarjeta-completar" id="paso-2">
-                <div class="encabezado-paso">
-                    <span class="numero-paso">2</span>
-                    <div>
-                        <p class="de-pasos">Paso 2 de 3</p>
-                        <h2>Tu trabajo</h2>
-                        <p class="ayuda-paso">De acá salen los ejemplos de tu curso. Casi todo es tocar opciones.</p>
-                    </div>
-                </div>
-
-                <div class="grilla-campos">
-                    <div class="campo">
-                        <label for="Puesto">¿Cuál es tu puesto?</label>
-                        <input type="text" id="Puesto" name="Puesto" maxlength="50" required placeholder="Ej.: vendedor, administrativa, cajero" />
-                    </div>
-                    <div class="campo">
-                        <label for="Area">¿En qué área trabajás?</label>
-                        <select id="Area" name="Area" required>
-                            <option value="">Elegí un área</option>
-                            <option value="Administración y finanzas">Administración y finanzas</option>
-                            <option value="Ventas">Ventas</option>
-                            <option value="Atención al cliente">Atención al cliente</option>
-                            <option value="Recursos Humanos">Recursos Humanos</option>
-                            <option value="Marketing y diseño">Marketing y diseño</option>
-                            <option value="Operaciones y logística">Operaciones y logística</option>
-                            <option value="Sistemas y tecnología">Sistemas y tecnología</option>
-                            <option value="Oficio o trabajo de campo">Oficio o trabajo de campo</option>
-                            <option value="Dirección o gerencia">Dirección o gerencia</option>
-                            <option value="Otra">Otra</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Qué cosas te llevan más tiempo en la semana? <span>(tocá las que hagas)</span></p>
-                    <div class="opciones">
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Responder mensajes o mails" /> Responder mensajes o mails</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Armar presupuestos o cotizaciones" /> Armar presupuestos</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Pasar o cargar datos a planillas" /> Pasar datos a planillas</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Armar reportes o resúmenes" /> Armar reportes o resúmenes</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Atender y responder dudas de clientes" /> Atender clientes</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Escribir textos, avisos o publicaciones" /> Escribir textos o publicaciones</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Organizar la agenda, turnos o pedidos" /> Organizar agenda, turnos o pedidos</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Buscar información" /> Buscar información</label>
-                    </div>
-                    <input class="otro" type="text" name="OtraTarea" maxlength="80" placeholder="Otra (opcional)" />
-                </div>
-
-                <div class="campo">
-                    <label for="TareaConcreta">¿Qué es lo que más te aburre o más tiempo te come? <span class="opcional">(opcional)</span></label>
-                    <p class="ayuda-campo">Es lo que más mejora tu curso: tu primera lección arranca resolviendo esto.</p>
-                    <textarea id="TareaConcreta" name="TareaConcreta" rows="2" maxlength="500" placeholder="Ej.: pasar los pedidos de WhatsApp a una planilla, me lleva toda la mañana"></textarea>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Qué herramientas usás en tu trabajo? <span>(podés elegir varias)</span></p>
-                    <div class="opciones">
-                        @foreach (Herramientas herramienta in ViewBag.Herramientas)
-                        {
-                            <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
-                        }
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿En tu trabajo manejás datos de clientes? <span>(nombres, teléfonos, cuentas, pedidos)</span></p>
-                    <div class="opciones">
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="Sí, todo el tiempo" required /> Sí, todo el tiempo</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="A veces" /> A veces</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="No" /> No</label>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===================== PASO 3: VOS Y LA IA ===================== -->
-            <section class="tarjeta-completar" id="paso-3">
-                <div class="encabezado-paso">
-                    <span class="numero-paso">3</span>
-                    <div>
-                        <p class="de-pasos">Paso 3 de 3</p>
-                        <h2>Vos y la IA</h2>
-                        <p class="ayuda-paso">No hay respuestas malas: así sabemos desde dónde arrancar y cómo explicarte.</p>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Usaste alguna vez una IA como ChatGPT o Gemini?</p>
-                    <div class="opciones opciones-columna">
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="1" required /> Nunca la usé</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="2" /> La probé alguna vez</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="3" /> La uso a veces para cosas simples</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="4" /> La uso seguido en mi trabajo</label>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Qué tan cómodo te sentís usando la compu y el celular?</p>
-                    <div class="opciones opciones-columna">
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me cuesta bastante, uso lo justo" required /> Me cuesta bastante, uso lo justo</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me defiendo con lo básico" /> Me defiendo con lo básico</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me manejo bien" /> Me manejo bien</label>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Cuántos años tenés?</p>
-                    <div class="opciones">
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Menos de 25 años" required /> Menos de 25</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Entre 25 y 40 años" /> 25 a 40</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Entre 40 y 55 años" /> 40 a 55</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Más de 55 años" /> Más de 55</label>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Algo de la IA te preocupa? <span>(podés elegir varias)</span></p>
-                    <div class="opciones">
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que me reemplace en el trabajo" /> Que me reemplace</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="No entenderla" /> No entenderla</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="La privacidad de los datos" /> La privacidad de los datos</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que me dé información equivocada" /> Que se equivoque</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que sea una pérdida de tiempo" /> Que sea una pérdida de tiempo</label>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <p class="pregunta-campo">¿Cuánto tiempo por día podés dedicarle?</p>
-                    <div class="opciones">
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="5" required /> 5 minutos</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="10" /> 10 minutos</label>
-                        <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="15" /> 15 minutos o más</label>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <label for="Hobbies">¿Qué te gusta hacer fuera del trabajo? <span class="opcional">(opcional)</span></label>
-                    <p class="ayuda-campo">Lo usamos para explicarte con comparaciones que te resulten familiares.</p>
-                    <input type="text" id="Hobbies" name="Hobbies" maxlength="200" placeholder="Ej.: cocinar, el fútbol, los videojuegos" />
-                </div>
-            </section>
-
-            <p class="privacidad-completar">🔒 Tus respuestas solo las usa la IA para armar tu curso. Tu jefe <strong>no las ve</strong>: solo ve si vas avanzando.</p>
-
-            <div class="acciones-completar">
-                <input type="submit" value="Unirme al equipo" />
-                <p>Al unirte, tu empresa va a poder armarte tu curso.</p>
             </div>
-        </form>
-    </main>
-</div>
+
+            <div class="grilla-2">
+                <div class="campo">
+                    <label for="Puesto">¿Cuál es tu puesto?</label>
+                    <input type="text" id="Puesto" name="Puesto" maxlength="50" required placeholder="Ej.: vendedor, administrativa, cajero" />
+                </div>
+                <div class="campo">
+                    <label for="Area">¿En qué área trabajás?</label>
+                    <select id="Area" name="Area" required>
+                        <option value="">Elegí un área</option>
+                        <option value="Administración y finanzas">Administración y finanzas</option>
+                        <option value="Ventas">Ventas</option>
+                        <option value="Atención al cliente">Atención al cliente</option>
+                        <option value="Recursos Humanos">Recursos Humanos</option>
+                        <option value="Marketing y diseño">Marketing y diseño</option>
+                        <option value="Operaciones y logística">Operaciones y logística</option>
+                        <option value="Sistemas y tecnología">Sistemas y tecnología</option>
+                        <option value="Oficio o trabajo de campo">Oficio o trabajo de campo</option>
+                        <option value="Dirección o gerencia">Dirección o gerencia</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>¿Qué cosas te llevan más tiempo en la semana? <span class="opcional">(tocá las que hagas)</span></label>
+                <div>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Responder mensajes o mails" /> Responder mensajes o mails</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Armar presupuestos o cotizaciones" /> Armar presupuestos</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Pasar o cargar datos a planillas" /> Pasar datos a planillas</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Armar reportes o resúmenes" /> Armar reportes o resúmenes</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Atender y responder dudas de clientes" /> Atender clientes</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Escribir textos, avisos o publicaciones" /> Escribir textos o publicaciones</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Organizar la agenda, turnos o pedidos" /> Organizar agenda, turnos o pedidos</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Tareas" value="Buscar información" /> Buscar información</label>
+                </div>
+                <input type="text" name="OtraTarea" maxlength="80" placeholder="Otra (opcional)" />
+            </div>
+
+            <div class="campo">
+                <label for="TareaConcreta">¿Qué es lo que más te aburre o más tiempo te come? <span class="opcional">(opcional)</span></label>
+                <p class="ayuda">Es lo que más mejora tu curso: tu primera lección arranca resolviendo esto.</p>
+                <textarea id="TareaConcreta" name="TareaConcreta" rows="2" maxlength="500" placeholder="Ej.: pasar los pedidos de WhatsApp a una planilla, me lleva toda la mañana"></textarea>
+            </div>
+
+            <div class="campo">
+                <label>¿Qué herramientas usás en tu trabajo? <span class="opcional">(podés elegir varias)</span></label>
+                <div>
+                    @foreach (Herramientas herramienta in ViewBag.Herramientas)
+                    {
+                        <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                    }
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>¿En tu trabajo manejás datos de clientes? <span class="opcional">(nombres, teléfonos, cuentas, pedidos)</span></label>
+                <div>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="Sí, todo el tiempo" required /> Sí, todo el tiempo</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="A veces" /> A veces</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="No" /> No</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== PASO 3: VOS Y LA IA ===================== -->
+        <section class="tarjeta" id="paso-3">
+            <div class="encabezado-paso">
+                <span class="numero-paso">3</span>
+                <div>
+                    <p class="ayuda">Paso 3 de 3</p>
+                    <h2>Vos y la IA</h2>
+                    <p class="ayuda">No hay respuestas malas: así sabemos desde dónde arrancar y cómo explicarte.</p>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>¿Usaste alguna vez una IA como ChatGPT o Gemini?</label>
+                <div class="en-columna">
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="1" required /> Nunca la usé</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="2" /> La probé alguna vez</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="3" /> La uso a veces para cosas simples</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="NivelIA" value="4" /> La uso seguido en mi trabajo</label>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>¿Qué tan cómodo te sentís usando la compu y el celular?</label>
+                <div class="en-columna">
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me cuesta bastante, uso lo justo" required /> Me cuesta bastante, uso lo justo</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me defiendo con lo básico" /> Me defiendo con lo básico</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="ComodidadTecnologia" value="Me manejo bien" /> Me manejo bien</label>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>¿Cuántos años tenés?</label>
+                <div>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Menos de 25 años" required /> Menos de 25</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Entre 25 y 40 años" /> 25 a 40</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Entre 40 y 55 años" /> 40 a 55</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="RangoEdad" value="Más de 55 años" /> Más de 55</label>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>¿Algo de la IA te preocupa? <span class="opcional">(podés elegir varias)</span></label>
+                <div>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que me reemplace en el trabajo" /> Que me reemplace</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="No entenderla" /> No entenderla</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="La privacidad de los datos" /> La privacidad de los datos</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que me dé información equivocada" /> Que se equivoque</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="PreocupacionIA" value="Que sea una pérdida de tiempo" /> Que sea una pérdida de tiempo</label>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>¿Cuánto tiempo por día podés dedicarle?</label>
+                <div>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="5" required /> 5 minutos</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="10" /> 10 minutos</label>
+                    <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="TiempoXDia" value="15" /> 15 minutos o más</label>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="Hobbies">¿Qué te gusta hacer fuera del trabajo? <span class="opcional">(opcional)</span></label>
+                <p class="ayuda">Lo usamos para explicarte con comparaciones que te resulten familiares.</p>
+                <input type="text" id="Hobbies" name="Hobbies" maxlength="200" placeholder="Ej.: cocinar, el fútbol, los videojuegos" />
+            </div>
+        </section>
+
+        <p class="aviso">🔒 Tus respuestas solo las usa la IA para armar tu curso. Tu jefe <strong>no las ve</strong>: solo ve si vas avanzando.</p>
+
+        <section class="titulo-pagina">
+            <input class="boton boton-grande" type="submit" value="Unirme al equipo" />
+            <p class="ayuda centrado">Al unirte, tu empresa va a poder armarte tu curso.</p>
+        </section>
+    </form>
+</main>

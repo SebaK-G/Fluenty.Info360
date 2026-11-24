@@ -438,11 +438,11 @@ public static class LogicaCurso
     {
         foreach (Unidades unidad in unidades)
         {
-            unidad.Clase = "unidad unidad-color-" + unidad.Numero;
+            unidad.Clase = "color-" + unidad.Numero;
             unidad.Etiqueta = "";
             if (unidad.Numero < unidadInicial)
             {
-                unidad.Clase = "unidad unidad-sabida";
+                unidad.Clase = "color-sabida";
                 unidad.Etiqueta = "Ya lo sabe";
             }
             if (unidad.Numero == unidadInicial)

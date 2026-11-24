@@ -1,86 +1,36 @@
-
 @{
     ViewData["Title"] = "Acceso";
 }
-@section Estilos {
-    <link rel="stylesheet" href="~/css/acceso.css" asp-append-version="true" />
-}
 
-<header class="encabezado">
-    <div class="logo-superior">
-<img src="~/Imagenes/LogoAffinity.png" alt="Logo" />
-    <span>Fluenty</span>
-</div>
-</header>
+<main class="pagina pagina-angosta">
+    <!-- Una tarjeta con dos mitades: el formulario y el panel azul de bienvenida -->
+    <section class="tarjeta grilla-2 acceso">
 
-<main class="fondo-principal">
-    <div class="contenedor-acceso">
-
-        <section class="panel-formularios">
-
-           <div class="logo-principal">
-<img src="~/Imagenes/LogoAffinity.png" alt="Logo" />
-    <h1>Fluenty</h1>
-</div>
-
-            <div id="form-login" class="formulario">
-                <h2 class="titulo-formulario">Iniciar sesión</h2>
-
-                <form asp-action="Login" asp-controller="Home" method="post">
-                    <div class="campo">
-                        <label for="EmailLogin">Email:</label>
-                        <input type="email" id="EmailLogin" name="Email"
-                               placeholder="Ingresa tu correo electrónico" required />
-                    </div>
-
-                    <div class="campo">
-                        <label for="ContrasenaLogin">Contraseña:</label>
-                        <input type="password" id="ContrasenaLogin" name="Contrasena"
-                               placeholder="Ingresa la contraseña" required />
-                    </div>
-
-                    <div>
-                        <input class="boton-enviar" type="submit" value="Acceder a Fluenty" />
-                    </div>
-                </form>
-            </div>
-
-            <div class="mensajes">
-                <p>@ViewBag.Mensaje</p>
-            </div>
-        </section>
-
-        <section class="promo-panel">
-            <h1>Bienvenido a Fluenty</h1>
-
-            <p class="texto-promo">
-                Donde todos se pueden capacitar para usar la Inteligencia Artificial.
-            </p>
-
-            <div class="stat-item">
-                <div class="icon">✓</div>
-                <div class="stat-text">
-                    <h2>+200</h2>
-                    <p>Cursos creados</p>
+        <div>
+            <h1>Iniciar sesión</h1>
+            <p class="ayuda">Entrá con el email y la contraseña de tu cuenta.</p>
+            <form class="separado" asp-action="Login" asp-controller="Home" method="post">
+                <div class="campo">
+                    <label for="EmailLogin">Email</label>
+                    <input type="email" id="EmailLogin" name="Email" placeholder="Ingresá tu correo electrónico" required />
                 </div>
-            </div>
-
-            <div class="stat-item">
-                <div class="icon">◌</div>
-                <div class="stat-text">
-                    <h2>+1.234.567</h2>
-                    <p>Empleados capacitados</p>
+                <div class="campo">
+                    <label for="ContrasenaLogin">Contraseña</label>
+                    <input type="password" id="ContrasenaLogin" name="Contrasena" placeholder="Ingresá la contraseña" required />
                 </div>
-            </div>
+                <p class="error">@ViewBag.Mensaje</p>
+                <input class="boton boton-grande separado" type="submit" value="Acceder a Fluenty" />
+            </form>
+        </div>
 
-            <div class="stat-item">
-                <div class="icon">▣</div>
-                <div class="stat-text">
-                    <h2>2.314 días</h2>
-                    <p>de tiempo ahorrado para las empresas</p>
-                </div>
+        <div class="tarjeta-azul">
+            <h2>Bienvenido a Fluenty</h2>
+            <p>Donde todos se pueden capacitar para usar la Inteligencia Artificial.</p>
+            <div class="columna separado">
+                <div class="dato"><strong>+200</strong><span>Cursos creados</span></div>
+                <div class="dato"><strong>+1.234.567</strong><span>Empleados capacitados</span></div>
+                <div class="dato"><strong>2.314 días</strong><span>de tiempo ahorrado para las empresas</span></div>
             </div>
-        </section>
-
-    </div>
+        </div>
+    </section>
 </main>

@@ -1,37 +1,25 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Calculadora de eficiencia";
-}
-@section Estilos {
-    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/calculadora.css" asp-append-version="true" />
+    ViewData["Activo"] = "Home";
 }
 
-<div class="pagina-calculadora">
+<main class="pagina">
 
-    <header class="encabezado-app">
-        <div class="logo-app">
-            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-            <span>Fluenty</span>
-        </div>
-        @await Html.PartialAsync("_NavApp", "Home")
-    </header>
+    <section class="titulo-pagina">
+        <span class="subtitulo">📊 Calculadora de eficiencia</span>
+        <h1>¿Cuánto tiempo le ahorra la IA a tu equipo?</h1>
+        <p>Elegí una tarea, contanos cuánto tiempo le dedican y te mostramos las horas (y la plata) que se ahorran usándola bien.</p>
+    </section>
 
-    <main class="calculadora">
+    <div class="grilla-2">
 
-        <div class="titulo-calculadora">
-            <span class="etiqueta-calculadora">📊 Calculadora de eficiencia</span>
-            <h1>¿Cuánto tiempo le ahorra la IA a tu equipo?</h1>
-            <p>Elegí una tarea, contanos cuánto tiempo le dedican y te mostramos las horas (y la plata) que se ahorran usándola bien.</p>
-        </div>
+        <!-- ===== Las 4 preguntas ===== -->
+        <form class="tarjeta" method="post" action='@Url.Action("Calcular", "Calculadora")' onsubmit="return validarCalculo()">
+            <h2>Tus datos</h2>
 
-        <div class="fila-calculadora">
-
-            <!-- ===== Las 4 preguntas ===== -->
-            <form class="tarjeta-calculadora" method="post" action='@Url.Action("Calcular", "Calculadora")' onsubmit="return validarCalculo()">
-                <h2>Tus datos</h2>
-
-                <label for="tarea" class="primera-pregunta">1. ¿Qué tarea querés calcular?</label>
+            <div class="campo">
+                <label for="tarea">1. ¿Qué tarea querés calcular?</label>
                 <select id="tarea" name="IdTipoTarea" required onchange="elegirTarea()">
                     @foreach (TiposTarea tipo in ViewBag.Tipos)
                     {
@@ -45,111 +33,101 @@
                     <input type="hidden" id="ejemplo-tarea-@tipo.IdTipoTarea" value="@tipo.Ejemplo" />
                     <input type="hidden" id="porcentaje-tarea-@tipo.IdTipoTarea" value="@tipo.PorcentajeAhorro" />
                 }
-                <p class="ayuda-calculadora" id="info-tarea"></p>
+                <p class="ayuda" id="info-tarea"></p>
+            </div>
 
+            <div class="campo">
                 <label for="personas">2. ¿Cuántas personas de tu equipo la hacen?</label>
                 <input type="number" id="personas" name="Personas" min="1" max="10000" step="1" required oninput="marcarPersonasEditadas()" />
-                <p class="ayuda-calculadora" id="info-personas"></p>
+                <p class="ayuda" id="info-personas"></p>
+            </div>
 
+            <div class="campo">
                 <label for="horas">3. ¿Cuántas horas por semana le dedica cada una?</label>
                 <input type="text" inputmode="decimal" id="horas" name="HorasSemana" placeholder="Ej.: 5" required />
-                <p class="ayuda-calculadora">Si no sabés exacto, poné lo que te parezca: por ejemplo, 1 hora por día son 5 por semana.</p>
+                <p class="ayuda">Si no sabés exacto, poné lo que te parezca: por ejemplo, 1 hora por día son 5 por semana.</p>
+            </div>
 
-                <label for="valor">4. ¿Cuánto vale una hora de trabajo? <span class="opcional">(opcional)</span></label>
-                <div class="campo-plata">
-                    <span>$</span>
-                    <input type="text" inputmode="decimal" id="valor" name="ValorHora" placeholder="Ej.: 8000" />
-                </div>
-                <p class="ayuda-calculadora">Lo que le cuesta a la empresa una hora de esa persona. Si lo dejás vacío, calculamos solo las horas.</p>
+            <div class="campo">
+                <label for="valor">4. ¿Cuánto vale una hora de trabajo ($)? <span class="opcional">(opcional)</span></label>
+                <input type="text" inputmode="decimal" id="valor" name="ValorHora" placeholder="Ej.: 8000" />
+                <p class="ayuda">Lo que le cuesta a la empresa una hora de esa persona. Si lo dejás vacío, calculamos solo las horas.</p>
+            </div>
 
-                <!-- Los errores de la validación (los de calculadora.js y los que manda el servidor) -->
-                <p class="error-calculadora" id="error-calculadora" style="display: @(ViewBag.Error == "" ? "none" : "block")">@ViewBag.Error</p>
+            <!-- Los errores de la validación (los de calculadora.js y los que manda el servidor) -->
+            <p class="error @(ViewBag.Error == "" ? "oculto" : "")" id="error-calculadora">@ViewBag.Error</p>
+            <input class="boton boton-grande separado" type="submit" value="Calcular ahorro" />
+        </form>
 
-                <input class="boton-home boton-calcular" type="submit" value="Calcular ahorro" />
-            </form>
-
-            <!-- ===== El resultado ===== -->
-            @if (ViewBag.Resultado != null)
-            {
-                <section class="tarjeta-calculadora resultado">
-                    <p class="etiqueta-resultado">Resultado · @ViewBag.Resultado.NombreTarea</p>
-                    <p class="numero-grande">@ViewBag.Resultado.HorasAhorradasMes.ToString("0.#") <span>horas por mes</span></p>
-                    <p class="detalle-resultado">Son @ViewBag.Resultado.HorasAhorradasSemana().ToString("0.#") horas por semana, o <strong>@ViewBag.Resultado.DiasAhorradosMes().ToString("0.#") @(ViewBag.Resultado.DiasAhorradosMes() == 1 ? "jornada" : "jornadas") de trabajo</strong> por mes que el equipo puede usar en otra cosa.</p>
-
-                    @if (ViewBag.Resultado.PlataAhorradaMes > 0)
-                    {
-                        <div class="cajas-resultado">
-                            <div>
-                                <strong>$ @ViewBag.Resultado.PlataAhorradaMes.ToString("N0")</strong>
-                                <span>por mes</span>
-                            </div>
-                            <div>
-                                <strong>$ @ViewBag.Resultado.PlataAhorradaAnio().ToString("N0")</strong>
-                                <span>por año</span>
-                            </div>
-                        </div>
-                    }
-
-                    <!-- Lo que ya se estaría ahorrando con lo que avanzó el equipo -->
-                    <div class="avance-resultado">
-                        <p><strong>Hoy, con tu equipo al @ViewBag.Avance% de sus cursos:</strong> ya estarían ahorrando unas @ViewBag.Resultado.HorasAhorradasHoy(ViewBag.Avance).ToString("0.#") horas por mes.</p>
-                        <div class="barra-avance"><span style="width: @(ViewBag.Avance)%"></span></div>
-                        @if (ViewBag.Avance < 100)
-                        {
-                            <p class="ayuda-calculadora">Cuanto más avancen en los cursos, más se acercan al ahorro total. <a href='@Url.Action("Index", "Empleados")'>Ver cómo va cada uno</a></p>
-                        }
-                    </div>
-
-                    <p class="cuenta-resultado">La cuenta: @ViewBag.Resultado.Personas @(ViewBag.Resultado.Personas == 1 ? "persona" : "personas") × @ViewBag.Resultado.HorasSemana.ToString("0.#") h por semana × @Calculos.SemanasPorMes semanas = horas de la tarea en el mes. La IA ahorra cerca del @ViewBag.Resultado.PorcentajeAhorro% de ese tiempo. Es una estimación: el ahorro real depende de cada tarea y de cuánto la usen.</p>
-                </section>
-            }
-            else
-            {
-                <section class="tarjeta-calculadora resultado vacio">
-                    <p class="numero-grande">— <span>horas por mes</span></p>
-                    <p class="detalle-resultado">Completá los datos y tocá <strong>Calcular ahorro</strong>. El resultado queda guardado abajo para comparar distintas tareas.</p>
-                    <p class="ayuda-calculadora">Tu equipo: @ViewBag.Personas @(ViewBag.Personas == 1 ? "persona" : "personas"), @ViewBag.EnCurso con curso, @ViewBag.Avance% de avance promedio.</p>
-                </section>
-            }
-        </div>
-
-        <!-- ===== Cálculos guardados ===== -->
-        @if (ViewBag.Calculos.Count > 0)
+        <!-- ===== El resultado ===== -->
+        @if (ViewBag.Resultado != null)
         {
-            <section class="tarjeta-calculadora">
-                <h2>Tus cálculos</h2>
-                <div class="tabla-calculos">
-                    <div class="fila-calculo encabezado-calculos">
-                        <span>Tarea</span>
-                        <span>Personas</span>
-                        <span>Horas por semana</span>
-                        <span>Ahorro por mes</span>
-                        <span>Fecha</span>
-                        <span></span>
+            <section class="tarjeta tarjeta-azul fija">
+                <span class="subtitulo">Resultado · @ViewBag.Resultado.NombreTarea</span>
+                <p class="numero-grande">@ViewBag.Resultado.HorasAhorradasMes.ToString("0.#") <span>horas por mes</span></p>
+                <p>Son @ViewBag.Resultado.HorasAhorradasSemana().ToString("0.#") horas por semana, o <strong>@ViewBag.Resultado.DiasAhorradosMes().ToString("0.#") @(ViewBag.Resultado.DiasAhorradosMes() == 1 ? "jornada" : "jornadas") de trabajo</strong> por mes que el equipo puede usar en otra cosa.</p>
+                @if (ViewBag.Resultado.PlataAhorradaMes > 0)
+                {
+                    <div class="grilla-2 separado">
+                        <div class="dato"><strong>$ @ViewBag.Resultado.PlataAhorradaMes.ToString("N0")</strong><span>por mes</span></div>
+                        <div class="dato"><strong>$ @ViewBag.Resultado.PlataAhorradaAnio().ToString("N0")</strong><span>por año</span></div>
                     </div>
-                    @foreach (Calculos calculo in ViewBag.Calculos)
+                }
+                <!-- Lo que ya se estaría ahorrando con lo que avanzó el equipo -->
+                <div class="caja separado">
+                    <p><strong>Hoy, con tu equipo al @ViewBag.Avance% de sus cursos:</strong> ya estarían ahorrando unas @ViewBag.Resultado.HorasAhorradasHoy(ViewBag.Avance).ToString("0.#") horas por mes.</p>
+                    <div class="barra"><span style="width: @(ViewBag.Avance)%"></span></div>
+                    @if (ViewBag.Avance < 100)
                     {
-                        <div id="calculo-@calculo.IdCalculo" class="fila-calculo @(ViewBag.Resultado != null && calculo.IdCalculo == ViewBag.Resultado.IdCalculo ? "fila-elegida" : "")">
-                            <a href='@Url.Action("Index", "Calculadora", new { IdCalculo = calculo.IdCalculo })'>@calculo.NombreTarea</a>
-                            <span>@calculo.Personas @(calculo.Personas == 1 ? "persona" : "personas")</span>
-                            <span>@calculo.HorasSemana.ToString("0.#") h por semana</span>
-                            <span>
-                                <strong>@calculo.HorasAhorradasMes.ToString("0.#") h</strong>
-                                @if (calculo.PlataAhorradaMes > 0)
-                                {
-                                    <span class="plata-tabla">· $ @calculo.PlataAhorradaMes.ToString("N0")</span>
-                                }
-                            </span>
-                            <span>@calculo.Fecha.ToString("dd/MM/yyyy")</span>
-                            <input class="boton-borrar-calculo" type="button" value="Borrar" onclick="borrarCalculo(@calculo.IdCalculo)" />
-                        </div>
+                        <p>Cuanto más avancen en los cursos, más se acercan al ahorro total. <a class="volver" href='@Url.Action("Index", "Empleados")'>Ver cómo va cada uno</a></p>
                     }
                 </div>
+                <p class="ayuda separado">La cuenta: @ViewBag.Resultado.Personas @(ViewBag.Resultado.Personas == 1 ? "persona" : "personas") × @ViewBag.Resultado.HorasSemana.ToString("0.#") h por semana × @Calculos.SemanasPorMes semanas = horas de la tarea en el mes. La IA ahorra cerca del @ViewBag.Resultado.PorcentajeAhorro% de ese tiempo. Es una estimación: el ahorro real depende de cada tarea y de cuánto la usen.</p>
             </section>
         }
+        else
+        {
+            <section class="tarjeta tarjeta-azul fija">
+                <p class="numero-grande">— <span>horas por mes</span></p>
+                <p>Completá los datos y tocá <strong>Calcular ahorro</strong>. El resultado queda guardado abajo para comparar distintas tareas.</p>
+                <p class="ayuda separado">Tu equipo: @ViewBag.Personas @(ViewBag.Personas == 1 ? "persona" : "personas"), @ViewBag.EnCurso con curso, @ViewBag.Avance% de avance promedio.</p>
+            </section>
+        }
+    </div>
 
-    </main>
-</div>
+    <!-- ===== Cálculos guardados ===== -->
+    @if (ViewBag.Calculos.Count > 0)
+    {
+        <section class="tarjeta tabla">
+            <h2>Tus cálculos</h2>
+            <div class="renglon ayuda">
+                <strong>Tarea</strong>
+                <strong>Personas</strong>
+                <strong>Horas por semana</strong>
+                <strong>Ahorro por mes</strong>
+                <strong>Fecha</strong>
+                <span></span>
+            </div>
+            @foreach (Calculos calculo in ViewBag.Calculos)
+            {
+                <div id="calculo-@calculo.IdCalculo" class="renglon @(ViewBag.Resultado != null && calculo.IdCalculo == ViewBag.Resultado.IdCalculo ? "activo" : "")">
+                    <a href='@Url.Action("Index", "Calculadora", new { IdCalculo = calculo.IdCalculo })'>@calculo.NombreTarea</a>
+                    <span>@calculo.Personas @(calculo.Personas == 1 ? "persona" : "personas")</span>
+                    <span>@calculo.HorasSemana.ToString("0.#") h por semana</span>
+                    <span>
+                        <strong>@calculo.HorasAhorradasMes.ToString("0.#") h</strong>
+                        @if (calculo.PlataAhorradaMes > 0)
+                        {
+                            <span class="ayuda">· $ @calculo.PlataAhorradaMes.ToString("N0")</span>
+                        }
+                    </span>
+                    <span>@calculo.Fecha.ToString("dd/MM/yyyy")</span>
+                    <input class="boton boton-rojo" type="button" value="Borrar" onclick="borrarCalculo(@calculo.IdCalculo)" />
+                </div>
+            }
+        </section>
+    }
+</main>
 
 @section Scripts {
     <script src="~/js/calculadora.js" asp-append-version="true"></script>

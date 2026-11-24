@@ -25,7 +25,7 @@ function estaResuelta(numero) {
     return document.getElementById("resuelta-" + numero).value == "si";
 }
 
-// Muestra la tarjeta "numero" y oculta las demás (la clase "activa" es la que la hace visible)
+// Muestra la tarjeta "numero" y oculta las demás (la clase "oculto" es la que las esconde)
 function mostrar(numero) {
     if (numero < 1 || numero > total) {
         return;
@@ -35,9 +35,10 @@ function mostrar(numero) {
         return;
     }
     for (let i = 1; i <= total; i++) {
-        let clase = "tarjeta-leccion tipo-" + document.getElementById("tipo-" + i).value;
+        // La tarjeta que se ve no tiene la clase "oculto"; las demás sí
+        let clase = "tarjeta oculto";
         if (i == numero) {
-            clase = clase + " activa";
+            clase = "tarjeta";
         }
         document.getElementById("tarjeta-" + i).className = clase;
     }
@@ -99,7 +100,7 @@ function responder(numero, letra) {
             return;
         }
         // Se pinta de verde la correcta (y de rojo la elegida si estaba mal)
-        document.getElementById("opcion-" + numero + "-" + data.correcta).className = "opcion-leccion bien";
+        document.getElementById("opcion-" + numero + "-" + data.correcta).className = "opcion bien";
         document.getElementById("explicacion-" + numero).innerText = data.explicacion;
         if (data.bien) {
             document.getElementById("veredicto-" + numero).innerText = "¡Bien ahí! 🎉";
@@ -107,7 +108,7 @@ function responder(numero, letra) {
             document.getElementById("otra-" + numero).style.display = "none";
             document.getElementById("resuelta-" + numero).value = "si";
         } else {
-            document.getElementById("opcion-" + numero + "-" + letra).className = "opcion-leccion mal";
+            document.getElementById("opcion-" + numero + "-" + letra).className = "opcion mal";
             document.getElementById("veredicto-" + numero).innerText = "Esta vez no. Leé por qué y probá con otra pregunta del mismo tema:";
             if (data.reexplicacion != "") {
                 ponerTexto("reexplicacion-" + numero, "📘 Te lo explicamos de otra forma: " + data.reexplicacion);
@@ -115,7 +116,7 @@ function responder(numero, letra) {
             document.getElementById("otra-" + numero).style.display = "block";
             proximas[numero] = data.siguiente;
         }
-        document.getElementById("devolucion-" + numero).className = "devolucion-opcion visible";
+        document.getElementById("devolucion-" + numero).className = "caja devolucion";
         actualizarSiguiente();
     })
     .catch(error => {
@@ -130,7 +131,7 @@ function responder(numero, letra) {
 function ponerOpcion(numero, letra, texto) {
     let boton = document.getElementById("opcion-" + numero + "-" + letra);
     boton.innerText = texto;
-    boton.className = "opcion-leccion";
+    boton.className = "opcion";
     if (texto == "") {
         boton.style.display = "none";
     } else {
@@ -153,7 +154,7 @@ function otraPregunta(numero) {
     ponerOpcion(numero, "B", nueva.opcionB);
     ponerOpcion(numero, "C", nueva.opcionC);
     habilitarOpciones(numero, true);
-    document.getElementById("devolucion-" + numero).className = "devolucion-opcion";
+    document.getElementById("devolucion-" + numero).className = "caja devolucion oculto";
     ponerTexto("reexplicacion-" + numero, "");
     proximas[numero] = null;
     window.scrollTo(0, 0);
@@ -198,7 +199,7 @@ function practicar(numero) {
         }
         if (data.aprobado) {
             document.getElementById("veredicto-" + numero).innerText = "✅ ¡Aprobado!";
-            devolucion.className = "devolucion-practica aprobada";
+            devolucion.className = "caja devolucion aprobada";
             document.getElementById("corregir-" + numero).style.display = "none";
             document.getElementById("respuesta-" + numero).disabled = true;
             document.getElementById("resuelta-" + numero).value = "si";

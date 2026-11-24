@@ -5,7 +5,7 @@
 function mostrarPublico(idRango, publico) {
     let caja = document.getElementById("publico-" + idRango);
     if (publico) {
-        caja.style.display = "block";
+        caja.style.display = "flex";
     } else {
         caja.style.display = "none";
     }

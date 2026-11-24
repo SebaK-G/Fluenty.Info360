@@ -1,90 +1,77 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Crea tu curso con IA";
-}
-@section Estilos {
-    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
+    ViewData["Activo"] = "Cursos";
 }
 
-<div class="pagina-curso">
+<main class="pagina pagina-angosta">
 
-    <header class="encabezado-app">
-        <div class="logo-app">
-            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-            <span>Fluenty</span>
-        </div>
-        @await Html.PartialAsync("_NavApp", "Cursos")
-    </header>
+    <section class="titulo-pagina">
+        <span class="subtitulo">Antes de empezar · 3 preguntas</span>
+        <h1>Contanos sobre tu equipo</h1>
+        <p>La IA va a usar estas respuestas en todos los cursos que genere para tu empresa. Lo completás una sola vez.</p>
+    </section>
 
-    <main class="formulario-empresa">
-        <section class="titulo-formulario-empresa">
-            <p class="etiqueta-formulario">Antes de empezar · 3 preguntas</p>
-            <h1>Contanos sobre tu equipo</h1>
-            <p>La IA va a usar estas respuestas en todos los cursos que genere para tu empresa. Lo completás una sola vez.</p>
+    @if (ViewBag.Error != "")
+    {
+        <p class="aviso">@ViewBag.Error</p>
+    }
+
+    <form class="columna" method="post" action='@Url.Action("FormularioEmpresa", "Curso")'>
+
+        <!-- ===== Pregunta 1 ===== -->
+        <section class="tarjeta">
+            <div class="encabezado-paso">
+                <span class="numero-paso">1</span>
+                <div>
+                    <p class="ayuda">Pregunta 1 de 3</p>
+                    <h2>Las dificultades de tu equipo</h2>
+                </div>
+            </div>
+            <div class="campo">
+                <label for="Dificultades">¿Cuáles son los principales problemas o dificultades que enfrenta tu equipo en el trabajo diario? ¿Qué tareas o procesos te gustaría mejorar?</label>
+                <textarea id="Dificultades" name="Dificultades" rows="4" maxlength="500" required placeholder="Ej.: tardamos mucho en responder mails y armar reportes"></textarea>
+            </div>
         </section>
 
-        @if (ViewBag.Error != "")
-        {
-            <p class="aviso">@ViewBag.Error</p>
-        }
-
-        <form method="post" action='@Url.Action("FormularioEmpresa", "Curso")'>
-
-            <!-- ===== Pregunta 1 ===== -->
-            <section class="tarjeta-completar">
-                <div class="encabezado-paso">
-                    <span class="numero-paso">1</span>
-                    <div>
-                        <p class="de-pasos">Pregunta 1 de 3</p>
-                        <h2>Las dificultades de tu equipo</h2>
-                    </div>
+        <!-- ===== Pregunta 2 ===== -->
+        <section class="tarjeta">
+            <div class="encabezado-paso">
+                <span class="numero-paso">2</span>
+                <div>
+                    <p class="ayuda">Pregunta 2 de 3</p>
+                    <h2>Las herramientas que usan</h2>
                 </div>
-                <div class="campo">
-                    <label for="Dificultades">¿Cuáles son los principales problemas o dificultades que enfrenta tu equipo en el trabajo diario? ¿Qué tareas o procesos te gustaría mejorar?</label>
-                    <textarea id="Dificultades" name="Dificultades" rows="4" maxlength="500" required placeholder="Ej.: tardamos mucho en responder mails y armar reportes"></textarea>
-                </div>
-            </section>
-
-            <!-- ===== Pregunta 2 ===== -->
-            <section class="tarjeta-completar">
-                <div class="encabezado-paso">
-                    <span class="numero-paso">2</span>
-                    <div>
-                        <p class="de-pasos">Pregunta 2 de 3</p>
-                        <h2>Las herramientas que usan</h2>
-                    </div>
-                </div>
-                <div class="campo">
-                    <p class="pregunta-campo">¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? <span>(podés elegir varias)</span></p>
-                    <div class="opciones">
-                        @foreach (Herramientas herramienta in ViewBag.Herramientas)
-                        {
-                            <label class="eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
-                        }
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===== Pregunta 3 ===== -->
-            <section class="tarjeta-completar">
-                <div class="encabezado-paso">
-                    <span class="numero-paso">3</span>
-                    <div>
-                        <p class="de-pasos">Pregunta 3 de 3</p>
-                        <h2>Lo que querés lograr</h2>
-                    </div>
-                </div>
-                <div class="campo">
-                    <label for="Objetivos">¿Qué te gustaría lograr mediante la capacitación de tus empleados? ¿Qué mejoras esperás conseguir en la productividad o en la forma de trabajar?</label>
-                    <textarea id="Objetivos" name="Objetivos" rows="4" maxlength="500" required placeholder="Ej.: ahorrar horas en tareas repetitivas y cometer menos errores"></textarea>
-                </div>
-            </section>
-
-            <div class="acciones-completar">
-                <input type="submit" value="Guardar y continuar" />
-                <p>Después vas a poder compartir el link con tu equipo.</p>
             </div>
-        </form>
-    </main>
-</div>
+            <div class="campo">
+                <label>¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? <span class="opcional">(podés elegir varias)</span></label>
+                <div>
+                    @foreach (Herramientas herramienta in ViewBag.Herramientas)
+                    {
+                        <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Pregunta 3 ===== -->
+        <section class="tarjeta">
+            <div class="encabezado-paso">
+                <span class="numero-paso">3</span>
+                <div>
+                    <p class="ayuda">Pregunta 3 de 3</p>
+                    <h2>Lo que querés lograr</h2>
+                </div>
+            </div>
+            <div class="campo">
+                <label for="Objetivos">¿Qué te gustaría lograr mediante la capacitación de tus empleados? ¿Qué mejoras esperás conseguir en la productividad o en la forma de trabajar?</label>
+                <textarea id="Objetivos" name="Objetivos" rows="4" maxlength="500" required placeholder="Ej.: ahorrar horas en tareas repetitivas y cometer menos errores"></textarea>
+            </div>
+        </section>
+
+        <section class="titulo-pagina">
+            <input class="boton boton-grande" type="submit" value="Guardar y continuar" />
+            <p class="ayuda centrado">Después vas a poder compartir el link con tu equipo.</p>
+        </section>
+    </form>
+</main>

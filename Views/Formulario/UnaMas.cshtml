@@ -1,53 +1,40 @@
 @{
     ViewData["Title"] = "Una sola pregunta más";
 }
-@section Estilos {
-    <link rel="stylesheet" href="~/css/formulario.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/completar.css" asp-append-version="true" />
+@section Encabezado {
+    <p class="ayuda">⏱ 10 segundos</p>
 }
 
-<div class="pagina-completar">
+<main class="pagina pagina-angosta">
 
-    <header class="encabezado-invitar">
-        <div class="logo-invitar">
-            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-            <span>Fluenty</span>
-        </div>
-        <p class="tiempo-invitar">⏱ 10 segundos</p>
-    </header>
+    <section class="titulo-pagina">
+        <span class="subtitulo">Ya casi, @ViewBag.Nombre</span>
+        <h1>Una sola pregunta más</h1>
+        <p>Con esto tu primera lección te resuelve algo de verdad, en vez de ser un ejemplo genérico.</p>
+    </section>
 
-    <main class="contenido-completar">
-
-        <section class="titulo-completar">
-            <p class="etiqueta-completar">Ya casi, @ViewBag.Nombre</p>
-            <h1>Una sola pregunta más</h1>
-            <p>Con esto tu primera lección te resuelve algo de verdad, en vez de ser un ejemplo genérico.</p>
+    <!-- Para quien dejó vacía (o con "nada") la pregunta de qué es lo que más tiempo le come -->
+    <form class="columna" action='@Url.Action("UnaMas", "Formulario")' method="POST">
+        <section class="tarjeta">
+            <div class="campo">
+                <label>¿Qué es lo que más tiempo te lleva en el día?</label>
+                <div class="en-columna">
+                    @foreach (string opcion in ViewBag.Opciones)
+                    {
+                        <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="Opcion" value="@opcion" /> @opcion</label>
+                    }
+                </div>
+                <input type="text" name="Otra" maxlength="80" placeholder="Otra cosa (opcional)" />
+            </div>
+            <div class="campo">
+                <label for="Detalle">Si querés, contalo en una frase <span class="opcional">(opcional)</span></label>
+                <input type="text" id="Detalle" name="Detalle" maxlength="200" placeholder="Ej.: paso 30 pedidos por día de WhatsApp a la planilla" />
+            </div>
         </section>
 
-        <!-- Para quien dejó vacía (o con "nada") la pregunta de qué es lo que más tiempo le come -->
-        <form class="una-mas" action='@Url.Action("UnaMas", "Formulario")' method="POST">
-            <section class="tarjeta-completar">
-                <div class="campo">
-                    <p class="pregunta-campo">¿Qué es lo que más tiempo te lleva en el día?</p>
-                    <div class="opciones opciones-columna">
-                        @foreach (string opcion in ViewBag.Opciones)
-                        {
-                            <label class="eleccion"><input onchange="pintarElecciones()" type="radio" name="Opcion" value="@opcion" /> @opcion</label>
-                        }
-                    </div>
-                    <input class="otro" type="text" name="Otra" maxlength="80" placeholder="Otra cosa (opcional)" />
-                </div>
-
-                <div class="campo">
-                    <label for="Detalle">Si querés, contalo en una frase <span class="opcional">(opcional)</span></label>
-                    <input type="text" id="Detalle" name="Detalle" maxlength="200" placeholder="Ej.: paso 30 pedidos por día de WhatsApp a la planilla" />
-                </div>
-            </section>
-
-            <div class="acciones-completar">
-                <input type="submit" value="Listo, armar mi curso" />
-                <a class="saltear" href='@Url.Action("Saltear", "Formulario")'>Saltear esta pregunta</a>
-            </div>
-        </form>
-    </main>
-</div>
+        <section class="titulo-pagina centrado">
+            <input class="boton boton-grande" type="submit" value="Listo, armar mi curso" />
+            <a class="volver" href='@Url.Action("Saltear", "Formulario")'>Saltear esta pregunta</a>
+        </section>
+    </form>
+</main>

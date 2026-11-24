@@ -1,142 +1,125 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = "Cursos";
-}
-@section Estilos {
-    <link rel="stylesheet" href="~/css/curso.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/sprint2.css" asp-append-version="true" />
+    ViewData["Activo"] = "Cursos";
 }
 
-<div class="pagina-curso">
+<main class="pagina">
 
-    <header class="encabezado-app">
-        <div class="logo-app">
-            <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-            <span>Fluenty</span>
-        </div>
-        @await Html.PartialAsync("_NavApp", "Cursos")
-    </header>
+    <section class="titulo-pagina">
+        <span class="subtitulo">Cursos por rango</span>
+        <h1>Un curso para cada rango</h1>
+        <p>La IA arma un curso para todo el rango con lo que contó cada persona, y nivela a cada uno: cada persona arranca en la unidad que le corresponde.</p>
+    </section>
 
-    <main class="contenido-curso">
+    @if (ViewBag.Mensaje != "")
+    {
+        <p class="aviso">@ViewBag.Mensaje</p>
+    }
 
-        <section class="titulo-sprint2">
-            <p class="etiqueta-sprint2">Cursos por rango</p>
-            <h1>Un curso para cada rango</h1>
-            <p>La IA arma un curso para todo el rango con lo que contó cada persona, y nivela a cada uno: cada persona arranca en la unidad que le corresponde.</p>
-        </section>
+    @foreach (GrupoRango grupo in ViewBag.Grupos)
+    {
+        <section class="tarjeta">
+            <div class="fila">
+                <div>
+                    <h2>@grupo.Rango.Nombre</h2>
+                    <p class="ayuda">@grupo.Miembros.Count personas · @grupo.ConFormulario completaron el formulario</p>
+                </div>
 
-        @if (ViewBag.Mensaje != "")
-        {
-            <p class="aviso">@ViewBag.Mensaje</p>
-        }
-
-        @foreach (GrupoRango grupo in ViewBag.Grupos)
-        {
-            <section class="tarjeta-curso grupo-rango">
-                <div class="encabezado-grupo">
-                    <div>
-                        <h2>@grupo.Rango.Nombre</h2>
-                        <p class="personas-rango">@grupo.Miembros.Count personas · @grupo.ConFormulario completaron el formulario</p>
-                    </div>
-
-                    @if (grupo.Curso == null)
+                @if (grupo.Curso == null)
+                {
+                    @if (grupo.ConFormulario > 0 && ViewBag.PuedeGenerar)
                     {
-                        @if (grupo.ConFormulario > 0 && ViewBag.PuedeGenerar)
-                        {
-                            <form class="form-generar" method="post" action='@Url.Action("Generar", "Curso")' onsubmit="mostrarCarga()">
-                                <input type="hidden" name="IdRango" value="@grupo.Rango.IdRango" />
-                                <!-- Para quién es el curso: solo el equipo, o también público en el buscador -->
-                                <div class="para-quien">
-                                    <label><input type="radio" name="Publico" value="false" checked onchange="mostrarPublico(@grupo.Rango.IdRango, false)" /> Solo mi equipo</label>
-                                    <label><input type="radio" name="Publico" value="true" onchange="mostrarPublico(@grupo.Rango.IdRango, true)" /> Público 🌎</label>
-                                </div>
-                                <div class="datos-publico" id="publico-@grupo.Rango.IdRango">
-                                    <p class="ayuda-sprint2">Un curso público aparece en el buscador para todas las empresas. La IA lo arma solo con el tema: no usa datos de tu empresa ni de tu equipo.</p>
-                                    <label for="Tema-@grupo.Rango.IdRango">¿De qué trata?</label>
-                                    <input type="text" id="Tema-@grupo.Rango.IdRango" name="Tema" maxlength="300" placeholder="Ej.: automatizar tareas cotidianas con IA" />
-                                    <label for="Categoria-@grupo.Rango.IdRango">Categoría</label>
-                                    <select id="Categoria-@grupo.Rango.IdRango" name="Categoria">
-                                        @foreach (string categoria in ViewBag.Categorias)
-                                        {
-                                            <option value="@categoria">@categoria</option>
-                                        }
-                                    </select>
-                                </div>
-                                <input class="boton-curso grande" type="submit" value="Generar curso del rango" />
-                            </form>
-                        }
-                        else
-                        {
-                            <span class="estado-grupo">Esperando que se sumen</span>
-                        }
+                        <form method="post" action='@Url.Action("Generar", "Curso")' onsubmit="mostrarCarga()">
+                            <input type="hidden" name="IdRango" value="@grupo.Rango.IdRango" />
+                            <!-- Para quién es el curso: solo el equipo, o también público en el buscador -->
+                            <div class="campo">
+                                <label><input type="radio" name="Publico" value="false" checked onchange="mostrarPublico(@grupo.Rango.IdRango, false)" /> Solo mi equipo</label>
+                                <label><input type="radio" name="Publico" value="true" onchange="mostrarPublico(@grupo.Rango.IdRango, true)" /> Público 🌎</label>
+                            </div>
+                            <div class="campo oculto" id="publico-@grupo.Rango.IdRango">
+                                <p class="ayuda">Un curso público aparece en el buscador para todas las empresas. La IA lo arma solo con el tema: no usa datos de tu empresa ni de tu equipo.</p>
+                                <label for="Tema-@grupo.Rango.IdRango">¿De qué trata?</label>
+                                <input type="text" id="Tema-@grupo.Rango.IdRango" name="Tema" maxlength="300" placeholder="Ej.: automatizar tareas cotidianas con IA" />
+                                <label for="Categoria-@grupo.Rango.IdRango">Categoría</label>
+                                <select id="Categoria-@grupo.Rango.IdRango" name="Categoria">
+                                    @foreach (string categoria in ViewBag.Categorias)
+                                    {
+                                        <option value="@categoria">@categoria</option>
+                                    }
+                                </select>
+                            </div>
+                            <input class="boton" type="submit" value="Generar curso del rango" />
+                        </form>
                     }
                     else
                     {
-                        <div class="curso-grupo">
-                            <span class="estado-grupo @(grupo.Curso.Estado == "Confirmado" ? "estado-ok" : "estado-borrador")">@(grupo.Curso.Estado == "Confirmado" ? "✓ Confirmado" : "Borrador")</span>
-                            @if (grupo.Curso.Publico)
-                            {
-                                <span class="estado-grupo estado-publico">🌎 Público</span>
-                            }
-                            <a class="boton-curso" href='@Url.Action("Ver", "Curso", new { IdCurso = grupo.Curso.IdCurso })'>@(grupo.Curso.Estado == "Confirmado" ? "Ver curso" : "Revisar curso")</a>
-                        </div>
+                        <span class="etiqueta">Esperando que se sumen</span>
                     }
-                </div>
-
-                @if (grupo.Curso != null)
-                {
-                    <p class="titulo-curso-grupo">📚 @grupo.Curso.Titulo</p>
-                }
-
-                @if (grupo.Miembros.Count > 0)
-                {
-                    <div class="miembros-grupo">
-                        @foreach (EmpleadoCurso miembro in grupo.Miembros)
-                        {
-                            <div class="miembro">
-                                <div>
-                                    <p class="nombre-empleado">@miembro.Nombre @miembro.Apellido</p>
-                                    <p class="puesto">@miembro.Puesto</p>
-                                </div>
-                                @if (!miembro.TieneFormulario)
-                                {
-                                    <span class="estado-grupo">Sin formulario</span>
-                                }
-                                else if (miembro.SinAsignar)
-                                {
-                                    <form method="post" action='@Url.Action("Sumar", "Curso")' onsubmit="mostrarCarga()">
-                                        <input type="hidden" name="IdCurso" value="@grupo.Curso.IdCurso" />
-                                        <input type="hidden" name="IdUsuario" value="@miembro.IdUsuario" />
-                                        <input class="boton-curso" type="submit" value="Sumarlo al curso" />
-                                    </form>
-                                }
-                                else if (miembro.IdCurso > 0)
-                                {
-                                    <span class="estado-grupo">@miembro.Progreso% · ⚡ @miembro.XP XP</span>
-                                    @if (miembro.TextoActividad != "")
-                                    {
-                                        <span class="estado-grupo estado-quieto">⏸ @miembro.TextoActividad</span>
-                                    }
-                                }
-                            </div>
-                        }
-                    </div>
                 }
                 else
                 {
-                    <p class="ayuda-sprint2">Todavía no hay nadie en este rango. Compartí su link desde <a href='@Url.Action("Index", "Equipo")'>Equipo</a>.</p>
+                    <div class="botones">
+                        <span class="etiqueta @(grupo.Curso.Estado == "Confirmado" ? "verde" : "naranja")">@(grupo.Curso.Estado == "Confirmado" ? "✓ Confirmado" : "Borrador")</span>
+                        @if (grupo.Curso.Publico)
+                        {
+                            <span class="etiqueta azul">🌎 Público</span>
+                        }
+                        <a class="boton" href='@Url.Action("Ver", "Curso", new { IdCurso = grupo.Curso.IdCurso })'>@(grupo.Curso.Estado == "Confirmado" ? "Ver curso" : "Revisar curso")</a>
+                    </div>
                 }
-            </section>
-        }
-    </main>
-</div>
+            </div>
+
+            @if (grupo.Curso != null)
+            {
+                <h3>📚 @grupo.Curso.Titulo</h3>
+            }
+
+            @if (grupo.Miembros.Count > 0)
+            {
+                @foreach (EmpleadoCurso miembro in grupo.Miembros)
+                {
+                    <div class="renglon">
+                        <div>
+                            <strong>@miembro.Nombre @miembro.Apellido</strong>
+                            <p class="ayuda">@miembro.Puesto</p>
+                        </div>
+                        @if (!miembro.TieneFormulario)
+                        {
+                            <span class="etiqueta">Sin formulario</span>
+                        }
+                        else if (miembro.SinAsignar)
+                        {
+                            <form method="post" action='@Url.Action("Sumar", "Curso")' onsubmit="mostrarCarga()">
+                                <input type="hidden" name="IdCurso" value="@grupo.Curso.IdCurso" />
+                                <input type="hidden" name="IdUsuario" value="@miembro.IdUsuario" />
+                                <input class="boton" type="submit" value="Sumarlo al curso" />
+                            </form>
+                        }
+                        else if (miembro.IdCurso > 0)
+                        {
+                            <span class="etiqueta">@miembro.Progreso% · ⚡ @miembro.XP XP</span>
+                            @if (miembro.TextoActividad != "")
+                            {
+                                <span class="etiqueta naranja">⏸ @miembro.TextoActividad</span>
+                            }
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="ayuda">Todavía no hay nadie en este rango. Compartí su link desde <a href='@Url.Action("Index", "Equipo")'>Equipo</a>.</p>
+            }
+        </section>
+    }
+</main>
 
 <!-- Mientras la IA arma el curso -->
 <div id="carga" class="fondo-carga">
-    <div class="tarjeta-curso caja-carga">
+    <div class="tarjeta">
         <h2>Armando el curso del rango</h2>
-        <p>Procesando información</p>
-        <div class="barra"><div class="barra-relleno animada"></div></div>
+        <div class="barra barra-carga"><span></span></div>
         <p>La IA está leyendo lo que contó cada persona para armar el curso y nivelar a cada uno. Puede tardar unos segundos.</p>
     </div>
 </div>

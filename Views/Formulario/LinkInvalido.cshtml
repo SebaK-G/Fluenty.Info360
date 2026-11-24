@@ -1,12 +1,14 @@
 @{
     ViewData["Title"] = "Link inválido";
 }
-@section Estilos {
-    <link rel="stylesheet" href="~/css/mensajes.css" asp-append-version="true" />
-}
 
-<div class="mensaje mensaje-chico mensaje-error">
-    <h1>Este link no es válido</h1>
-    <p>Puede que ya lo hayas usado o que esté mal copiado. Pedile a tu empresa un link nuevo.</p>
-    <a class="boton" href='@Url.Action("Acceso", "Home")'>Ir a iniciar sesión</a>
-</div>
+<main class="pagina pagina-angosta">
+    <section class="tarjeta centrado">
+        <div class="medalla medalla-error">!</div>
+        <h1>Este link no es válido</h1>
+        <p>Puede que ya lo hayas usado o que esté mal copiado. Pedile a tu empresa un link nuevo.</p>
+        <div class="botones centrado">
+            <a class="boton" href='@Url.Action("Acceso", "Home")'>Ir a iniciar sesión</a>
+        </div>
+    </section>
+</main>
