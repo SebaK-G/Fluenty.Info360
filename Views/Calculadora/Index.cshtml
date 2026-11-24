@@ -110,7 +110,7 @@
             </div>
             @foreach (Calculos calculo in ViewBag.Calculos)
             {
-                <div id="calculo-@calculo.IdCalculo" class="renglon @(ViewBag.Resultado != null && calculo.IdCalculo == ViewBag.Resultado.IdCalculo ? "activo" : "")">
+                <div id="calculo-@calculo.IdCalculo" class="renglon @(ViewBag.Resultado != null && calculo.IdCalculo == ViewBag.Resultado.IdCalculo ? "renglon-activo" : "")">
                     <a href='@Url.Action("Index", "Calculadora", new { IdCalculo = calculo.IdCalculo })'>@calculo.NombreTarea</a>
                     <span>@calculo.Personas @(calculo.Personas == 1 ? "persona" : "personas")</span>
                     <span>@calculo.HorasSemana.ToString("0.#") h por semana</span>

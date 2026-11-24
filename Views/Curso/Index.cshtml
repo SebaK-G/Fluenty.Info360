@@ -4,6 +4,15 @@
     ViewData["Activo"] = "Cursos";
 }
 
+<!-- Cartel de carga, arriba de todo para que quede pegado arriba de la pantalla (sticky). Mientras la IA arma el curso -->
+<div id="carga" class="fondo-carga">
+    <div class="tarjeta">
+        <h2>Armando el curso del rango</h2>
+        <div class="barra barra-carga"><span></span></div>
+        <p>La IA está leyendo lo que contó cada persona para armar el curso y nivelar a cada uno. Puede tardar unos segundos.</p>
+    </div>
+</div>
+
 <main class="pagina">
 
     <section class="titulo-pagina">
@@ -60,10 +69,10 @@
                 else
                 {
                     <div class="botones">
-                        <span class="etiqueta @(grupo.Curso.Estado == "Confirmado" ? "verde" : "naranja")">@(grupo.Curso.Estado == "Confirmado" ? "✓ Confirmado" : "Borrador")</span>
+                        <span class="etiqueta @(grupo.Curso.Estado == "Confirmado" ? "etiqueta-verde" : "etiqueta-naranja")">@(grupo.Curso.Estado == "Confirmado" ? "✓ Confirmado" : "Borrador")</span>
                         @if (grupo.Curso.Publico)
                         {
-                            <span class="etiqueta azul">🌎 Público</span>
+                            <span class="etiqueta etiqueta-azul">🌎 Público</span>
                         }
                         <a class="boton" href='@Url.Action("Ver", "Curso", new { IdCurso = grupo.Curso.IdCurso })'>@(grupo.Curso.Estado == "Confirmado" ? "Ver curso" : "Revisar curso")</a>
                     </div>
@@ -101,7 +110,7 @@
                             <span class="etiqueta">@miembro.Progreso% · ⚡ @miembro.XP XP</span>
                             @if (miembro.TextoActividad != "")
                             {
-                                <span class="etiqueta naranja">⏸ @miembro.TextoActividad</span>
+                                <span class="etiqueta etiqueta-naranja">⏸ @miembro.TextoActividad</span>
                             }
                         }
                     </div>
@@ -114,15 +123,6 @@
         </section>
     }
 </main>
-
-<!-- Mientras la IA arma el curso -->
-<div id="carga" class="fondo-carga">
-    <div class="tarjeta">
-        <h2>Armando el curso del rango</h2>
-        <div class="barra barra-carga"><span></span></div>
-        <p>La IA está leyendo lo que contó cada persona para armar el curso y nivelar a cada uno. Puede tardar unos segundos.</p>
-    </div>
-</div>
 
 @section Scripts {
     <script src="~/js/curso.js" asp-append-version="true"></script>

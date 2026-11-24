@@ -4,6 +4,15 @@
     ViewData["Activo"] = "Home";
 }
 
+<!-- Cartel de carga, arriba de todo para que quede pegado arriba de la pantalla (sticky). Mientras la IA arma la lección (la primera vez tarda unos segundos) -->
+<div id="carga" class="fondo-carga">
+    <div class="tarjeta">
+        <h2>Preparando tu lección</h2>
+        <p>La IA está armando las explicaciones con ejemplos de tu trabajo.</p>
+        <div class="barra barra-carga"><span></span></div>
+    </div>
+</div>
+
 <main class="pagina">
 
     <section class="tarjeta">
@@ -160,12 +169,3 @@
     }
 
 </main>
-
-<!-- Mientras la IA arma la lección (la primera vez tarda unos segundos) -->
-<div id="carga" class="fondo-carga">
-    <div class="tarjeta">
-        <h2>Preparando tu lección</h2>
-        <p>La IA está armando las explicaciones con ejemplos de tu trabajo.</p>
-        <div class="barra barra-carga"><span></span></div>
-    </div>
-</div>

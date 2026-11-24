@@ -24,14 +24,14 @@ window.onpageshow = function () {
 };
 
 // Formularios: pinta de azul las opciones elegidas (los <label class="boton-chico eleccion"> con un radio o checkbox adentro).
-// La clase "activo" es la misma que marca el botón chico elegido en toda la app.
+// La clase "boton-chico-activo" es la misma que marca el botón chico elegido en toda la app.
 // Cada input llama a esta función cuando cambia (onchange).
 function pintarElecciones() {
     let opciones = document.getElementsByClassName("eleccion");
     for (let i = 0; i < opciones.length; i++) {
         let input = opciones[i].getElementsByTagName("input")[0];
         if (input.checked) {
-            opciones[i].className = "boton-chico eleccion activo";
+            opciones[i].className = "boton-chico eleccion boton-chico-activo";
         } else {
             opciones[i].className = "boton-chico eleccion";
         }

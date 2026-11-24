@@ -4,6 +4,15 @@
     ViewData["Activo"] = ViewBag.BotonActivo;
 }
 
+<!-- Pantalla de carga: mientras la IA rehace una unidad o arma una lección -->
+<div id="carga" class="fondo-carga">
+    <div class="tarjeta">
+        <h2>@(ViewBag.ModoAlumno ? "Preparando tu lección" : "Rehaciendo la unidad")</h2>
+        <div class="barra barra-carga"><span></span></div>
+        <p>@(ViewBag.ModoAlumno ? "La IA está armando las explicaciones con ejemplos de tu trabajo." : "La IA está armando de nuevo esta unidad. El resto del curso queda igual.")</p>
+    </div>
+</div>
+
 <main class="pagina">
 
     @if (ViewBag.Error != "")
@@ -45,7 +54,7 @@
             <div class="separado">
                 @foreach (Usuarios persona in ViewBag.Personas)
                 {
-                    <a class="boton-chico @(persona.Elegida ? "activo" : "")" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso, IdUsuario = persona.IdUsuario })'>@persona.Nombre @persona.Apellido</a>
+                    <a class="boton-chico @(persona.Elegida ? "boton-chico-activo" : "")" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso, IdUsuario = persona.IdUsuario })'>@persona.Nombre @persona.Apellido</a>
                 }
             </div>
         </section>
@@ -64,13 +73,13 @@
     {
         <!-- unidad.Clase es color-1, color-2... o color-sabida si ya la sabe -->
         <section class="encabezado-unidad @unidad.Clase" id="unidad-@unidad.Numero">
-            <p class="ayuda">UNIDAD @unidad.Numero</p>
-            <h2>@unidad.Titulo</h2>
-            <p>@unidad.Objetivo</p>
             @if (unidad.Etiqueta != "")
             {
                 <span class="etiqueta">@unidad.Etiqueta</span>
             }
+            <p class="ayuda">UNIDAD @unidad.Numero</p>
+            <h2>@unidad.Titulo</h2>
+            <p>@unidad.Objetivo</p>
         </section>
 
         <section class="tarjeta">
@@ -92,7 +101,7 @@
                             @if (leccion.Intentos > 0)
                             {
                                 <!-- Nota = preguntas bien a la primera; intentos = cuántas veces la terminó (o rindió) -->
-                                <span class="etiqueta @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "naranja" : "verde")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</span>
+                                <span class="etiqueta @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "etiqueta-naranja" : "etiqueta-verde")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</span>
                             }
                             @if (leccion.SePuedeHacer && leccion.Estado == "Disponible")
                             {
@@ -144,12 +153,3 @@
         }
     </section>
 </main>
-
-<!-- Pantalla de carga: mientras la IA rehace una unidad o arma una lección -->
-<div id="carga" class="fondo-carga">
-    <div class="tarjeta">
-        <h2>@(ViewBag.ModoAlumno ? "Preparando tu lección" : "Rehaciendo la unidad")</h2>
-        <div class="barra barra-carga"><span></span></div>
-        <p>@(ViewBag.ModoAlumno ? "La IA está armando las explicaciones con ejemplos de tu trabajo." : "La IA está armando de nuevo esta unidad. El resto del curso queda igual.")</p>
-    </div>
-</div>

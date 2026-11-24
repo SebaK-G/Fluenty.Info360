@@ -31,12 +31,12 @@
                     </div>
                     @if (empleado.EstadoCurso == "Confirmado")
                     {
-                        <span class="etiqueta azul">@empleado.Progreso% · ⚡ @empleado.XP XP · 🔥 @empleado.Racha</span>
+                        <span class="etiqueta etiqueta-azul">@empleado.Progreso% · ⚡ @empleado.XP XP · 🔥 @empleado.Racha</span>
                         <a class="boton" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso, IdUsuario = empleado.IdUsuario })'>Ver su camino</a>
                     }
                     else if (empleado.TieneFormulario)
                     {
-                        <span class="etiqueta naranja">Esperando su curso</span>
+                        <span class="etiqueta etiqueta-naranja">Esperando su curso</span>
                     }
                     else
                     {

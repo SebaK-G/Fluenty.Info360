@@ -101,7 +101,7 @@ function mostrarRespuesta(data, texto) {
             sinChats.style.display = "none";
         }
         let lista = document.getElementById("lista-chats");
-        lista.innerHTML = '<a class="item-chat activo" href="/Asistente/Index?IdChat=' + data.idChat + '"><strong>' + data.tituloChat + '</strong><p class="ayuda">Ahora</p></a>' + lista.innerHTML;
+        lista.innerHTML = '<a class="item-chat item-chat-activo" href="/Asistente/Index?IdChat=' + data.idChat + '"><strong>' + data.tituloChat + '</strong><p class="ayuda">Ahora</p></a>' + lista.innerHTML;
     }
     if (data.restantes != undefined) {
         document.getElementById("restantes").innerHTML = data.restantes;

@@ -15,7 +15,7 @@
     <div class="asistente">
 
         <!-- ===== Izquierda: los chats de la persona ===== -->
-        <aside class="tarjeta">
+        <section class="tarjeta">
             <a class="boton boton-grande" href='@Url.Action("Index", "Asistente", new { IdChat = 0 })'>+ Nuevo chat</a>
             @if (ViewBag.Chats.Count == 0)
             {
@@ -25,13 +25,13 @@
             <div id="lista-chats">
                 @foreach (Chats item in ViewBag.Chats)
                 {
-                    <a class="item-chat @(item.IdChat == ViewBag.IdChat ? "activo" : "")" href='@Url.Action("Index", "Asistente", new { IdChat = item.IdChat })'>
+                    <a class="item-chat @(item.IdChat == ViewBag.IdChat ? "item-chat-activo" : "")" href='@Url.Action("Index", "Asistente", new { IdChat = item.IdChat })'>
                         <strong>@item.Titulo</strong>
                         <p class="ayuda">@item.FechaUltimo.ToString("dd/MM HH:mm")</p>
                     </a>
                 }
             </div>
-        </aside>
+        </section>
 
         <!-- ===== Derecha: el chat abierto ===== -->
         <section class="tarjeta">

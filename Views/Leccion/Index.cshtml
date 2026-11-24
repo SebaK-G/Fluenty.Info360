@@ -5,6 +5,14 @@
     ViewData["SinEncabezado"] = true;
 }
 
+<!-- Cartel de carga, arriba de todo para que quede pegado arriba de la pantalla (sticky). Mientras la IA responde -->
+<div id="carga" class="fondo-carga">
+    <div class="tarjeta">
+        <p class="puntitos"><span></span><span class="puntito-2"></span><span class="puntito-3"></span></p>
+        <p id="texto-carga">Un segundo...</p>
+    </div>
+</div>
+
 <main class="pagina-leccion">
 
     <!-- ===== Barra de arriba: salir, progreso, XP y pedidos a la IA que quedan hoy ===== -->
@@ -43,13 +51,13 @@
 
             @if (tarjeta.Tipo == "gancho")
             {
-                <span class="etiqueta azul">💡 Para arrancar</span>
+                <span class="etiqueta etiqueta-azul">💡 Para arrancar</span>
                 <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
             }
             else if (tarjeta.Tipo == "explicacion")
             {
-                <span class="etiqueta azul">📘 La idea</span>
+                <span class="etiqueta etiqueta-azul">📘 La idea</span>
                 <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 @if (tarjeta.ParaQue != "")
                 {
@@ -69,19 +77,19 @@
             }
             else if (tarjeta.Tipo == "comparacion")
             {
-                <span class="etiqueta azul">🧠 Pensalo así</span>
+                <span class="etiqueta etiqueta-azul">🧠 Pensalo así</span>
                 <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 <p class="destacado texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
             }
             else if (tarjeta.Tipo == "historia")
             {
-                <span class="etiqueta azul">📖 Una historia</span>
+                <span class="etiqueta etiqueta-azul">📖 Una historia</span>
                 <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
             }
             else if (tarjeta.Tipo == "chat")
             {
-                <span class="etiqueta azul">👀 Mirá cómo se hace</span>
+                <span class="etiqueta etiqueta-azul">👀 Mirá cómo se hace</span>
                 <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
                 <div class="grilla-2 separado">
@@ -101,7 +109,7 @@
             }
             else if (tarjeta.EsDePregunta)
             {
-                <span class="etiqueta azul">@tarjeta.Etiqueta</span>
+                <span class="etiqueta etiqueta-azul">@tarjeta.Etiqueta</span>
                 <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
                 <p class="globo globo-ia @(tarjeta.Contexto == "" ? "oculto" : "")" id="contexto-@tarjeta.Orden">@tarjeta.Contexto</p>
@@ -110,7 +118,7 @@
                     <button type="button" class="opcion" id="opcion-@tarjeta.Orden-B" onclick="responder(@tarjeta.Orden, 'B')" @(tarjeta.Resuelta ? "disabled" : "")>@tarjeta.OpcionB</button>
                     <button type="button" class="opcion @(tarjeta.OpcionC == "" ? "oculto" : "")" id="opcion-@tarjeta.Orden-C" onclick="responder(@tarjeta.Orden, 'C')" @(tarjeta.Resuelta ? "disabled" : "")>@tarjeta.OpcionC</button>
                 </div>
-                <div class="caja devolucion @(tarjeta.Resuelta ? "" : "oculto")" id="devolucion-@tarjeta.Orden">
+                <div class="caja separado @(tarjeta.Resuelta ? "" : "oculto")" id="devolucion-@tarjeta.Orden">
                     <strong id="veredicto-@tarjeta.Orden">@(tarjeta.Resuelta ? "✅ Esta ya la contestaste bien." : "")</strong>
                     <p id="explicacion-@tarjeta.Orden">@(tarjeta.Resuelta ? tarjeta.Explicacion : "")</p>
                     <p class="destacado oculto" id="reexplicacion-@tarjeta.Orden"></p>
@@ -119,7 +127,7 @@
             }
             else if (tarjeta.Tipo == "practica")
             {
-                <span class="etiqueta azul">✍️ Probalo vos</span>
+                <span class="etiqueta etiqueta-azul">✍️ Probalo vos</span>
                 <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 <p class="texto-grande" id="texto-@tarjeta.Orden">@tarjeta.Texto</p>
                 @if (tarjeta.Explicacion != "")
@@ -129,7 +137,7 @@
                 <textarea id="respuesta-@tarjeta.Orden" rows="5" maxlength="800" placeholder="Escribí acá tu pedido a la IA..." @(tarjeta.Resuelta ? "disabled" : "")></textarea>
                 <button type="button" class="boton boton-verde boton-grande separado @(tarjeta.Resuelta ? "oculto" : "")" id="corregir-@tarjeta.Orden" onclick="practicar(@tarjeta.Orden)">Corregir mi respuesta</button>
                 <p class="ayuda" id="intentos-@tarjeta.Orden">@(tarjeta.Intentos > 0 ? "Intentos: " + tarjeta.Intentos : "")</p>
-                <div class="caja devolucion @(tarjeta.Resuelta ? "aprobada" : "oculto")" id="devolucion-@tarjeta.Orden">
+                <div class="caja separado @(tarjeta.Resuelta ? "devolucion-aprobada" : "oculto")" id="devolucion-@tarjeta.Orden">
                     <strong id="veredicto-@tarjeta.Orden">@(tarjeta.Resuelta ? "✅ ¡Aprobado!" : "")</strong>
                     <p id="texto-devolucion-@tarjeta.Orden">@(tarjeta.Resuelta ? "Este ejercicio ya lo tenías aprobado." : "")</p>
                     <div class="oculto" id="ejemplo-@tarjeta.Orden">
@@ -140,7 +148,7 @@
             }
             else if (tarjeta.Tipo == "cierre")
             {
-                <span class="etiqueta azul">🚀 Mañana en el laburo</span>
+                <span class="etiqueta etiqueta-azul">🚀 Mañana en el laburo</span>
                 <h2 id="titulo-@tarjeta.Orden">@tarjeta.Titulo</h2>
                 <p class="destacado texto-grande">@tarjeta.Texto</p>
                 <form method="post" action='@Url.Action("Completar", "Leccion")' onsubmit="mostrarCarga('Calculando tu nota...')">
@@ -165,21 +173,11 @@
     <p class="titulo-pagina centrado separado" id="aviso-siguiente">Para seguir, primero resolvé esta tarjeta 🙂</p>
 
     <!-- ===== Botones de abajo ===== -->
-    <footer class="navegacion">
-        <div class="fila">
-            <button type="button" id="atras" class="boton boton-borde" onclick="anterior()">Atrás</button>
-            <button type="button" id="siguiente" class="boton boton-verde" onclick="siguiente()">Continuar</button>
-        </div>
-    </footer>
-</main>
-
-<!-- Mientras la IA responde -->
-<div id="carga" class="fondo-carga">
-    <div class="tarjeta">
-        <p class="puntitos"><span></span><span class="puntito-2"></span><span class="puntito-3"></span></p>
-        <p id="texto-carga">Un segundo...</p>
+    <div class="botones centrado">
+        <button type="button" id="atras" class="boton boton-borde" onclick="anterior()">Atrás</button>
+        <button type="button" id="siguiente" class="boton boton-verde" onclick="siguiente()">Continuar</button>
     </div>
-</div>
+</main>
 
 @section Scripts {
     <script src="~/js/leccion.js" asp-append-version="true"></script>

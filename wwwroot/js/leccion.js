@@ -100,7 +100,7 @@ function responder(numero, letra) {
             return;
         }
         // Se pinta de verde la correcta (y de rojo la elegida si estaba mal)
-        document.getElementById("opcion-" + numero + "-" + data.correcta).className = "opcion bien";
+        document.getElementById("opcion-" + numero + "-" + data.correcta).className = "opcion opcion-bien";
         document.getElementById("explicacion-" + numero).innerText = data.explicacion;
         if (data.bien) {
             document.getElementById("veredicto-" + numero).innerText = "¡Bien ahí! 🎉";
@@ -108,7 +108,7 @@ function responder(numero, letra) {
             document.getElementById("otra-" + numero).style.display = "none";
             document.getElementById("resuelta-" + numero).value = "si";
         } else {
-            document.getElementById("opcion-" + numero + "-" + letra).className = "opcion mal";
+            document.getElementById("opcion-" + numero + "-" + letra).className = "opcion opcion-mal";
             document.getElementById("veredicto-" + numero).innerText = "Esta vez no. Leé por qué y probá con otra pregunta del mismo tema:";
             if (data.reexplicacion != "") {
                 ponerTexto("reexplicacion-" + numero, "📘 Te lo explicamos de otra forma: " + data.reexplicacion);
@@ -116,7 +116,7 @@ function responder(numero, letra) {
             document.getElementById("otra-" + numero).style.display = "block";
             proximas[numero] = data.siguiente;
         }
-        document.getElementById("devolucion-" + numero).className = "caja devolucion";
+        document.getElementById("devolucion-" + numero).className = "caja separado";
         actualizarSiguiente();
     })
     .catch(error => {
@@ -154,7 +154,7 @@ function otraPregunta(numero) {
     ponerOpcion(numero, "B", nueva.opcionB);
     ponerOpcion(numero, "C", nueva.opcionC);
     habilitarOpciones(numero, true);
-    document.getElementById("devolucion-" + numero).className = "caja devolucion oculto";
+    document.getElementById("devolucion-" + numero).className = "caja separado oculto";
     ponerTexto("reexplicacion-" + numero, "");
     proximas[numero] = null;
     window.scrollTo(0, 0);
@@ -199,7 +199,7 @@ function practicar(numero) {
         }
         if (data.aprobado) {
             document.getElementById("veredicto-" + numero).innerText = "✅ ¡Aprobado!";
-            devolucion.className = "caja devolucion aprobada";
+            devolucion.className = "caja separado devolucion-aprobada";
             document.getElementById("corregir-" + numero).style.display = "none";
             document.getElementById("respuesta-" + numero).disabled = true;
             document.getElementById("resuelta-" + numero).value = "si";

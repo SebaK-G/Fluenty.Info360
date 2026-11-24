@@ -43,10 +43,10 @@
         </div>
         <!-- Categorías: cada botón vuelve a buscar con esa categoría -->
         <div class="separado">
-            <a class="boton-chico @(ViewBag.Categoria == "" ? "activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>Todas</a>
+            <a class="boton-chico @(ViewBag.Categoria == "" ? "boton-chico-activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>Todas</a>
             @foreach (string categoria in ViewBag.Categorias)
             {
-                <a class="boton-chico @(ViewBag.Categoria == categoria ? "activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Categoria = categoria, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>@categoria</a>
+                <a class="boton-chico @(ViewBag.Categoria == categoria ? "boton-chico-activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Categoria = categoria, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>@categoria</a>
             }
         </div>
     </form>
@@ -73,7 +73,7 @@
                     <div>
                         @if (curso.Categoria != "")
                         {
-                            <span class="etiqueta azul">@curso.Categoria</span>
+                            <span class="etiqueta etiqueta-azul">@curso.Categoria</span>
                         }
                         <span class="etiqueta">@curso.NombreNivel</span>
                     </div>
@@ -85,7 +85,7 @@
                     </p>
                     @if (curso.YaLoTiene)
                     {
-                        <span class="etiqueta verde">✓ Ya lo tenés</span>
+                        <span class="etiqueta etiqueta-verde">✓ Ya lo tenés</span>
                     }
                 </a>
             }

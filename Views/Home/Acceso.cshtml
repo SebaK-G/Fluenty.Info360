@@ -3,10 +3,10 @@
 }
 
 <main class="pagina pagina-angosta">
-    <!-- Una tarjeta con dos mitades: el formulario y el panel azul de bienvenida -->
-    <section class="tarjeta grilla-2 acceso">
+    <!-- Dos tarjetas: el formulario y el panel azul de bienvenida -->
+    <div class="grilla-2">
 
-        <div>
+        <section class="tarjeta">
             <h1>Iniciar sesión</h1>
             <p class="ayuda">Entrá con el email y la contraseña de tu cuenta.</p>
             <form class="separado" asp-action="Login" asp-controller="Home" method="post">
@@ -21,9 +21,9 @@
                 <p class="error">@ViewBag.Mensaje</p>
                 <input class="boton boton-grande separado" type="submit" value="Acceder a Fluenty" />
             </form>
-        </div>
+        </section>
 
-        <div class="tarjeta-azul">
+        <section class="tarjeta tarjeta-azul">
             <h2>Bienvenido a Fluenty</h2>
             <p>Donde todos se pueden capacitar para usar la Inteligencia Artificial.</p>
             <div class="columna separado">
@@ -31,6 +31,6 @@
                 <div class="dato"><strong>+1.234.567</strong><span>Empleados capacitados</span></div>
                 <div class="dato"><strong>2.314 días</strong><span>de tiempo ahorrado para las empresas</span></div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 </main>

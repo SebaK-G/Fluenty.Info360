@@ -12,7 +12,7 @@
         <!-- ===== Izquierda: de qué se trata y el temario ===== -->
         <div class="columna">
             <section class="tarjeta">
-                <span class="etiqueta azul">🌎 @(ViewBag.Curso.Categoria != "" ? ViewBag.Curso.Categoria : "Curso público")</span>
+                <span class="etiqueta etiqueta-azul">🌎 @(ViewBag.Curso.Categoria != "" ? ViewBag.Curso.Categoria : "Curso público")</span>
                 <span class="etiqueta">@ViewBag.NombreNivel</span>
                 <h1 class="separado">@ViewBag.Curso.Titulo</h1>
                 <p>@ViewBag.Curso.Descripcion</p>
@@ -33,30 +33,24 @@
             <section class="tarjeta">
                 <h2>Temario</h2>
                 <p class="ayuda">4 unidades de 5 lecciones. La última de cada unidad es un examen.</p>
-                <!-- <details> se abre y se cierra solo, sin JavaScript -->
                 @foreach (Unidades unidad in ViewBag.Unidades)
                 {
-                    <details class="temario" open="@(unidad.Numero == 1)">
-                        <summary>
-                            <span class="numero">@unidad.Numero</span>
-                            <span>
-                                <strong>@unidad.Titulo</strong>
-                                <p class="ayuda">@unidad.Objetivo</p>
-                            </span>
-                        </summary>
-                        <ol>
+                    <div class="caja separado">
+                        <h3><span class="numero">@unidad.Numero</span> @unidad.Titulo</h3>
+                        <p class="ayuda">@unidad.Objetivo</p>
+                        <ol class="temario separado">
                             @foreach (Lecciones leccion in unidad.Lecciones)
                             {
                                 <li>@leccion.Titulo</li>
                             }
                         </ol>
-                    </details>
+                    </div>
                 }
             </section>
         </div>
 
         <!-- ===== Derecha: inscribirse ===== -->
-        <aside class="tarjeta fija">
+        <section class="tarjeta fija">
             <div class="grilla-3">
                 <div class="dato"><strong>@(ViewBag.Curso.DuracionHoras > 0 ? ViewBag.Curso.DuracionHoras + " h" : "—")</strong><span>duración</span></div>
                 <div class="dato"><strong>20</strong><span>lecciones</span></div>
@@ -84,6 +78,6 @@
                 <p class="ayuda separado">Para inscribirte hace falta tu formulario de empleado: la IA lo usa para armar las lecciones a tu medida.</p>
                 <span class="boton boton-grande boton-apagado separado">Inscribirme</span>
             }
-        </aside>
+        </section>
     </div>
 </main>
