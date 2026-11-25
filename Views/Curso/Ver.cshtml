@@ -8,7 +8,7 @@
 <div id="carga" class="fondo-carga">
     <div class="tarjeta">
         <h2>@(ViewBag.ModoAlumno ? "Preparando tu lección" : "Rehaciendo la unidad")</h2>
-        <div class="barra barra-carga"><span></span></div>
+        <div class="barra barra-carga"><div></div></div>
         <p>@(ViewBag.ModoAlumno ? "La IA está armando las explicaciones con ejemplos de tu trabajo." : "La IA está armando de nuevo esta unidad. El resto del curso queda igual.")</p>
     </div>
 </div>
@@ -22,22 +22,22 @@
 
     <!-- ===== Portada del curso ===== -->
     <section class="tarjeta">
-        <span class="subtitulo">@ViewBag.Subtitulo</span>
+        <p class="subtitulo">@ViewBag.Subtitulo</p>
         <h1>@ViewBag.Curso.Titulo</h1>
         <p>@ViewBag.Curso.Descripcion</p>
 
         <div class="grilla-3 separado">
             @if (ViewBag.ModoAlumno)
             {
-                <div class="dato"><strong>⚡ @ViewBag.XP</strong><span>XP</span></div>
-                <div class="dato"><strong>🔥 @ViewBag.Racha</strong><span>días de racha</span></div>
-                <div class="dato"><strong>@ViewBag.Asignacion.Progreso%</strong><span>completado</span></div>
+                <div class="dato"><h3>⚡ @ViewBag.XP</h3><p>XP</p></div>
+                <div class="dato"><h3>🔥 @ViewBag.Racha</h3><p>días de racha</p></div>
+                <div class="dato"><h3>@ViewBag.Asignacion.Progreso%</h3><p>completado</p></div>
             }
             else
             {
-                <div class="dato"><strong>4</strong><span>unidades</span></div>
-                <div class="dato"><strong>20</strong><span>lecciones</span></div>
-                <div class="dato"><strong>@ViewBag.Personas.Count</strong><span>personas</span></div>
+                <div class="dato"><h3>4</h3><p>unidades</p></div>
+                <div class="dato"><h3>20</h3><p>lecciones</p></div>
+                <div class="dato"><h3>@ViewBag.Personas.Count</h3><p>personas</p></div>
             }
         </div>
 
@@ -63,7 +63,7 @@
     @if (ViewBag.Asignacion != null)
     {
         <section class="tarjeta tarjeta-azul">
-            <p><strong>🎯 @ViewBag.TextoArranque</strong></p>
+            <p>🎯 @ViewBag.TextoArranque</p>
             <p>@ViewBag.Asignacion.MotivoNivel</p>
         </section>
     }
@@ -75,7 +75,7 @@
         <section class="encabezado-unidad @unidad.Clase" id="unidad-@unidad.Numero">
             @if (unidad.Etiqueta != "")
             {
-                <span class="etiqueta">@unidad.Etiqueta</span>
+                <p class="etiqueta">@unidad.Etiqueta</p>
             }
             <p class="ayuda">UNIDAD @unidad.Numero</p>
             <h2>@unidad.Titulo</h2>
@@ -101,7 +101,7 @@
                             @if (leccion.Intentos > 0)
                             {
                                 <!-- Nota = preguntas bien a la primera; intentos = cuántas veces la terminó (o rindió) -->
-                                <span class="etiqueta @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "etiqueta-naranja" : "etiqueta-verde")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</span>
+                                <p class="etiqueta @(leccion.Numero == 5 && leccion.Estado != "Completada" ? "etiqueta-naranja" : "etiqueta-verde")">Nota @leccion.Nota% · @leccion.Intentos @(leccion.Intentos == 1 ? "intento" : "intentos")</p>
                             }
                             @if (leccion.SePuedeHacer && leccion.Estado == "Disponible")
                             {
@@ -118,9 +118,9 @@
                 <form class="campo caja separado" method="post" action='@Url.Action("RehacerUnidad", "Curso")' onsubmit="mostrarCarga()">
                     <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
                     <input type="hidden" name="NumeroUnidad" value="@unidad.Numero" />
-                    <label for="Pedido-@unidad.Numero">¿Querés cambiar la unidad @unidad.Numero? Contale a la IA qué cambiar:</label>
+                    <p class="pregunta">¿Querés cambiar la unidad @unidad.Numero? Contale a la IA qué cambiar:</p>
                     <div class="input-boton">
-                        <textarea id="Pedido-@unidad.Numero" name="Pedido" rows="2" maxlength="300" required placeholder="Ej.: que sea más difícil, con más ejemplos de Excel"></textarea>
+                        <input type="text" id="Pedido-@unidad.Numero" name="Pedido" maxlength="300" required placeholder="Ej.: que sea más difícil, con más ejemplos de Excel" />
                         <input class="boton" type="submit" value="Rehacer unidad @unidad.Numero" />
                     </div>
                 </form>

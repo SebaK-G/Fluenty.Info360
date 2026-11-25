@@ -7,7 +7,7 @@
 <main class="pagina pagina-angosta">
 
     <section class="titulo-pagina">
-        <span class="subtitulo">Antes de empezar · 3 preguntas</span>
+        <p class="subtitulo">Antes de empezar · 3 preguntas</p>
         <h1>Contanos sobre tu equipo</h1>
         <p>La IA va a usar estas respuestas en todos los cursos que genere para tu empresa. Lo completás una sola vez.</p>
     </section>
@@ -22,33 +22,33 @@
         <!-- ===== Pregunta 1 ===== -->
         <section class="tarjeta">
             <div class="encabezado-paso">
-                <span class="numero-paso">1</span>
+                <p class="numero-paso">1</p>
                 <div>
                     <p class="ayuda">Pregunta 1 de 3</p>
                     <h2>Las dificultades de tu equipo</h2>
                 </div>
             </div>
             <div class="campo">
-                <label for="Dificultades">¿Cuáles son los principales problemas o dificultades que enfrenta tu equipo en el trabajo diario? ¿Qué tareas o procesos te gustaría mejorar?</label>
-                <textarea id="Dificultades" name="Dificultades" rows="4" maxlength="500" required placeholder="Ej.: tardamos mucho en responder mails y armar reportes"></textarea>
+                <p class="pregunta">¿Cuáles son los principales problemas o dificultades que enfrenta tu equipo en el trabajo diario? ¿Qué tareas o procesos te gustaría mejorar?</p>
+                <input type="text" id="Dificultades" name="Dificultades" maxlength="500" required placeholder="Ej.: tardamos mucho en responder mails y armar reportes" />
             </div>
         </section>
 
         <!-- ===== Pregunta 2 ===== -->
         <section class="tarjeta">
             <div class="encabezado-paso">
-                <span class="numero-paso">2</span>
+                <p class="numero-paso">2</p>
                 <div>
                     <p class="ayuda">Pregunta 2 de 3</p>
                     <h2>Las herramientas que usan</h2>
                 </div>
             </div>
             <div class="campo">
-                <label>¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? <span class="opcional">(podés elegir varias)</span></label>
+                <p class="pregunta">¿Qué herramientas digitales utiliza actualmente tu equipo? ¿Utilizan herramientas de inteligencia artificial? (podés elegir varias)</p>
                 <div>
                     @foreach (Herramientas herramienta in ViewBag.Herramientas)
                     {
-                        <label class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</label>
+                        <div class="boton-chico eleccion"><input onchange="pintarElecciones()" type="checkbox" name="Herramientas" value="@herramienta.IdHerramienta" /> @herramienta.Nombre</div>
                     }
                 </div>
             </div>
@@ -57,15 +57,15 @@
         <!-- ===== Pregunta 3 ===== -->
         <section class="tarjeta">
             <div class="encabezado-paso">
-                <span class="numero-paso">3</span>
+                <p class="numero-paso">3</p>
                 <div>
                     <p class="ayuda">Pregunta 3 de 3</p>
                     <h2>Lo que querés lograr</h2>
                 </div>
             </div>
             <div class="campo">
-                <label for="Objetivos">¿Qué te gustaría lograr mediante la capacitación de tus empleados? ¿Qué mejoras esperás conseguir en la productividad o en la forma de trabajar?</label>
-                <textarea id="Objetivos" name="Objetivos" rows="4" maxlength="500" required placeholder="Ej.: ahorrar horas en tareas repetitivas y cometer menos errores"></textarea>
+                <p class="pregunta">¿Qué te gustaría lograr mediante la capacitación de tus empleados? ¿Qué mejoras esperás conseguir en la productividad o en la forma de trabajar?</p>
+                <input type="text" id="Objetivos" name="Objetivos" maxlength="500" required placeholder="Ej.: ahorrar horas en tareas repetitivas y cometer menos errores" />
             </div>
         </section>
 

@@ -12,8 +12,8 @@
         <!-- ===== Izquierda: de qué se trata y el temario ===== -->
         <div class="columna">
             <section class="tarjeta">
-                <span class="etiqueta etiqueta-azul">🌎 @(ViewBag.Curso.Categoria != "" ? ViewBag.Curso.Categoria : "Curso público")</span>
-                <span class="etiqueta">@ViewBag.NombreNivel</span>
+                <p class="etiqueta etiqueta-azul">🌎 @(ViewBag.Curso.Categoria != "" ? ViewBag.Curso.Categoria : "Curso público")</p>
+                <p class="etiqueta">@ViewBag.NombreNivel</p>
                 <h1 class="separado">@ViewBag.Curso.Titulo</h1>
                 <p>@ViewBag.Curso.Descripcion</p>
 
@@ -25,7 +25,7 @@
                     <h3 class="separado">Herramientas que vas a usar</h3>
                     @foreach (string herramienta in ViewBag.Herramientas)
                     {
-                        <span class="etiqueta">@herramienta</span>
+                        <p class="etiqueta">@herramienta</p>
                     }
                 }
             </section>
@@ -36,7 +36,10 @@
                 @foreach (Unidades unidad in ViewBag.Unidades)
                 {
                     <div class="caja separado">
-                        <h3><span class="numero">@unidad.Numero</span> @unidad.Titulo</h3>
+                        <div class="en-linea">
+                            <p class="numero">@unidad.Numero</p>
+                            <h3>@unidad.Titulo</h3>
+                        </div>
                         <p class="ayuda">@unidad.Objetivo</p>
                         <ol class="temario separado">
                             @foreach (Lecciones leccion in unidad.Lecciones)
@@ -52,9 +55,9 @@
         <!-- ===== Derecha: inscribirse ===== -->
         <section class="tarjeta fija">
             <div class="grilla-3">
-                <div class="dato"><strong>@(ViewBag.Curso.DuracionHoras > 0 ? ViewBag.Curso.DuracionHoras + " h" : "—")</strong><span>duración</span></div>
-                <div class="dato"><strong>20</strong><span>lecciones</span></div>
-                <div class="dato"><strong>@ViewBag.Inscriptos</strong><span>@(ViewBag.Inscriptos == 1 ? "persona" : "personas")</span></div>
+                <div class="dato"><h3>@(ViewBag.Curso.DuracionHoras > 0 ? ViewBag.Curso.DuracionHoras + " h" : "—")</h3><p>duración</p></div>
+                <div class="dato"><h3>20</h3><p>lecciones</p></div>
+                <div class="dato"><h3>@ViewBag.Inscriptos</h3><p>@(ViewBag.Inscriptos == 1 ? "persona" : "personas")</p></div>
             </div>
             @if (ViewBag.Error != "")
             {
@@ -76,7 +79,7 @@
             else
             {
                 <p class="ayuda separado">Para inscribirte hace falta tu formulario de empleado: la IA lo usa para armar las lecciones a tu medida.</p>
-                <span class="boton boton-grande boton-apagado separado">Inscribirme</span>
+                <p class="boton boton-grande boton-apagado separado">Inscribirme</p>
             }
         </section>
     </div>

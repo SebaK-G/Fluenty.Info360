@@ -5,7 +5,7 @@
 
 <div id="carga" class="fondo-carga">
     <div class="tarjeta">
-        <p class="puntitos"><span></span><span class="puntito-2"></span><span class="puntito-3"></span></p>
+        <div class="puntitos"><div></div><div class="puntito-2"></div><div class="puntito-3"></div></div>
         <p>Preparando la próxima lección...</p>
     </div>
 </div>
@@ -26,20 +26,18 @@
         <p>@ViewBag.Leccion.Titulo</p>
         <!-- La nota: preguntas bien contestadas a la primera -->
         <p class="numero-grande">@ViewBag.Nota%</p>
-        <p>
-            Contestaste bien a la primera @ViewBag.AciertosPrimera de @ViewBag.Preguntas @(ViewBag.Preguntas == 1 ? "pregunta" : "preguntas").
-            @if (ViewBag.EsExamen)
-            {
-                <span>Para aprobar hace falta @ViewBag.NotaMinima%.</span>
-            }
-        </p>
+        <p>Contestaste bien a la primera @ViewBag.AciertosPrimera de @ViewBag.Preguntas @(ViewBag.Preguntas == 1 ? "pregunta" : "preguntas").</p>
+        @if (ViewBag.EsExamen)
+        {
+            <p>Para aprobar hace falta @ViewBag.NotaMinima%.</p>
+        }
     </section>
 
     @if (ViewBag.Aprobo)
     {
         <div class="grilla-2 separado">
-            <div class="dato"><strong>⚡ @(ViewBag.XPGanado > 0 ? "+" + ViewBag.XPGanado : "0") XP</strong><span>Ahora tenés @ViewBag.XP</span></div>
-            <div class="dato"><strong>🔥 @ViewBag.Racha @(ViewBag.Racha == 1 ? "día" : "días")</strong><span>@(ViewBag.RachaSubio ? "¡Tu racha creció!" : "Racha de hoy cumplida")</span></div>
+            <div class="dato"><h3>⚡ @(ViewBag.XPGanado > 0 ? "+" + ViewBag.XPGanado : "0") XP</h3><p>Ahora tenés @ViewBag.XP</p></div>
+            <div class="dato"><h3>🔥 @ViewBag.Racha @(ViewBag.Racha == 1 ? "día" : "días")</h3><p>@(ViewBag.RachaSubio ? "¡Tu racha creció!" : "Racha de hoy cumplida")</p></div>
         </div>
 
         @if (ViewBag.XPGanado == 0)
@@ -55,7 +53,7 @@
         {
             <!-- Nivelar por lo que hace: le salió perfecta la primera lección -->
             <section class="tarjeta separado">
-                <p><strong>🚀 ¡Todas bien a la primera!</strong> Se nota que esto ya lo manejás. Si querés, salteá las lecciones 2 a 4 de esta unidad y andá directo al examen. Si lo aprobás, pasás a la unidad siguiente.</p>
+                <p>🚀 ¡Todas bien a la primera! Se nota que esto ya lo manejás. Si querés, salteá las lecciones 2 a 4 de esta unidad y andá directo al examen. Si lo aprobás, pasás a la unidad siguiente.</p>
                 <form method="post" action='@Url.Action("Saltar", "Leccion")'>
                     <input type="hidden" name="IdLeccion" value="@ViewBag.Leccion.IdLeccion" />
                     <input class="boton boton-verde separado" type="submit" value="Ir directo al examen" />
@@ -66,7 +64,7 @@
         {
             <!-- Nivelar por lo que hace: la primera lección le costó mucho -->
             <section class="tarjeta separado">
-                <p><strong>🤝 Esta lección te costó un poco.</strong> No pasa nada: capaz te conviene arrancar una unidad antes, con lo básico, y después volver acá con todo más claro.</p>
+                <p>🤝 Esta lección te costó un poco. No pasa nada: capaz te conviene arrancar una unidad antes, con lo básico, y después volver acá con todo más claro.</p>
                 <form method="post" action='@Url.Action("Bajar", "Leccion")'>
                     <input type="hidden" name="IdLeccion" value="@ViewBag.Leccion.IdLeccion" />
                     <input class="boton boton-verde separado" type="submit" value="Arrancar por lo básico" />

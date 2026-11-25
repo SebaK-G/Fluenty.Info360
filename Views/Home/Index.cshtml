@@ -9,7 +9,7 @@
     <div class="tarjeta">
         <h2>Preparando tu lección</h2>
         <p>La IA está armando las explicaciones con ejemplos de tu trabajo.</p>
-        <div class="barra barra-carga"><span></span></div>
+        <div class="barra barra-carga"><div></div></div>
     </div>
 </div>
 
@@ -26,12 +26,12 @@
         <section class="tarjeta tarjeta-azul" id="mis-cursos">
             <div class="fila">
                 <div>
-                    <span class="subtitulo">📚 @(ViewBag.MisCursos.Count == 1 ? "Tu curso" : "Tus cursos")</span>
+                    <p class="subtitulo">📚 @(ViewBag.MisCursos.Count == 1 ? "Tu curso" : "Tus cursos")</p>
                     <h2>Mis cursos</h2>
                 </div>
                 <div class="grilla-2">
-                    <div class="dato"><strong>⚡ @ViewBag.XP</strong><span>XP</span></div>
-                    <div class="dato"><strong>🔥 @ViewBag.Racha</strong><span>días de racha</span></div>
+                    <div class="dato"><h3>⚡ @ViewBag.XP</h3><p>XP</p></div>
+                    <div class="dato"><h3>🔥 @ViewBag.Racha</h3><p>días de racha</p></div>
                 </div>
             </div>
 
@@ -40,11 +40,11 @@
                 {
                     <div class="caja">
                         <h3>@curso.Titulo</h3>
-                        <div class="barra"><span style="width: @(curso.Progreso)%"></span></div>
+                        <div class="barra"><div style="width: @(curso.Progreso)%"></div></div>
                         <p class="ayuda">@curso.Progreso% completado</p>
                         @if (curso.Proxima != null)
                         {
-                            <p>@(curso.Progreso == 0 ? "Primera lección" : "Siguiente"): <strong>@curso.Proxima.Titulo</strong></p>
+                            <p>@(curso.Progreso == 0 ? "Primera lección" : "Siguiente"): @curso.Proxima.Titulo</p>
                             <div class="botones">
                                 <a class="boton boton-borde" href='@Url.Action("Index", "Leccion", new { IdLeccion = curso.Proxima.IdLeccion })' onclick="mostrarCarga()">@(curso.Progreso == 0 ? "Empezar el curso" : "Seguir aprendiendo")</a>
                             </div>
@@ -73,24 +73,24 @@
     {
         <div class="grilla-2">
             <div class="grilla-3">
-                <div class="tarjeta dato"><strong>@ViewBag.CantidadPersonas</strong><span>Personas a tu cargo</span></div>
-                <div class="tarjeta dato"><strong>@ViewBag.EnCapacitacion</strong><span>En capacitación</span></div>
-                <div class="tarjeta dato"><strong>@ViewBag.EsperandoCurso</strong><span>Esperando su curso</span></div>
+                <div class="tarjeta dato"><h3>@ViewBag.CantidadPersonas</h3><p>Personas a tu cargo</p></div>
+                <div class="tarjeta dato"><h3>@ViewBag.EnCapacitacion</h3><p>En capacitación</p></div>
+                <div class="tarjeta dato"><h3>@ViewBag.EsperandoCurso</h3><p>Esperando su curso</p></div>
             </div>
 
             <section class="tarjeta">
                 @if (ViewBag.EsDueno)
                 {
-                    <span class="subtitulo">✓ Tu plan</span>
+                    <p class="subtitulo">✓ Tu plan</p>
                     <h2>Plan Empresarial Activo</h2>
                     <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más.</p>
                 }
                 else
                 {
-                    <span class="subtitulo">👥 Tu equipo</span>
+                    <p class="subtitulo">👥 Tu equipo</p>
                     <h2>@ViewBag.CantidadRangos rangos a tu cargo</h2>
                 }
-                <p><strong>@ViewBag.CantidadCursos</strong> cursos confirmados en tus rangos.</p>
+                <p>@ViewBag.CantidadCursos cursos confirmados en tus rangos.</p>
             </section>
         </div>
 
@@ -98,7 +98,7 @@
         {
             <!-- Solo se ve si participa, nunca lo que contestó en su formulario -->
             <section class="tarjeta">
-                <span class="subtitulo">⏸ Para darles un empujón</span>
+                <p class="subtitulo">⏸ Para darles un empujón</p>
                 <h2>@ViewBag.Quietos.Count @(ViewBag.Quietos.Count == 1 ? "persona no avanza" : "personas no avanzan")</h2>
                 @foreach (string quieto in ViewBag.Quietos)
                 {

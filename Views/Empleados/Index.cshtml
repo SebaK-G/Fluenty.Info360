@@ -7,7 +7,7 @@
 <main class="pagina">
 
     <section class="titulo-pagina">
-        <span class="subtitulo">Tu gente</span>
+        <p class="subtitulo">Tu gente</p>
         <h1>Empleados</h1>
         <p>Cómo va cada persona de tus rangos con su curso.</p>
     </section>
@@ -26,21 +26,21 @@
             {
                 <div class="renglon">
                     <div>
-                        <strong>@empleado.Nombre @empleado.Apellido</strong>
+                        <p class="negrita">@empleado.Nombre @empleado.Apellido</p>
                         <p class="ayuda">@empleado.NombreRango · @empleado.Puesto</p>
                     </div>
                     @if (empleado.EstadoCurso == "Confirmado")
                     {
-                        <span class="etiqueta etiqueta-azul">@empleado.Progreso% · ⚡ @empleado.XP XP · 🔥 @empleado.Racha</span>
+                        <p class="etiqueta etiqueta-azul">@empleado.Progreso% · ⚡ @empleado.XP XP · 🔥 @empleado.Racha</p>
                         <a class="boton" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso, IdUsuario = empleado.IdUsuario })'>Ver su camino</a>
                     }
                     else if (empleado.TieneFormulario)
                     {
-                        <span class="etiqueta etiqueta-naranja">Esperando su curso</span>
+                        <p class="etiqueta etiqueta-naranja">Esperando su curso</p>
                     }
                     else
                     {
-                        <span class="etiqueta">Sin formulario</span>
+                        <p class="etiqueta">Sin formulario</p>
                     }
                 </div>
             }

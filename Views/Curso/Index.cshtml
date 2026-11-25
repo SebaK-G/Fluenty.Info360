@@ -8,7 +8,7 @@
 <div id="carga" class="fondo-carga">
     <div class="tarjeta">
         <h2>Armando el curso del rango</h2>
-        <div class="barra barra-carga"><span></span></div>
+        <div class="barra barra-carga"><div></div></div>
         <p>La IA está leyendo lo que contó cada persona para armar el curso y nivelar a cada uno. Puede tardar unos segundos.</p>
     </div>
 </div>
@@ -16,7 +16,7 @@
 <main class="pagina">
 
     <section class="titulo-pagina">
-        <span class="subtitulo">Cursos por rango</span>
+        <p class="subtitulo">Cursos por rango</p>
         <h1>Un curso para cada rango</h1>
         <p>La IA arma un curso para todo el rango con lo que contó cada persona, y nivela a cada uno: cada persona arranca en la unidad que le corresponde.</p>
     </section>
@@ -43,14 +43,14 @@
                             <input type="hidden" name="IdRango" value="@grupo.Rango.IdRango" />
                             <!-- Para quién es el curso: solo el equipo, o también público en el buscador -->
                             <div class="campo">
-                                <label><input type="radio" name="Publico" value="false" checked onchange="mostrarPublico(@grupo.Rango.IdRango, false)" /> Solo mi equipo</label>
-                                <label><input type="radio" name="Publico" value="true" onchange="mostrarPublico(@grupo.Rango.IdRango, true)" /> Público 🌎</label>
+                                <div><input type="radio" name="Publico" value="false" checked onchange="mostrarPublico(@grupo.Rango.IdRango, false)" /> Solo mi equipo</div>
+                                <div><input type="radio" name="Publico" value="true" onchange="mostrarPublico(@grupo.Rango.IdRango, true)" /> Público 🌎</div>
                             </div>
                             <div class="campo oculto" id="publico-@grupo.Rango.IdRango">
                                 <p class="ayuda">Un curso público aparece en el buscador para todas las empresas. La IA lo arma solo con el tema: no usa datos de tu empresa ni de tu equipo.</p>
-                                <label for="Tema-@grupo.Rango.IdRango">¿De qué trata?</label>
+                                <p class="pregunta">¿De qué trata?</p>
                                 <input type="text" id="Tema-@grupo.Rango.IdRango" name="Tema" maxlength="300" placeholder="Ej.: automatizar tareas cotidianas con IA" />
-                                <label for="Categoria-@grupo.Rango.IdRango">Categoría</label>
+                                <p class="pregunta">Categoría</p>
                                 <select id="Categoria-@grupo.Rango.IdRango" name="Categoria">
                                     @foreach (string categoria in ViewBag.Categorias)
                                     {
@@ -63,16 +63,16 @@
                     }
                     else
                     {
-                        <span class="etiqueta">Esperando que se sumen</span>
+                        <p class="etiqueta">Esperando que se sumen</p>
                     }
                 }
                 else
                 {
                     <div class="botones">
-                        <span class="etiqueta @(grupo.Curso.Estado == "Confirmado" ? "etiqueta-verde" : "etiqueta-naranja")">@(grupo.Curso.Estado == "Confirmado" ? "✓ Confirmado" : "Borrador")</span>
+                        <p class="etiqueta @(grupo.Curso.Estado == "Confirmado" ? "etiqueta-verde" : "etiqueta-naranja")">@(grupo.Curso.Estado == "Confirmado" ? "✓ Confirmado" : "Borrador")</p>
                         @if (grupo.Curso.Publico)
                         {
-                            <span class="etiqueta etiqueta-azul">🌎 Público</span>
+                            <p class="etiqueta etiqueta-azul">🌎 Público</p>
                         }
                         <a class="boton" href='@Url.Action("Ver", "Curso", new { IdCurso = grupo.Curso.IdCurso })'>@(grupo.Curso.Estado == "Confirmado" ? "Ver curso" : "Revisar curso")</a>
                     </div>
@@ -90,12 +90,12 @@
                 {
                     <div class="renglon">
                         <div>
-                            <strong>@miembro.Nombre @miembro.Apellido</strong>
+                            <p class="negrita">@miembro.Nombre @miembro.Apellido</p>
                             <p class="ayuda">@miembro.Puesto</p>
                         </div>
                         @if (!miembro.TieneFormulario)
                         {
-                            <span class="etiqueta">Sin formulario</span>
+                            <p class="etiqueta">Sin formulario</p>
                         }
                         else if (miembro.SinAsignar)
                         {
@@ -107,10 +107,10 @@
                         }
                         else if (miembro.IdCurso > 0)
                         {
-                            <span class="etiqueta">@miembro.Progreso% · ⚡ @miembro.XP XP</span>
+                            <p class="etiqueta">@miembro.Progreso% · ⚡ @miembro.XP XP</p>
                             @if (miembro.TextoActividad != "")
                             {
-                                <span class="etiqueta etiqueta-naranja">⏸ @miembro.TextoActividad</span>
+                                <p class="etiqueta etiqueta-naranja">⏸ @miembro.TextoActividad</p>
                             }
                         }
                     </div>

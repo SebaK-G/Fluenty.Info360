@@ -101,7 +101,7 @@ function mostrarRespuesta(data, texto) {
             sinChats.style.display = "none";
         }
         let lista = document.getElementById("lista-chats");
-        lista.innerHTML = '<a class="item-chat item-chat-activo" href="/Asistente/Index?IdChat=' + data.idChat + '"><strong>' + data.tituloChat + '</strong><p class="ayuda">Ahora</p></a>' + lista.innerHTML;
+        lista.innerHTML = '<a class="item-chat item-chat-activo" href="/Asistente/Index?IdChat=' + data.idChat + '"><p class="negrita">' + data.tituloChat + '</p><p class="ayuda">Ahora</p></a>' + lista.innerHTML;
     }
     if (data.restantes != undefined) {
         document.getElementById("restantes").innerHTML = data.restantes;
@@ -109,31 +109,17 @@ function mostrarRespuesta(data, texto) {
     bajarAlFinal();
 }
 
-// Enter manda, Shift + Enter hace un salto de línea
+// Con Enter se manda la pregunta
 function teclaEnter(evento) {
-    if (evento.key == "Enter" && !evento.shiftKey) {
-        // Que el Enter no agregue un salto de línea en el cuadro
-        evento.preventDefault();
+    if (evento.key == "Enter") {
         enviar();
     }
-}
-
-// El cuadro de texto crece mientras se escribe (hasta 160 píxeles de alto)
-function ajustarAlto() {
-    let cuadro = document.getElementById("texto");
-    cuadro.style.height = "auto";
-    let alto = cuadro.scrollHeight;
-    if (alto > 160) {
-        alto = 160;
-    }
-    cuadro.style.height = alto + "px";
 }
 
 // Las preguntas de ejemplo: al tocar una, se copia en el cuadro de texto
 function usarSugerencia(numero) {
     let cuadro = document.getElementById("texto");
     cuadro.value = document.getElementById("sugerencia-" + numero).innerText;
-    ajustarAlto();
     cuadro.focus();
 }
 

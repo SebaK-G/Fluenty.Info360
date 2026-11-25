@@ -7,7 +7,7 @@
 <main class="pagina">
 
     <section class="titulo-pagina">
-        <span class="subtitulo">Tu equipo</span>
+        <p class="subtitulo">Tu equipo</p>
         <h1>El árbol de tu empresa</h1>
         <p>Cada rango tiene su propio link: quien entra por ese link queda en ese rango. Cada rango ve y les crea cursos solo a los rangos que tiene abajo.</p>
     </section>
@@ -24,11 +24,11 @@
                             <h3>@rango.Nombre @(rango.EsPropio ? "(vos)" : "")</h3>
                             @if (rango.Profundidad == 0)
                             {
-                                <span class="etiqueta">⬆ El de más arriba</span>
+                                <p class="etiqueta">⬆ El de más arriba</p>
                             }
                             else
                             {
-                                <span class="etiqueta">Nivel @rango.Profundidad · depende de <strong>@rango.NombrePadre</strong></span>
+                                <p class="etiqueta">Nivel @rango.Profundidad · depende de @rango.NombrePadre</p>
                             }
                             <p class="ayuda">@rango.CantidadPersonas personas</p>
                             @if (rango.IdRangoPadre > 0 && !ViewBag.EsDueno && rango.Tareas != "")
@@ -49,7 +49,7 @@
                         <!-- Qué hace la gente de este rango: si alguien llena mal su formulario, la IA usa esto.
                              El botón guarda con fetch (wwwroot/js/equipo.js), sin recargar la página. -->
                         <div class="campo separado">
-                            <label for="Tareas-@rango.IdRango">¿Qué hace la gente de este rango?</label>
+                            <p class="pregunta">¿Qué hace la gente de este rango?</p>
                             <div class="input-boton">
                                 <input type="text" id="Tareas-@rango.IdRango" maxlength="300" value="@rango.Tareas" placeholder="Ej.: atienden clientes por WhatsApp, arman presupuestos y cargan las ventas" />
                                 <input class="boton" type="button" value="Guardar" onclick="guardarTareas(@rango.IdRango)" />
@@ -75,15 +75,15 @@
             }
             <form class="grilla-4" method="post" action='@Url.Action("Crear", "Equipo")'>
                 <div class="campo">
-                    <label for="Nombre">Nombre del rango</label>
+                    <p class="pregunta">Nombre del rango</p>
                     <input type="text" id="Nombre" name="Nombre" maxlength="50" required placeholder="Ej.: Vendedor" />
                 </div>
                 <div class="campo">
-                    <label for="Tareas">¿Qué hace la gente?</label>
+                    <p class="pregunta">¿Qué hace la gente?</p>
                     <input type="text" id="Tareas" name="Tareas" maxlength="300" placeholder="Ej.: atienden clientes y arman presupuestos" />
                 </div>
                 <div class="campo">
-                    <label for="IdRangoPadre">Va abajo de</label>
+                    <p class="pregunta">Va abajo de</p>
                     <select id="IdRangoPadre" name="IdRangoPadre">
                         @foreach (Rangos rango in ViewBag.Arbol)
                         {
@@ -92,7 +92,7 @@
                     </select>
                 </div>
                 <div class="campo">
-                    <label>&nbsp;</label>
+                    <p class="pregunta">&nbsp;</p>
                     <input class="boton" type="submit" value="Agregar rango" />
                 </div>
             </form>

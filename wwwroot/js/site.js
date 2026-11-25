@@ -23,7 +23,7 @@ window.onpageshow = function () {
     ocultarCarga();
 };
 
-// Formularios: pinta de azul las opciones elegidas (los <label class="boton-chico eleccion"> con un radio o checkbox adentro).
+// Formularios: pinta de azul las opciones elegidas (los div con clase "boton-chico eleccion", que tienen un radio o checkbox adentro).
 // La clase "boton-chico-activo" es la misma que marca el botón chico elegido en toda la app.
 // Cada input llama a esta función cuando cambia (onchange).
 function pintarElecciones() {

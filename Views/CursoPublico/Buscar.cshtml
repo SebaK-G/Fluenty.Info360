@@ -7,7 +7,7 @@
 <main class="pagina">
 
     <section class="titulo-pagina">
-        <span class="subtitulo">🌎 Cursos públicos</span>
+        <p class="subtitulo">🌎 Cursos públicos</p>
         <h1>Explorá cursos</h1>
         <p>Cursos que armaron otros equipos y dejaron abiertos para todos. Al inscribirte, la IA arma cada lección con ejemplos de tu trabajo.</p>
     </section>
@@ -16,11 +16,11 @@
     <form class="tarjeta" method="get" action='@Url.Action("Buscar", "CursoPublico")'>
         <div class="grilla-4">
             <div class="campo">
-                <label for="Texto">Buscar</label>
+                <p class="pregunta">Buscar</p>
                 <input type="text" id="Texto" name="Texto" value="@ViewBag.Texto" placeholder="Ej.: Excel, mails, atención al cliente" />
             </div>
             <div class="campo">
-                <label for="Nivel">Nivel</label>
+                <p class="pregunta">Nivel</p>
                 <select id="Nivel" name="Nivel">
                     <option value="0">Todos</option>
                     <option value="1" selected="@(ViewBag.Nivel == 1)">Principiante</option>
@@ -29,14 +29,14 @@
                 </select>
             </div>
             <div class="campo">
-                <label for="Orden">Ordenar</label>
+                <p class="pregunta">Ordenar</p>
                 <select id="Orden" name="Orden">
                     <option value="recientes">Más nuevos</option>
                     <option value="populares" selected="@(ViewBag.Orden == "populares")">Más elegidos</option>
                 </select>
             </div>
             <div class="campo">
-                <label>&nbsp;</label>
+                <p class="pregunta">&nbsp;</p>
                 <input type="hidden" name="Categoria" value="@ViewBag.Categoria" />
                 <input class="boton" type="submit" value="Buscar cursos" />
             </div>
@@ -73,9 +73,9 @@
                     <div>
                         @if (curso.Categoria != "")
                         {
-                            <span class="etiqueta etiqueta-azul">@curso.Categoria</span>
+                            <p class="etiqueta etiqueta-azul">@curso.Categoria</p>
                         }
-                        <span class="etiqueta">@curso.NombreNivel</span>
+                        <p class="etiqueta">@curso.NombreNivel</p>
                     </div>
                     <h3>@curso.Titulo</h3>
                     <p>@curso.DescripcionCorta</p>
@@ -85,7 +85,7 @@
                     </p>
                     @if (curso.YaLoTiene)
                     {
-                        <span class="etiqueta etiqueta-verde">✓ Ya lo tenés</span>
+                        <p class="etiqueta etiqueta-verde">✓ Ya lo tenés</p>
                     }
                 </a>
             }
