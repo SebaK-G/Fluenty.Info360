@@ -59,9 +59,9 @@ input[type="checkbox"] {
 /* En celular va todo centrado, uno abajo del otro */
 .encabezado {
 	background-color: #ffffff;
-	margin: 12px;
+	margin: 0;
 	padding: 12px 16px;
-	border-radius: 14px;
+	border-radius: 0;
 	text-align: center;
 }
 
@@ -1098,7 +1098,7 @@ input[type="checkbox"] {
 	}
 
 	.encabezado {
-		padding: 12px 30px;
+		padding: 12px 16px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
