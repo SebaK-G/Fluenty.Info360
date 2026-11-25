@@ -8,26 +8,6 @@
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
 </head>
 <body>
-    @* El encabezado es el mismo en todas las pantallas (menos en la lección).
-       Si hay alguien logueado, a la derecha va el menú; si no, lo que mande la vista en @section Encabezado *@
-    @if (ViewData["SinEncabezado"] == null)
-    {
-        <header class="encabezado">
-            <a class="logo" href="/">
-                <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
-                Fluenty
-            </a>
-            @if (ViewBag.Menu != null)
-            {
-                @await Html.PartialAsync("_NavApp", (string)ViewData["Activo"])
-            }
-            else
-            {
-                @await RenderSectionAsync("Encabezado", required: false)
-            }
-        </header>
-    }
-
     @RenderBody()
 
     <script src="~/js/site.js" asp-append-version="true"></script>

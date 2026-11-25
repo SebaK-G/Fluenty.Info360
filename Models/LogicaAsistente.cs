@@ -134,7 +134,7 @@ public static class LogicaAsistente
         texto = texto + "Nunca le pidas contraseñas ni datos privados de clientes, y si los pega, recordale que no los comparta con ninguna IA.\n\n";
         texto = texto + GuiaFluenty.Manual + "\n\n";
 
-        // Qué menús tiene esta persona (lo mismo que muestra _NavApp)
+        // Qué menús tiene esta persona (lo mismo que muestra el menú de arriba)
         bool gestiona = bd.ContarRangosAbajo(idRango) > 0;
         List<CursoInscripto> cursos = bd.TraerCursosUsuario(idUsuario);
         texto = texto + GuiaFluenty.QueVe(esDueno, gestiona, cursos.Count) + "\n";

@@ -1,8 +1,13 @@
 @{
     ViewData["Title"] = "Capacitación en IA a la medida de cada rol";
 }
-@* El encabezado lo arma _Layout; acá solo mandamos los links del lado derecho *@
-@section Encabezado {
+
+<!-- Encabezado: el mismo en todas las pantallas -->
+<header class="encabezado">
+    <a class="logo" href="/">
+        <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+        Fluenty
+    </a>
     <nav class="menu">
         <a href="#como-funciona">Cómo funciona</a>
         <a href="#funcionalidades">Funcionalidades</a>
@@ -10,7 +15,7 @@
         <a href="#preguntas">Preguntas</a>
         <a class="salir" href="/Home/Acceso">Ingresar</a>
     </nav>
-}
+</header>
 
 <main>
 

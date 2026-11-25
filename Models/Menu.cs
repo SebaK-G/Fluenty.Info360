@@ -1,6 +1,6 @@
 namespace Fluenty.Info360.Models;
 
-// Qué botones ve cada persona en el menú de arriba (Views/Shared/_NavApp.cshtml).
+// Qué botones ve cada persona en el menú de arriba (el <nav class="menu"> de cada pantalla).
 // Cada controller lo arma con Menu.Armar y lo manda en ViewBag.Menu.
 public class Menu
 {

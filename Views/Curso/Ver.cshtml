@@ -1,8 +1,38 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = ViewBag.Curso.Titulo;
-    ViewData["Activo"] = ViewBag.BotonActivo;
 }
+
+<!-- Encabezado: el mismo en todas las pantallas -->
+<header class="encabezado">
+    <a class="logo" href="/">
+        <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+        Fluenty
+    </a>
+    <nav class="menu">
+        <a href='@Url.Action("Index", "Home")'>Home</a>
+        @if (ViewBag.Menu.EsDueno || ViewBag.Menu.Gestiona)
+        {
+            <a href='@Url.Action("Index", "Equipo")'>Equipo</a>
+        }
+        @if (ViewBag.Menu.Gestiona)
+        {
+            <a href='@Url.Action("Index", "Curso")' class='@(ViewBag.BotonActivo == "Cursos" ? "activo" : "")'>Cursos</a>
+            <a href='@Url.Action("Index", "Empleados")'>Empleados</a>
+        }
+        @if (ViewBag.Menu.CantidadCursos == 1)
+        {
+            <a href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Menu.IdCursoPropio })' class='@(ViewBag.BotonActivo == "MiCurso" ? "activo" : "")'>Mi curso</a>
+        }
+        else if (ViewBag.Menu.CantidadCursos > 1)
+        {
+            <a href='@Url.Action("Index", "Home")#mis-cursos' class='@(ViewBag.BotonActivo == "MiCurso" ? "activo" : "")'>Mis cursos</a>
+        }
+        <a href='@Url.Action("Buscar", "CursoPublico")'>Explorar</a>
+        <a href='@Url.Action("Index", "Asistente")'>Asistente</a>
+        <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
+    </nav>
+</header>
 
 <!-- Pantalla de carga: mientras la IA rehace una unidad o arma una lección -->
 <div id="carga" class="fondo-carga">
