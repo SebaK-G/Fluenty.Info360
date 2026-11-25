@@ -8,22 +8,23 @@
         <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
         Fluenty
     </a>
-    <nav class="menu">
-        <a href="#como-funciona">Cómo funciona</a>
-        <a href="#funcionalidades">Funcionalidades</a>
-        <a href="#cursos">Los cursos</a>
-        <a href="#preguntas">Preguntas</a>
-        <a class="salir" href="/Home/Acceso">Ingresar</a>
+    <!-- En la landing el menú son links de texto; en el celular solo se ve Ingresar -->
+    <nav class="menu-landing">
+        <a class="solo-compu" href="#como-funciona">Cómo funciona</a>
+        <a class="solo-compu" href="#funcionalidades">Funcionalidades</a>
+        <a class="solo-compu" href="#cursos">Los cursos</a>
+        <a class="solo-compu" href="#preguntas">Preguntas</a>
+        <a class="boton" href="/Home/Acceso">Ingresar</a>
     </nav>
 </header>
 
 <main>
 
     <!-- ===== Inicio ===== -->
-    <section class="seccion seccion-oscura" id="inicio">
+    <section class="seccion seccion-oscura portada" id="inicio">
         <div class="pagina">
             <div class="grilla-2">
-                <div class="titulo-pagina portada">
+                <div class="titulo-pagina">
                     <p class="subtitulo">Capacitación en IA para empresas</p>
                     <h1>Tu equipo, fluido en IA.</h1>
                     <p>Contanos de qué va tu empresa, tus empleados nos cuentan de qué va su trabajo y Fluenty arma un curso para cada uno: corto, práctico y directo al punto.</p>
@@ -31,7 +32,11 @@
                         <a class="boton boton-borde" href="/Home/Acceso">Empezar ahora</a>
                         <a class="boton" href="#como-funciona">Ver cómo funciona</a>
                     </div>
-                    <p class="separado">✓ Sin cursos genéricos · ✓ Sin horas de video · ✓ Un curso por cada rol</p>
+                    <div class="separado">
+                        <p class="etiqueta">✓ Sin cursos genéricos</p>
+                        <p class="etiqueta">✓ Sin horas de video</p>
+                        <p class="etiqueta">✓ Un curso por cada rol</p>
+                    </div>
                 </div>
 
                 <!-- Vista previa de un curso: usa las mismas clases que el camino de verdad (Curso/Ver) -->
@@ -57,10 +62,10 @@
     <!-- ===== El problema ===== -->
     <section class="seccion" id="problema">
         <div class="pagina">
-            <div>
+            <div class="centrado">
                 <p class="subtitulo">El problema</p>
                 <h2>Los cursos de IA son para todo el mundo. Por eso no son para nadie.</h2>
-                <p>Un contador, un diseñador y un vendedor no usan la IA de la misma forma, pero terminan viendo el mismo curso. Fluenty parte al revés: primero entiende tu empresa y el puesto de cada persona, y recién después genera el contenido.</p>
+                <p class="bajada">Un contador, un diseñador y un vendedor no usan la IA de la misma forma, pero terminan viendo el mismo curso. Fluenty parte al revés: primero entiende tu empresa y el puesto de cada persona, y recién después genera el contenido.</p>
             </div>
             <div class="grilla-2">
                 <article class="tarjeta">
@@ -88,9 +93,10 @@
     <!-- ===== Cómo funciona ===== -->
     <section class="seccion seccion-blanca" id="como-funciona">
         <div class="pagina">
-            <div>
+            <div class="centrado">
                 <p class="subtitulo">Cómo funciona</p>
                 <h2>De la primera pregunta al primer curso, en cuatro pasos.</h2>
+                <p class="bajada">Vos contestás unas preguntas, tu equipo también, y la IA hace el resto.</p>
             </div>
             <div class="grilla-4">
                 <article class="caja">
@@ -120,7 +126,7 @@
     <!-- ===== Funcionalidades ===== -->
     <section class="seccion seccion-oscura" id="funcionalidades">
         <div class="pagina">
-            <div class="titulo-pagina">
+            <div class="titulo-pagina centrado">
                 <p class="subtitulo">Funcionalidades</p>
                 <h2>Todo lo que necesitás para capacitar a tu equipo.</h2>
             </div>
@@ -170,10 +176,10 @@
                 </div>
                 <!-- Las mismas unidades de colores que tiene cada curso -->
                 <div class="grilla-2">
-                    <div class="encabezado-unidad color-1"><p>UNIDAD 1</p><h3>Primeros pasos</h3><div class="barra"><div style="width: 100%"></div></div></div>
-                    <div class="encabezado-unidad color-2"><p>UNIDAD 2</p><h3>Usarla en tu tarea</h3><div class="barra"><div style="width: 40%"></div></div></div>
-                    <div class="encabezado-unidad color-3"><p>UNIDAD 3</p><h3>Automatizar</h3><div class="barra"><div style="width: 0%"></div></div></div>
-                    <div class="encabezado-unidad color-4"><p>UNIDAD 4</p><h3>Nivel experto</h3><div class="barra"><div style="width: 0%"></div></div></div>
+                    <div class="encabezado-unidad color-1"><p>UNIDAD 1</p><h3>Primeros pasos</h3><p>5 lecciones · terminada</p><div class="barra"><div style="width: 100%"></div></div></div>
+                    <div class="encabezado-unidad color-2"><p>UNIDAD 2</p><h3>Usarla en tu tarea</h3><p>5 lecciones · 2 hechas</p><div class="barra"><div style="width: 40%"></div></div></div>
+                    <div class="encabezado-unidad color-3"><p>UNIDAD 3</p><h3>Automatizar</h3><p>5 lecciones</p><div class="barra"><div style="width: 0%"></div></div></div>
+                    <div class="encabezado-unidad color-4"><p>UNIDAD 4</p><h3>Nivel experto</h3><p>5 lecciones</p><div class="barra"><div style="width: 0%"></div></div></div>
                 </div>
             </div>
         </div>
@@ -182,7 +188,7 @@
     <!-- ===== Para quién ===== -->
     <section class="seccion seccion-blanca" id="para-quien">
         <div class="pagina">
-            <div>
+            <div class="centrado">
                 <p class="subtitulo">Para quién</p>
                 <h2>Pensado para los dos lados.</h2>
             </div>
@@ -206,7 +212,7 @@
                     </ul>
                 </article>
             </div>
-            <div>
+            <div class="centrado">
                 <p class="ayuda">Lo que viene:</p>
                 <p class="etiqueta">Favoritos</p>
                 <p class="etiqueta">Comentarios y estrellas</p>
@@ -218,7 +224,7 @@
     <!-- ===== Preguntas ===== -->
     <section class="seccion" id="preguntas">
         <div class="pagina">
-            <div>
+            <div class="centrado">
                 <p class="subtitulo">Preguntas frecuentes</p>
                 <h2>Lo que más nos preguntan.</h2>
             </div>
@@ -247,7 +253,7 @@
     <section class="seccion seccion-oscura" id="empezar">
         <div class="pagina titulo-pagina centrado">
             <h2>Tu equipo puede empezar hoy.</h2>
-            <p>Completá el cuestionario de tu empresa, compartí el link y en minutos tenés los primeros cursos.</p>
+            <p class="bajada">Completá el cuestionario de tu empresa, compartí el link y en minutos tenés los primeros cursos.</p>
             <div class="botones centrado">
                 <a class="boton boton-borde" href="/Home/Acceso">Ingresar a mi cuenta</a>
                 <a class="boton" href="mailto:contacto@fluenty.com">Hablar con nosotros</a>

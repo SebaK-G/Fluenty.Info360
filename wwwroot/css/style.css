@@ -1046,10 +1046,36 @@ input[type="checkbox"] {
 
 /* ===== LANDING ===== */
 
+/* Menú de la landing: links de texto y el botón Ingresar */
+.menu-landing {
+	margin-top: 8px;
+}
+
+.menu-landing a {
+	color: #172333;
+	font-weight: bold;
+	text-decoration: none;
+	padding: 8px 12px;
+}
+
+.menu-landing a:hover {
+	color: #0b1ca6;
+}
+
+.menu-landing .boton {
+	color: #ffffff;
+}
+
+/* Los links de texto solo se ven en la compu (en la media query pasan a inline-block) */
+.solo-compu {
+	display: none;
+}
+
 /* Cada sección ocupa todo el ancho; .pagina centra el contenido adentro */
 .seccion {
-	padding: 40px 0;
+	padding: 50px 0;
 	background-color: #f3f6fb;
+	font-size: 17px;
 }
 
 .seccion-blanca {
@@ -1062,14 +1088,26 @@ input[type="checkbox"] {
 
 .seccion .pagina {
 	margin: 0 auto;
+	gap: 30px;
 }
 
 .seccion h2 {
 	font-size: 26px;
 }
 
+/* La primera sección: más aire y el título bien grande */
+.portada {
+	padding: 60px 0;
+}
+
 .portada h1 {
-	font-size: 36px;
+	font-size: 40px;
+}
+
+/* El texto que va abajo de cada título de sección */
+.bajada {
+	font-size: 18px;
+	margin-top: 10px;
 }
 
 /* Listas con un tilde en vez del puntito */
@@ -1245,15 +1283,33 @@ input[type="checkbox"] {
 		width: 720px;
 	}
 
+	.menu-landing {
+		margin-top: 0;
+	}
+
+	.solo-compu {
+		display: inline-block;
+	}
+
 	.seccion {
-		padding: 50px 0;
+		padding: 80px 0;
 	}
 
 	.seccion h2 {
-		font-size: 30px;
+		font-size: 34px;
+	}
+
+	.portada {
+		padding: 90px 0;
 	}
 
 	.portada h1 {
-		font-size: 52px;
+		font-size: 60px;
+	}
+
+	/* En la compu el texto de abajo del título no ocupa todo el ancho */
+	.bajada {
+		width: 70%;
+		margin: 12px auto 0;
 	}
 }
