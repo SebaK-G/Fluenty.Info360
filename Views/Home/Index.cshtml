@@ -11,13 +11,10 @@
     </a>
     <nav class="menu">
         <a href='@Url.Action("Index", "Home")' class="activo">Home</a>
-        @if (ViewBag.Menu.EsDueno || ViewBag.Menu.Gestiona)
-        {
-            <a href='@Url.Action("Index", "Equipo")'>Equipo</a>
-        }
         @if (ViewBag.Menu.Gestiona)
         {
             <a href='@Url.Action("Index", "Curso")'>Cursos</a>
+            <a href='@Url.Action("Index", "Calculadora")'>Calculadora</a>
             <a href='@Url.Action("Index", "Empleados")'>Empleados</a>
         }
         @if (ViewBag.Menu.CantidadCursos == 1)
@@ -28,10 +25,11 @@
         {
             <a href='@Url.Action("Index", "Home")#mis-cursos'>Mis cursos</a>
         }
-        <a href='@Url.Action("Buscar", "CursoPublico")'>Explorar</a>
-        <a href='@Url.Action("Index", "Asistente")'>Asistente</a>
-        <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
     </nav>
+    <div class="usuario">
+        <p>👤 @ViewBag.Menu.Nombre</p>
+        <a class="salir" href='@Url.Action("Salir", "Home")'>Salir</a>
+    </div>
 </header>
 
 <!-- Cartel de carga, arriba de todo para que quede pegado arriba de la pantalla (sticky). Mientras la IA arma la lección (la primera vez tarda unos segundos) -->
@@ -95,6 +93,30 @@
         <section class="tarjeta">
             <h2>Tu curso</h2>
             <p>Todavía no tenés un curso. Cuando tu responsable te lo asigne, lo vas a ver acá.</p>
+        </section>
+    }
+
+    <!-- ===== Herramientas de quien no tiene rangos abajo ===== -->
+    @if (!ViewBag.Gestiona)
+    {
+        <section class="tarjeta">
+            <h2>Herramientas para tu aprendizaje</h2>
+            <div class="grilla-2">
+                <div class="caja fila">
+                    <div>
+                        <h3>Explorar nuevos cursos</h3>
+                        <p class="ayuda">Encontrá cursos que armaron otros equipos.</p>
+                    </div>
+                    <a class="boton" href='@Url.Action("Buscar", "CursoPublico")'>Buscar</a>
+                </div>
+                <div class="caja fila">
+                    <div>
+                        <h3>Asistente IA</h3>
+                        <p class="ayuda">Preguntale a la IA cómo usarla en tu trabajo.</p>
+                    </div>
+                    <a class="boton" href='@Url.Action("Index", "Asistente")'>Preguntar</a>
+                </div>
+            </div>
         </section>
     }
 
@@ -168,6 +190,13 @@
                         <p class="ayuda">Calculá horas ahorradas y retorno en capacitación.</p>
                     </div>
                     <a class="boton" href='@Url.Action("Index", "Calculadora")'>Calcular</a>
+                </div>
+                <div class="caja fila">
+                    <div>
+                        <h3>Explorar nuevos cursos</h3>
+                        <p class="ayuda">Encontrá cursos que armaron otros equipos.</p>
+                    </div>
+                    <a class="boton" href='@Url.Action("Buscar", "CursoPublico")'>Buscar</a>
                 </div>
             </div>
         </section>

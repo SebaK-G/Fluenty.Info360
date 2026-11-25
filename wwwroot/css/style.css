@@ -99,13 +99,31 @@ input[type="checkbox"] {
 	background-color: #075b99;
 }
 
+/* Nombre de la persona y Salir, a la derecha del menú */
+.usuario {
+	margin-top: 8px;
+}
+
+.usuario p {
+	display: inline-block;
+	font-weight: bold;
+	margin-right: 8px;
+}
+
+.salir,
 .menu .salir {
+	display: inline-block;
 	background-color: #ffffff;
 	color: #d90000;
 	border: 2px solid #d90000;
+	border-radius: 20px;
 	padding: 7px 16px;
+	font-size: 14px;
+	font-weight: bold;
+	text-decoration: none;
 }
 
+.salir:hover,
 .menu .salir:hover {
 	background-color: #d90000;
 	color: #ffffff;
@@ -1115,6 +1133,10 @@ input[type="checkbox"] {
 	}
 
 	.menu {
+		margin-top: 0;
+	}
+
+	.usuario {
 		margin-top: 0;
 	}
 

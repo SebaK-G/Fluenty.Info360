@@ -11,13 +11,10 @@
     </a>
     <nav class="menu">
         <a href='@Url.Action("Index", "Home")'>Home</a>
-        @if (ViewBag.Menu.EsDueno || ViewBag.Menu.Gestiona)
-        {
-            <a href='@Url.Action("Index", "Equipo")'>Equipo</a>
-        }
         @if (ViewBag.Menu.Gestiona)
         {
             <a href='@Url.Action("Index", "Curso")'>Cursos</a>
+            <a href='@Url.Action("Index", "Calculadora")'>Calculadora</a>
             <a href='@Url.Action("Index", "Empleados")'>Empleados</a>
         }
         @if (ViewBag.Menu.CantidadCursos == 1)
@@ -28,10 +25,11 @@
         {
             <a href='@Url.Action("Index", "Home")#mis-cursos'>Mis cursos</a>
         }
-        <a href='@Url.Action("Buscar", "CursoPublico")' class="activo">Explorar</a>
-        <a href='@Url.Action("Index", "Asistente")'>Asistente</a>
-        <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
     </nav>
+    <div class="usuario">
+        <p>👤 @ViewBag.Menu.Nombre</p>
+        <a class="salir" href='@Url.Action("Salir", "Home")'>Salir</a>
+    </div>
 </header>
 
 <main class="pagina">
@@ -68,7 +66,8 @@
             <div class="campo">
                 <p class="pregunta">&nbsp;</p>
                 <input type="hidden" name="Categoria" value="@ViewBag.Categoria" />
-                <input class="boton" type="submit" value="Buscar cursos" />
+                <input class="boton" type="submit" value="Buscar" />
+                <a class="boton" href='@Url.Action("Index", "Asistente")'>Asistente IA</a>
             </div>
         </div>
         <!-- Categorías: cada botón vuelve a buscar con esa categoría -->

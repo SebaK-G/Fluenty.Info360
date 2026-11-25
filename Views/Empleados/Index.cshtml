@@ -11,13 +11,10 @@
     </a>
     <nav class="menu">
         <a href='@Url.Action("Index", "Home")'>Home</a>
-        @if (ViewBag.Menu.EsDueno || ViewBag.Menu.Gestiona)
-        {
-            <a href='@Url.Action("Index", "Equipo")'>Equipo</a>
-        }
         @if (ViewBag.Menu.Gestiona)
         {
             <a href='@Url.Action("Index", "Curso")'>Cursos</a>
+            <a href='@Url.Action("Index", "Calculadora")'>Calculadora</a>
             <a href='@Url.Action("Index", "Empleados")' class="activo">Empleados</a>
         }
         @if (ViewBag.Menu.CantidadCursos == 1)
@@ -28,10 +25,11 @@
         {
             <a href='@Url.Action("Index", "Home")#mis-cursos'>Mis cursos</a>
         }
-        <a href='@Url.Action("Buscar", "CursoPublico")'>Explorar</a>
-        <a href='@Url.Action("Index", "Asistente")'>Asistente</a>
-        <a href='@Url.Action("Salir", "Home")' class="salir">Salir</a>
     </nav>
+    <div class="usuario">
+        <p>👤 @ViewBag.Menu.Nombre</p>
+        <a class="salir" href='@Url.Action("Salir", "Home")'>Salir</a>
+    </div>
 </header>
 
 <main class="pagina">

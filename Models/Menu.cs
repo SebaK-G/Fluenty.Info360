@@ -5,11 +5,13 @@ namespace Fluenty.Info360.Models;
 public class Menu
 {
     public bool EsDueno { get; set; }
-    // Tiene rangos abajo: ve Equipo, Cursos y Empleados
+    // Tiene rangos abajo: ve Cursos, Calculadora y Empleados
     public bool Gestiona { get; set; }
     public int CantidadCursos { get; set; }
     // Si tiene un solo curso, "Mi curso" lleva directo a ese
     public int IdCursoPropio { get; set; }
+    // Nombre y apellido que se ven a la derecha del menú
+    public string Nombre { get; set; }
 
     public static Menu Armar(int idUsuario, int idRango, bool esDueno)
     {
@@ -17,6 +19,8 @@ public class Menu
         Menu menu = new Menu();
         menu.EsDueno = esDueno;
         menu.Gestiona = bd.ContarRangosAbajo(idRango) > 0;
+        Usuarios usuario = bd.TraerEmpleado(idUsuario);
+        menu.Nombre = usuario.Nombre + " " + usuario.Apellido;
         List<CursoInscripto> misCursos = bd.TraerCursosUsuario(idUsuario);
         menu.CantidadCursos = misCursos.Count;
         if (misCursos.Count == 1)
