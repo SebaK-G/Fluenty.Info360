@@ -57,12 +57,12 @@ label {
 
 /* ===== ENCABEZADO Y MENÚ (igual en todas las pantallas) ===== */
 
-/* En celular va todo centrado, uno abajo del otro */
+/* El encabezado ocupa todo el ancho, sin separación ni bordes redondeados */
 .encabezado {
 	background-color: #ffffff;
-	margin: 12px;
+	margin: 0;
 	padding: 12px 16px;
-	border-radius: 14px;
+	border-radius: 0;
 	text-align: center;
 }
 
