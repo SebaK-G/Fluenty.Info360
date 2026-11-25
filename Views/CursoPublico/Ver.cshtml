@@ -34,81 +34,106 @@
 
 <main class="pagina">
 
-    <a class="volver" href='@Url.Action("Buscar", "CursoPublico")'>← Volver a los cursos</a>
+    <!-- Una sola tarjeta con todo el detalle del curso -->
+    <section class="tarjeta">
+        <!-- Arriba: Volver a la izquierda y el título en el medio -->
+        <div class="encabezado-detalle">
+            <div><a class="boton boton-gris" href='@Url.Action("Buscar", "CursoPublico")'>← Volver</a></div>
+            <h2>Detalles del curso</h2>
+            <div></div>
+        </div>
 
-    <div class="grilla-2-1">
-        <!-- ===== Izquierda: de qué se trata y el temario ===== -->
-        <div class="columna">
-            <section class="tarjeta">
-                <p class="etiqueta etiqueta-azul">🌎 @(ViewBag.Curso.Categoria != "" ? ViewBag.Curso.Categoria : "Curso público")</p>
-                <p class="etiqueta">@ViewBag.NombreNivel</p>
-                <h1 class="separado">@ViewBag.Curso.Titulo</h1>
+        <div class="grilla-2 separado">
+            <!-- ===== Izquierda: de qué se trata ===== -->
+            <div>
+                <h1>@ViewBag.Curso.Titulo</h1>
+                <div class="separado">
+                    <p class="etiqueta etiqueta-gris">Dificultad: @ViewBag.NombreNivel</p>
+                    <p class="etiqueta etiqueta-gris">Duración: @(ViewBag.Curso.DuracionHoras > 0 ? ViewBag.Curso.DuracionHoras + " Horas" : "20 lecciones")</p>
+                    @if (ViewBag.Curso.Categoria != "")
+                    {
+                        <p class="etiqueta etiqueta-gris">@ViewBag.Curso.Categoria</p>
+                    }
+                </div>
+
+                <h3 class="separado">Información detallada:</h3>
                 <p>@ViewBag.Curso.Descripcion</p>
 
-                <h3 class="separado">Lo que vas a lograr</h3>
-                <p>@ViewBag.Curso.Objetivos</p>
+                <h3 class="separado">Objetivos de aprendizaje:</h3>
+                <ul class="lista-check">
+                    @foreach (string objetivo in ViewBag.Objetivos)
+                    {
+                        <li>@objetivo</li>
+                    }
+                </ul>
 
                 @if (ViewBag.Herramientas.Count > 0)
                 {
-                    <h3 class="separado">Herramientas que vas a usar</h3>
-                    @foreach (string herramienta in ViewBag.Herramientas)
-                    {
-                        <p class="etiqueta">@herramienta</p>
-                    }
-                }
-            </section>
-
-            <section class="tarjeta">
-                <h2>Temario</h2>
-                <p class="ayuda">4 unidades de 5 lecciones. La última de cada unidad es un examen.</p>
-                @foreach (Unidades unidad in ViewBag.Unidades)
-                {
-                    <div class="caja separado">
-                        <div class="en-linea">
-                            <p class="numero">@unidad.Numero</p>
-                            <h3>@unidad.Titulo</h3>
-                        </div>
-                        <p class="ayuda">@unidad.Objetivo</p>
-                        <ol class="temario separado">
-                            @foreach (Lecciones leccion in unidad.Lecciones)
-                            {
-                                <li>@leccion.Titulo</li>
-                            }
-                        </ol>
+                    <div class="en-linea separado">
+                        <h3>Herramientas integradas:</h3>
+                        <p>@string.Join(" - ", ViewBag.Herramientas)</p>
                     </div>
                 }
-            </section>
+            </div>
+
+            <!-- ===== Derecha: el temario en un marco gris ===== -->
+            <div class="marco">
+                <div class="marco-adentro">
+                    @foreach (Unidades unidad in ViewBag.Unidades)
+                    {
+                        <div class="separado">
+                            <div class="en-linea">
+                                <p class="numero">@unidad.Numero</p>
+                                <h3>@unidad.Titulo</h3>
+                            </div>
+                            <ol class="temario">
+                                @foreach (Lecciones leccion in unidad.Lecciones)
+                                {
+                                    <li>@leccion.Titulo</li>
+                                }
+                            </ol>
+                        </div>
+                    }
+                </div>
+                <p class="marco-pie">Temario · 4 unidades de 5 lecciones · @ViewBag.Inscriptos @(ViewBag.Inscriptos == 1 ? "persona inscripta" : "personas inscriptas")</p>
+            </div>
         </div>
 
-        <!-- ===== Derecha: inscribirse ===== -->
-        <section class="tarjeta fija">
-            <div class="grilla-3">
-                <div class="dato"><h3>@(ViewBag.Curso.DuracionHoras > 0 ? ViewBag.Curso.DuracionHoras + " h" : "—")</h3><p>duración</p></div>
-                <div class="dato"><h3>20</h3><p>lecciones</p></div>
-                <div class="dato"><h3>@ViewBag.Inscriptos</h3><p>@(ViewBag.Inscriptos == 1 ? "persona" : "personas")</p></div>
+        <!-- Abajo a la derecha: inscribirse -->
+        <div class="fila separado">
+            <div>
+                @if (ViewBag.Error != "")
+                {
+                    <p class="error">@ViewBag.Error</p>
+                }
+                @if (ViewBag.YaInscripto)
+                {
+                    <p>✓ Ya tenés este curso.</p>
+                }
+                else if (ViewBag.TieneFormulario)
+                {
+                    <p class="ayuda">Arrancás en la unidad que va con tu experiencia con la IA, y cada lección se arma con ejemplos de tu trabajo.</p>
+                }
+                else
+                {
+                    <p class="ayuda">Para inscribirte hace falta tu formulario de empleado: la IA lo usa para armar las lecciones a tu medida.</p>
+                }
             </div>
-            @if (ViewBag.Error != "")
-            {
-                <p class="error separado">@ViewBag.Error</p>
-            }
             @if (ViewBag.YaInscripto)
             {
-                <p class="separado">✓ Ya tenés este curso.</p>
-                <a class="boton boton-grande separado" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso })'>Ir al curso</a>
+                <a class="boton boton-redondo" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Curso.IdCurso })'>Ir al curso</a>
             }
             else if (ViewBag.TieneFormulario)
             {
-                <p class="separado">Arrancás en la unidad que va con tu experiencia con la IA, y cada lección se arma con ejemplos de tu trabajo.</p>
                 <form method="post" action='@Url.Action("Inscribirse", "CursoPublico")' onsubmit="desactivarBoton('boton-inscribirse')">
                     <input type="hidden" name="IdCurso" value="@ViewBag.Curso.IdCurso" />
-                    <input class="boton boton-grande separado" type="submit" id="boton-inscribirse" value="Inscribirme gratis" />
+                    <input class="boton boton-redondo" type="submit" id="boton-inscribirse" value="Inscribirse al curso" />
                 </form>
             }
             else
             {
-                <p class="ayuda separado">Para inscribirte hace falta tu formulario de empleado: la IA lo usa para armar las lecciones a tu medida.</p>
-                <p class="boton boton-grande boton-apagado separado">Inscribirme</p>
+                <p class="boton boton-redondo boton-apagado">Inscribirse al curso</p>
             }
-        </section>
-    </div>
+        </div>
+    </section>
 </main>

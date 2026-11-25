@@ -35,7 +35,6 @@
 <main class="pagina pagina-angosta">
 
     <section class="titulo-pagina">
-        <p class="subtitulo">Antes de empezar · 3 preguntas</p>
         <h1>Contanos sobre tu equipo</h1>
         <p>La IA va a usar estas respuestas en todos los cursos que genere para tu empresa. Lo completás una sola vez.</p>
     </section>
@@ -47,12 +46,23 @@
 
     <form class="columna" method="post" action='@Url.Action("FormularioEmpresa", "Curso")'>
 
+        <!-- ===== Presentación (se ve primero, salvo que haya un error) ===== -->
+        <section class="tarjeta paso-formulario centrado @(ViewBag.Error != "" ? "oculto" : "")" id="paso-0">
+            <h1>Creá tu curso con IA</h1>
+            <h3 class="separado">Generá cursos de IA para capacitar a tus empleados</h3>
+            <img class="logo-presentacion" src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+            <p>Rellená el formulario, sumá a tus empleados con el link de su rango y revisá los resultados para crear un curso personalizado y enfocado para cada uno.</p>
+            <div class="botones centrado separado">
+                <button type="button" class="boton boton-redondo" onclick="irAPaso(1)">Iniciar creación de cursos</button>
+            </div>
+        </section>
+
         <!-- ===== Pregunta 1 ===== -->
-        <section class="tarjeta">
+        <section class="tarjeta paso-formulario @(ViewBag.Error != "" ? "" : "oculto")" id="paso-1">
             <div class="encabezado-paso">
                 <p class="numero-paso">1</p>
                 <div>
-                    <p class="ayuda">Pregunta 1 de 3</p>
+                    <p class="paso-de">Preguntas 1 de 3</p>
                     <h2>Las dificultades de tu equipo</h2>
                 </div>
             </div>
@@ -60,14 +70,27 @@
                 <p class="pregunta">¿Cuáles son los principales problemas o dificultades que enfrenta tu equipo en el trabajo diario? ¿Qué tareas o procesos te gustaría mejorar?</p>
                 <input type="text" id="Dificultades" name="Dificultades" maxlength="500" required placeholder="Ej.: tardamos mucho en responder mails y armar reportes" />
             </div>
+
+            <!-- Abajo: el botón en el medio y los números de página a la derecha -->
+            <div class="pie-paso">
+                <div></div>
+                <div class="centrado"><button type="button" class="boton boton-redondo" onclick="irAPaso(2)">Siguiente</button></div>
+                <div class="paginador">
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(1)">‹</button>
+                    <button type="button" class="numero-pagina numero-pagina-activo" onclick="irAPaso(1)">1</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(2)">2</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(3)">3</button>
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(2)">›</button>
+                </div>
+            </div>
         </section>
 
         <!-- ===== Pregunta 2 ===== -->
-        <section class="tarjeta">
+        <section class="tarjeta paso-formulario oculto" id="paso-2">
             <div class="encabezado-paso">
                 <p class="numero-paso">2</p>
                 <div>
-                    <p class="ayuda">Pregunta 2 de 3</p>
+                    <p class="paso-de">Preguntas 2 de 3</p>
                     <h2>Las herramientas que usan</h2>
                 </div>
             </div>
@@ -80,14 +103,27 @@
                     }
                 </div>
             </div>
+
+            <!-- Abajo: el botón en el medio y los números de página a la derecha -->
+            <div class="pie-paso">
+                <div></div>
+                <div class="centrado"><button type="button" class="boton boton-redondo" onclick="irAPaso(3)">Siguiente</button></div>
+                <div class="paginador">
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(1)">‹</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(1)">1</button>
+                    <button type="button" class="numero-pagina numero-pagina-activo" onclick="irAPaso(2)">2</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(3)">3</button>
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(3)">›</button>
+                </div>
+            </div>
         </section>
 
         <!-- ===== Pregunta 3 ===== -->
-        <section class="tarjeta">
+        <section class="tarjeta paso-formulario oculto" id="paso-3">
             <div class="encabezado-paso">
                 <p class="numero-paso">3</p>
                 <div>
-                    <p class="ayuda">Pregunta 3 de 3</p>
+                    <p class="paso-de">Preguntas 3 de 3</p>
                     <h2>Lo que querés lograr</h2>
                 </div>
             </div>
@@ -95,11 +131,20 @@
                 <p class="pregunta">¿Qué te gustaría lograr mediante la capacitación de tus empleados? ¿Qué mejoras esperás conseguir en la productividad o en la forma de trabajar?</p>
                 <input type="text" id="Objetivos" name="Objetivos" maxlength="500" required placeholder="Ej.: ahorrar horas en tareas repetitivas y cometer menos errores" />
             </div>
+
+            <!-- Abajo: el botón en el medio y los números de página a la derecha -->
+            <div class="pie-paso">
+                <div></div>
+                <div class="centrado"><input class="boton boton-redondo" type="submit" value="Enviar datos" onclick="revisarPasos()" /></div>
+                <div class="paginador">
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(2)">‹</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(1)">1</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(2)">2</button>
+                    <button type="button" class="numero-pagina numero-pagina-activo" onclick="irAPaso(3)">3</button>
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(3)">›</button>
+                </div>
+            </div>
         </section>
 
-        <section class="titulo-pagina">
-            <input class="boton boton-grande" type="submit" value="Guardar y continuar" />
-            <p class="ayuda centrado">Después vas a poder compartir el link con tu equipo.</p>
-        </section>
     </form>
 </main>

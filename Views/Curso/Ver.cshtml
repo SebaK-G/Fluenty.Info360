@@ -54,7 +54,8 @@
         <h1>@ViewBag.Curso.Titulo</h1>
         <p>@ViewBag.Curso.Descripcion</p>
 
-        <div class="grilla-3 separado">
+        <!-- Tres cuadraditos chicos, como en el Figma -->
+        <div class="datos-chicos separado">
             @if (ViewBag.ModoAlumno)
             {
                 <div class="dato"><h3>⚡ @ViewBag.XP</h3><p>XP</p></div>
@@ -70,7 +71,10 @@
         </div>
 
         <h3 class="separado">Lo que vas a lograr</h3>
-        <p>@ViewBag.Curso.Objetivos</p>
+        @foreach (string objetivo in ViewBag.Objetivos)
+        {
+            <p>@objetivo</p>
+        }
     </section>
 
     <!-- ===== Responsable: de quién se mira el camino ===== -->

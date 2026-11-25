@@ -44,6 +44,7 @@ function mostrar(numero) {
     }
     actual = numero;
     document.getElementById("relleno").style.width = (numero * 100 / total) + "%";
+    document.getElementById("numero-tarjeta").innerText = numero + " de " + total;
     document.getElementById("atras").disabled = numero == 1;
     actualizarSiguiente();
     window.speechSynthesis.cancel();

@@ -43,48 +43,94 @@
 
 <main class="pagina">
 
-    <section class="tarjeta">
-        <h1>¡Hola, @ViewBag.Nombre!</h1>
-        <p>Estás en el espacio de capacitación de @ViewBag.NombreEmpresa.</p>
-    </section>
+    @if (ViewBag.Gestiona)
+    {
+        <!-- ===== Arriba: el saludo con los números a la izquierda y el plan (o el equipo) a la derecha ===== -->
+        <div class="grilla-2">
+            <div class="columna">
+                <section class="tarjeta">
+                    <h1>¡Hola, @ViewBag.Nombre!</h1>
+                    <p>Todo lo que necesitás para capacitar, gestionar y hacer más eficiente a todo tu equipo de @ViewBag.NombreEmpresa, en un solo lugar.</p>
+                </section>
+                <div class="grilla-3">
+                    <div class="tarjeta numero-info"><h3>ⓘ @ViewBag.CantidadPersonas</h3><p>Personas a tu cargo</p></div>
+                    <div class="tarjeta numero-info"><h3>ⓘ @ViewBag.EnCapacitacion</h3><p>En capacitación</p></div>
+                    <div class="tarjeta numero-info"><h3>ⓘ @ViewBag.EsperandoCurso</h3><p>Esperando su curso</p></div>
+                </div>
+            </div>
+
+            <section class="tarjeta">
+                <div class="fila">
+                    @if (ViewBag.EsDueno)
+                    {
+                        <p class="negrita">☑ Tu plan</p>
+                    }
+                    else
+                    {
+                        <p class="negrita">👥 Tu equipo</p>
+                    }
+                    <a class="ver-todas" href='@Url.Action("Index", "Equipo")'>Ver todas →</a>
+                </div>
+                @if (ViewBag.EsDueno)
+                {
+                    <h2 class="separado">Plan Empresarial Activo</h2>
+                    <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más, con @ViewBag.CantidadCursos cursos confirmados en tus rangos.</p>
+                }
+                else
+                {
+                    <h2 class="separado">@ViewBag.CantidadRangos rangos a tu cargo</h2>
+                    <p>@ViewBag.CantidadCursos cursos confirmados en tus rangos.</p>
+                }
+                <div class="fila separado">
+                    <p>En capacitación: @ViewBag.EnCapacitacion/@ViewBag.CantidadPersonas</p>
+                    <p>@(ViewBag.CantidadPersonas == 0 ? 0 : ViewBag.EnCapacitacion * 100 / ViewBag.CantidadPersonas)%</p>
+                </div>
+                <div class="barra"><div style="width: @(ViewBag.CantidadPersonas == 0 ? 0 : ViewBag.EnCapacitacion * 100 / ViewBag.CantidadPersonas)%"></div></div>
+            </section>
+        </div>
+    }
+    else
+    {
+        <section class="tarjeta">
+            <h1>¡Hola, @ViewBag.Nombre!</h1>
+            <p class="texto-grande">Seguí aprendiendo y llevá la IA a tu trabajo de todos los días.</p>
+            <p>Estás en el espacio de capacitación de @ViewBag.NombreEmpresa. Tu próximo paso te está esperando.</p>
+        </section>
+    }
 
     <!-- ===== Mis cursos (lo ve cualquiera que tenga al menos uno) ===== -->
     @if (ViewBag.MisCursos.Count > 0)
     {
         <section class="tarjeta tarjeta-azul" id="mis-cursos">
-            <div class="fila">
+            <div class="curso-asignado">
                 <div>
-                    <p class="subtitulo">📚 @(ViewBag.MisCursos.Count == 1 ? "Tu curso" : "Tus cursos")</p>
-                    <h2>Mis cursos</h2>
+                    <p class="subtitulo">📚 @(ViewBag.MisCursos.Count == 1 ? "Tu curso asignado" : "Tus cursos asignados")</p>
+                    @foreach (CursoInscripto curso in ViewBag.MisCursos)
+                    {
+                        <div class="separado">
+                            <h2>@curso.Titulo</h2>
+                            <div class="barra"><div style="width: @(curso.Progreso)%"></div></div>
+                            <p class="negrita">@curso.Progreso% completado</p>
+                            @if (curso.Proxima != null)
+                            {
+                                <p class="negrita">@(curso.Progreso == 0 ? "Primera lección" : "Próxima lección"): @curso.Proxima.Titulo</p>
+                                <div class="botones separado">
+                                    <a class="boton boton-oscuro" href='@Url.Action("Index", "Leccion", new { IdLeccion = curso.Proxima.IdLeccion })' onclick="mostrarCarga()">@(curso.Progreso == 0 ? "Empezar el curso" : "Seguir aprendiendo")</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="botones separado">
+                                    <a class="boton boton-oscuro" href='@Url.Action("Ver", "Curso", new { IdCurso = curso.IdCurso })'>Ver el curso</a>
+                                </div>
+                            }
+                        </div>
+                    }
                 </div>
                 <div class="grilla-2">
-                    <div class="dato"><h3>⚡ @ViewBag.XP</h3><p>XP</p></div>
-                    <div class="dato"><h3>🔥 @ViewBag.Racha</h3><p>días de racha</p></div>
+                    <div class="dato"><p class="dato-icono">⚡</p><h3>@ViewBag.XP</h3><p>XP</p></div>
+                    <div class="dato"><p class="dato-icono">🔥</p><h3>@ViewBag.Racha</h3><p>días de racha</p></div>
                 </div>
-            </div>
-
-            <div class="@(ViewBag.MisCursos.Count == 1 ? "" : "grilla-2")">
-                @foreach (CursoInscripto curso in ViewBag.MisCursos)
-                {
-                    <div class="caja">
-                        <h3>@curso.Titulo</h3>
-                        <div class="barra"><div style="width: @(curso.Progreso)%"></div></div>
-                        <p class="ayuda">@curso.Progreso% completado</p>
-                        @if (curso.Proxima != null)
-                        {
-                            <p>@(curso.Progreso == 0 ? "Primera lección" : "Siguiente"): @curso.Proxima.Titulo</p>
-                            <div class="botones">
-                                <a class="boton boton-borde" href='@Url.Action("Index", "Leccion", new { IdLeccion = curso.Proxima.IdLeccion })' onclick="mostrarCarga()">@(curso.Progreso == 0 ? "Empezar el curso" : "Seguir aprendiendo")</a>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="botones">
-                                <a class="boton boton-borde" href='@Url.Action("Ver", "Curso", new { IdCurso = curso.IdCurso })'>Ver el curso</a>
-                            </div>
-                        }
-                    </div>
-                }
             </div>
         </section>
     }
@@ -99,9 +145,19 @@
     <!-- ===== Herramientas de quien no tiene rangos abajo ===== -->
     @if (!ViewBag.Gestiona)
     {
-        <section class="tarjeta">
+        <section class="tarjeta herramientas">
             <h2>Herramientas para tu aprendizaje</h2>
             <div class="grilla-2">
+                @if (ViewBag.MisCursos.Count > 0)
+                {
+                    <div class="caja fila">
+                        <div>
+                            <h3>Mi curso</h3>
+                            <p class="ayuda">Revisá las unidades y los objetivos de tu capacitación.</p>
+                        </div>
+                        <a class="boton" href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.MisCursos[0].IdCurso })'>Ver unidades</a>
+                    </div>
+                }
                 <div class="caja fila">
                     <div>
                         <h3>Explorar nuevos cursos</h3>
@@ -123,28 +179,46 @@
     <!-- ===== Su gente (solo si tiene rangos abajo) ===== -->
     @if (ViewBag.Gestiona)
     {
-        <div class="grilla-2">
-            <div class="grilla-3">
-                <div class="tarjeta dato"><div class="centrado"><h3>@ViewBag.CantidadPersonas</h3><p>Personas a tu cargo</p></div></div>
-                <div class="tarjeta dato"><div class="centrado"><h3>@ViewBag.EnCapacitacion</h3><p>En capacitación</p></div></div>
-                <div class="tarjeta dato"><div class="centrado"><h3>@ViewBag.EsperandoCurso</h3><p>Esperando su curso</p></div></div>
+        <section class="tarjeta herramientas">
+            <h2 class="centrado">▦ Herramientas principales</h2>
+            <div class="grilla-2">
+                <div class="caja fila">
+                    <div>
+                        <h3>Crear curso con IA</h3>
+                        <p>Generá cursos completos con IA adaptados al rol y puesto en segundos.</p>
+                    </div>
+                    <a class="boton" href='@Url.Action("Index", "Curso")'>Generar</a>
+                </div>
+                <div class="caja fila">
+                    <div>
+                        <h3>Calcular ahorro y rendimiento</h3>
+                        <p>Calculá horas ahorradas y retorno en capacitación técnica.</p>
+                    </div>
+                    <a class="boton" href='@Url.Action("Index", "Calculadora")'>Calcular</a>
+                </div>
+                <div class="caja fila">
+                    <div>
+                        <h3>Explorar nuevos cursos</h3>
+                        <p>Encontrá información y capacitaciones rápidamente en el catálogo.</p>
+                    </div>
+                    <a class="boton" href='@Url.Action("Buscar", "CursoPublico")'>Buscar</a>
+                </div>
+                <div class="caja fila">
+                    <div>
+                        <h3>Visualizar empleados</h3>
+                        <p>Seguí el progreso de tus empleados, su XP y su racha.</p>
+                    </div>
+                    <a class="boton" href='@Url.Action("Index", "Empleados")'>Seguir</a>
+                </div>
+                <div class="caja fila">
+                    <div>
+                        <h3>Tu equipo y sus links</h3>
+                        <p>Mirá el árbol de rangos y compartí el link de cada uno.</p>
+                    </div>
+                    <a class="boton" href='@Url.Action("Index", "Equipo")'>Ver equipo</a>
+                </div>
             </div>
-
-            <section class="tarjeta">
-                @if (ViewBag.EsDueno)
-                {
-                    <p class="subtitulo">✓ Tu plan</p>
-                    <h2>Plan Empresarial Activo</h2>
-                    <p>Contás con el plan empresarial financiado por @ViewBag.MesesRestantes meses más.</p>
-                }
-                else
-                {
-                    <p class="subtitulo">👥 Tu equipo</p>
-                    <h2>@ViewBag.CantidadRangos rangos a tu cargo</h2>
-                }
-                <p>@ViewBag.CantidadCursos cursos confirmados en tus rangos.</p>
-            </section>
-        </div>
+        </section>
 
         @if (ViewBag.Quietos.Count > 0)
         {
@@ -159,47 +233,6 @@
                 <p class="ayuda">Un mensaje tuyo ayuda más que cualquier aviso: las lecciones son de 5 minutos y les ahorran trabajo.</p>
             </section>
         }
-
-        <section class="tarjeta">
-            <h2>Herramientas principales</h2>
-            <div class="grilla-2">
-                <div class="caja fila">
-                    <div>
-                        <h3>Tu equipo y sus links</h3>
-                        <p class="ayuda">Mirá el árbol de rangos y compartí el link de cada uno.</p>
-                    </div>
-                    <a class="boton" href='@Url.Action("Index", "Equipo")'>Ver equipo</a>
-                </div>
-                <div class="caja fila">
-                    <div>
-                        <h3>Crear cursos con IA</h3>
-                        <p class="ayuda">Un curso por rango, con la IA nivelando a cada persona.</p>
-                    </div>
-                    <a class="boton" href='@Url.Action("Index", "Curso")'>Generar</a>
-                </div>
-                <div class="caja fila">
-                    <div>
-                        <h3>Visualizar empleados</h3>
-                        <p class="ayuda">Seguí el progreso, el XP y la racha de cada persona.</p>
-                    </div>
-                    <a class="boton" href='@Url.Action("Index", "Empleados")'>Seguir</a>
-                </div>
-                <div class="caja fila">
-                    <div>
-                        <h3>Calcular ahorro y rendimiento</h3>
-                        <p class="ayuda">Calculá horas ahorradas y retorno en capacitación.</p>
-                    </div>
-                    <a class="boton" href='@Url.Action("Index", "Calculadora")'>Calcular</a>
-                </div>
-                <div class="caja fila">
-                    <div>
-                        <h3>Explorar nuevos cursos</h3>
-                        <p class="ayuda">Encontrá cursos que armaron otros equipos.</p>
-                    </div>
-                    <a class="boton" href='@Url.Action("Buscar", "CursoPublico")'>Buscar</a>
-                </div>
-            </div>
-        </section>
 
         <section class="tarjeta">
             <h2>Actividades recientes</h2>

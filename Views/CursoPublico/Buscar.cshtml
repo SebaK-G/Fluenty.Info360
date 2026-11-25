@@ -34,45 +34,32 @@
 
 <main class="pagina">
 
-    <section class="titulo-pagina">
-        <p class="subtitulo">🌎 Cursos públicos</p>
-        <h1>Explorá cursos</h1>
-        <p>Cursos que armaron otros equipos y dejaron abiertos para todos. Al inscribirte, la IA arma cada lección con ejemplos de tu trabajo.</p>
+    <section class="titulo-pagina centrado">
+        <h1>Buscador</h1>
+        <p>Encontrá cursos que armaron otros equipos y dejaron abiertos para todos. Al inscribirte, la IA arma cada lección con ejemplos de tu trabajo.</p>
     </section>
 
-    <!-- ===== Buscador ===== -->
-    <form class="tarjeta" method="get" action='@Url.Action("Buscar", "CursoPublico")'>
-        <div class="grilla-4">
-            <div class="campo">
-                <p class="pregunta">Buscar</p>
-                <input type="text" id="Texto" name="Texto" value="@ViewBag.Texto" placeholder="Ej.: Excel, mails, atención al cliente" />
-            </div>
-            <div class="campo">
-                <p class="pregunta">Nivel</p>
-                <select id="Nivel" name="Nivel">
-                    <option value="0">Todos</option>
-                    <option value="1" selected="@(ViewBag.Nivel == 1)">Principiante</option>
-                    <option value="3" selected="@(ViewBag.Nivel == 3)">Intermedio</option>
-                    <option value="4" selected="@(ViewBag.Nivel == 4)">Avanzado</option>
-                </select>
-            </div>
-            <div class="campo">
-                <p class="pregunta">Ordenar</p>
-                <select id="Orden" name="Orden">
-                    <option value="recientes">Más nuevos</option>
-                    <option value="populares" selected="@(ViewBag.Orden == "populares")">Más elegidos</option>
-                </select>
-            </div>
-            <div class="campo">
-                <p class="pregunta">&nbsp;</p>
-                <input type="hidden" name="Categoria" value="@ViewBag.Categoria" />
-                <input class="boton" type="submit" value="Buscar" />
-                <a class="boton" href='@Url.Action("Index", "Asistente")'>Asistente IA</a>
-            </div>
+    <!-- ===== Buscador: una sola barra con el texto, los filtros y los botones ===== -->
+    <form method="get" action='@Url.Action("Buscar", "CursoPublico")'>
+        <div class="barra-busqueda">
+            <input type="search" id="Texto" name="Texto" value="@ViewBag.Texto" placeholder="🔍 Buscar cursos, habilidades o herramientas IA..." />
+            <select id="Nivel" name="Nivel">
+                <option value="0">Todos los niveles</option>
+                <option value="1" selected="@(ViewBag.Nivel == 1)">Principiante</option>
+                <option value="3" selected="@(ViewBag.Nivel == 3)">Intermedio</option>
+                <option value="4" selected="@(ViewBag.Nivel == 4)">Avanzado</option>
+            </select>
+            <select id="Orden" name="Orden">
+                <option value="recientes">Más nuevos</option>
+                <option value="populares" selected="@(ViewBag.Orden == "populares")">Más elegidos</option>
+            </select>
+            <input type="hidden" name="Categoria" value="@ViewBag.Categoria" />
+            <input class="boton" type="submit" value="Buscar" />
+            <a class="boton" href='@Url.Action("Index", "Asistente")'>Asistente IA</a>
         </div>
         <!-- Categorías: cada botón vuelve a buscar con esa categoría -->
-        <div class="separado">
-            <a class="boton-chico @(ViewBag.Categoria == "" ? "boton-chico-activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>Todas</a>
+        <div class="filtros separado">
+            <a class="boton-chico @(ViewBag.Categoria == "" ? "boton-chico-activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>Todos</a>
             @foreach (string categoria in ViewBag.Categorias)
             {
                 <a class="boton-chico @(ViewBag.Categoria == categoria ? "boton-chico-activo" : "")" href='@Url.Action("Buscar", "CursoPublico", new { Texto = ViewBag.Texto, Categoria = categoria, Nivel = ViewBag.Nivel, Orden = ViewBag.Orden })'>@categoria</a>
@@ -81,7 +68,10 @@
     </form>
 
     <!-- ===== Resultados ===== -->
-    <p class="titulo-pagina">@ViewBag.Cursos.Count @(ViewBag.Cursos.Count == 1 ? "curso encontrado" : "cursos encontrados")</p>
+    <div class="titulo-pagina">
+        <h2>Resultados</h2>
+        <p>@ViewBag.Cursos.Count @(ViewBag.Cursos.Count == 1 ? "curso encontrado" : "cursos encontrados")</p>
+    </div>
 
     @if (ViewBag.Cursos.Count == 0)
     {
@@ -99,23 +89,16 @@
             @foreach (CursoPublico curso in ViewBag.Cursos)
             {
                 <a class="tarjeta tarjeta-curso" href='@Url.Action("Ver", "CursoPublico", new { IdCurso = curso.IdCurso })'>
-                    <div>
-                        @if (curso.Categoria != "")
-                        {
-                            <p class="etiqueta etiqueta-azul">@curso.Categoria</p>
-                        }
-                        <p class="etiqueta">@curso.NombreNivel</p>
-                    </div>
+                    <p class="icono-curso">🤖</p>
                     <h3>@curso.Titulo</h3>
                     <p>@curso.DescripcionCorta</p>
-                    <p class="ayuda">
-                        ⏱ @(curso.DuracionHoras > 0 ? curso.DuracionHoras + " h" : "20 lecciones") ·
-                        👥 @curso.Inscriptos @(curso.Inscriptos == 1 ? "persona" : "personas")
-                    </p>
-                    @if (curso.YaLoTiene)
-                    {
-                        <p class="etiqueta etiqueta-verde">✓ Ya lo tenés</p>
-                    }
+                    <div class="fila-siempre separado">
+                        <div>
+                            <p class="etiqueta etiqueta-gris">@curso.NombreNivel</p>
+                            <p class="etiqueta etiqueta-gris">@(curso.DuracionHoras > 0 ? curso.DuracionHoras + " Horas" : "20 lecciones")</p>
+                        </div>
+                        <p class="boton boton-acceder">@(curso.YaLoTiene ? "✓ Ya lo tenés" : "Acceder")</p>
+                    </div>
                 </a>
             }
         </div>

@@ -37,8 +37,9 @@ select {
 	font-family: Arial, sans-serif;
 	font-size: 15px;
 	color: #172333;
-	background-color: #f8fafc;
-	border: 1px solid #c4d0de;
+	background-color: #f1f3f6;
+	border: 1px solid #e1e6ed;
+	border-bottom: 2px solid #d3dae4;
 	border-radius: 10px;
 }
 
@@ -195,6 +196,30 @@ input[type="checkbox"] {
 	padding: 14px 18px;
 }
 
+/* Las herramientas del Home: cajas más grandes con una línea abajo para que parezcan levantadas */
+.herramientas .caja {
+	padding: 24px 26px;
+	border-bottom: 3px solid #dbe2ea;
+}
+
+.herramientas h3 {
+	font-size: 19px;
+	margin-bottom: 4px;
+}
+
+/* El link "Ver todas →" de arriba a la derecha */
+.ver-todas {
+	font-size: 13px;
+	color: #0668c6;
+	text-decoration: none;
+}
+
+/* El curso del Home: a la izquierda el curso y a la derecha el XP y la racha */
+.curso-asignado {
+	display: grid;
+	gap: 18px;
+}
+
 /* Tarjeta azul para lo más importante */
 .tarjeta-azul {
 	background: linear-gradient(to bottom right, #0b1ca6, #075b99);
@@ -280,6 +305,12 @@ input[type="checkbox"] {
 	background-color: #d90000;
 	border: 2px solid #d90000;
 	color: #ffffff;
+}
+
+/* Botón azul muy oscuro (el de "Seguir aprendiendo" sobre la tarjeta azul) */
+.boton-oscuro {
+	background-color: #0d1257;
+	border-color: #0d1257;
 }
 
 .boton-verde {
@@ -534,19 +565,61 @@ input[type="checkbox"] {
 .encabezado-paso {
 	display: grid;
 	grid-template-columns: 44px 1fr;
+	align-items: center;
 	gap: 14px;
-	padding-bottom: 14px;
 	margin-bottom: 18px;
-	border-bottom: 1px solid #e3e9f1;
+}
+
+/* El logo grande de la presentación de "Creá tu curso con IA" */
+.logo-presentacion {
+	width: 90px;
+	height: 90px;
+	margin: 26px 0;
+}
+
+/* "Preguntas 2 de 3" en azul arriba del título del paso */
+.paso-de {
+	color: #0b1ca6;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+/* Abajo de cada paso: el botón en el medio y los números de página a la derecha */
+.pie-paso {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: center;
+	gap: 10px;
+	margin-top: 22px;
+}
+
+.paginador {
+	text-align: right;
+}
+
+.numero-pagina,
+.flecha-pagina {
+	background-color: #ffffff;
+	color: #5b6b80;
+	border: none;
+	border-radius: 6px;
+	padding: 5px 8px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.numero-pagina-activo {
+	background-color: #0b1ca6;
+	color: #ffffff;
 }
 
 .numero-paso {
 	width: 44px;
 	height: 44px;
 	border-radius: 10px;
-	background: linear-gradient(to bottom right, #0b1ca6, #2f8cff);
+	background-color: #0b1ca6;
 	color: #ffffff;
-	font-size: 20px;
+	font-size: 24px;
 	font-weight: bold;
 	/* flex para centrar el número */
 	display: flex;
@@ -559,9 +632,6 @@ input[type="checkbox"] {
 
 /* Un número grande con su texto abajo */
 .dato {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	background-color: #eef4fa;
 	border-radius: 12px;
 	padding: 12px 16px;
@@ -581,6 +651,43 @@ input[type="checkbox"] {
 
 .tarjeta-azul .dato {
 	background-color: #ffffff;
+	border-radius: 16px;
+	padding: 20px 12px;
+}
+
+/* Cuadraditos chicos del curso (XP, racha y completado), uno al lado del otro */
+.datos-chicos {
+	display: grid;
+	grid-template-columns: 100px 100px 100px;
+	gap: 10px;
+}
+
+.datos-chicos .dato {
+	border: 1px solid #dde3ea;
+	padding: 18px 6px;
+}
+
+.datos-chicos .dato h3 {
+	font-size: 20px;
+}
+
+/* El ícono arriba del número (⚡ o 🔥) */
+.dato .dato-icono {
+	font-size: 30px;
+}
+
+.tarjeta-azul .dato h3 {
+	font-size: 34px;
+	color: #0d1726;
+}
+
+/* Los números chicos del Home del jefe: el número arriba y el texto abajo, a la izquierda */
+.numero-info h3 {
+	font-size: 20px;
+}
+
+.numero-info p {
+	margin-left: 24px;
 }
 
 .numero-grande {
@@ -679,6 +786,171 @@ input[type="checkbox"] {
 	to {
 		opacity: 1;
 	}
+}
+
+
+/* ===== ACCESO: una tarjeta con el formulario y el panel oscuro ===== */
+
+.acceso {
+	display: grid;
+	gap: 16px;
+	padding: 10px;
+}
+
+.acceso-formulario {
+	padding: 20px;
+}
+
+/* El logo grande arriba del formulario */
+.logo-grande {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	font-size: 32px;
+	font-weight: bold;
+	color: #172333;
+}
+
+.logo-grande img {
+	width: 56px;
+	height: 56px;
+}
+
+/* "Iniciar sesión" con una línea azul abajo, como una pestaña */
+.pestana {
+	display: inline-block;
+	font-size: 20px;
+	padding-bottom: 6px;
+	border-bottom: 3px solid #0b1ca6;
+	margin: 18px 0 26px 0;
+}
+
+/* El link chiquito a la derecha, abajo de la contraseña */
+.olvide {
+	display: block;
+	text-align: right;
+	font-size: 12px;
+	color: #0668c6;
+	margin-top: 6px;
+}
+
+/* El panel de la derecha: degradado radial, más claro en el medio */
+.acceso-panel {
+	background: radial-gradient(circle, #0b4f9c, #0d1b3d);
+	color: #ffffff;
+	border-radius: 16px;
+	padding: 30px 26px;
+}
+
+.tarjeta .acceso-panel h2 {
+	color: #ffffff;
+	font-size: 28px;
+	margin: 18px 0 22px 0;
+}
+
+.acceso-bienvenida {
+	font-size: 24px;
+}
+
+/* Cada número del panel: el ícono a la izquierda y el texto a la derecha */
+.estadistica {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	background-color: #ffffff;
+	color: #172333;
+	border-radius: 12px;
+	padding: 10px 16px;
+}
+
+.tarjeta .estadistica h3 {
+	font-size: 26px;
+	color: #0d1726;
+}
+
+.estadistica p {
+	font-size: 13px;
+}
+
+.estadistica .icono {
+	width: 36px;
+	text-align: center;
+	font-size: 28px;
+	color: #0b1ca6;
+}
+
+
+/* ===== EMPLEADOS: la lista con el estado de cada uno ===== */
+
+/* Barra gris con el buscador y su botón */
+.barra-gris {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 10px;
+	align-items: center;
+	background-color: #ebedf0;
+	border-radius: 10px;
+	padding: 6px;
+	margin-bottom: 12px;
+}
+
+.barra-gris input {
+	border: none;
+	background-color: #ebedf0;
+}
+
+/* Cada renglón: el nombre, el estado y el botón (tres columnas) */
+.renglon-empleado {
+	display: grid;
+	grid-template-columns: 1fr auto 100px;
+	gap: 12px;
+	align-items: center;
+	background-color: #ebedf0;
+	border-radius: 10px;
+	padding: 12px 18px;
+	margin-bottom: 8px;
+}
+
+/* La fila de títulos no tiene fondo */
+.encabezado-lista {
+	background-color: #ffffff;
+	padding: 0 18px;
+	margin-bottom: 4px;
+	color: #172333;
+}
+
+.nombre-empleado {
+	font-size: 17px;
+	color: #172333;
+}
+
+/* El cartel redondo del estado de cada empleado */
+.estado {
+	border-radius: 20px;
+	padding: 6px 14px;
+	font-size: 13px;
+	font-weight: bold;
+	color: #ffffff;
+}
+
+.estado-azul {
+	background-color: #0b1ca6;
+}
+
+.estado-celeste {
+	background-color: #1e8fe0;
+}
+
+.estado-rojo {
+	background-color: #d90000;
+}
+
+/* Botón chiquito (el "Ver perfil" de cada renglón) */
+.boton-chiquito {
+	font-size: 12px;
+	padding: 8px 10px;
+	text-align: center;
 }
 
 
@@ -825,6 +1097,69 @@ input[type="checkbox"] {
 }
 
 
+/* ===== BUSCADOR ===== */
+
+/* La barra del buscador: transparente sobre el fondo azul. En celular va todo uno abajo del otro */
+.barra-busqueda {
+	display: grid;
+	gap: 10px;
+	background-color: rgba(255, 255, 255, 0.15);
+	border-radius: 12px;
+	padding: 10px;
+}
+
+/* Las categorías sobre el fondo oscuro: grises transparentes y la elegida azul */
+.filtros .boton-chico {
+	background-color: rgba(255, 255, 255, 0.15);
+	border-color: rgba(255, 255, 255, 0.3);
+	color: #ffffff;
+}
+
+.filtros .boton-chico-activo {
+	background-color: #0b1ca6;
+	border-color: #0b1ca6;
+}
+
+/* El cuadradito con el ícono de cada curso */
+.icono-curso {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 54px;
+	height: 54px;
+	border-radius: 12px;
+	background: radial-gradient(circle, #2f8cff, #0d1b3d);
+	font-size: 28px;
+	margin-bottom: 12px;
+}
+
+.tarjeta-curso h3 {
+	font-size: 21px;
+	margin-bottom: 6px;
+}
+
+.etiqueta-gris {
+	background-color: #9aa4b5;
+	color: #ffffff;
+	font-size: 13px;
+	padding: 6px 12px;
+}
+
+/* El botón "Acceder" de cada tarjeta (es un p porque toda la tarjeta ya es un link) */
+.boton-acceder {
+	font-size: 13px;
+	padding: 8px 14px;
+}
+
+/* Siempre en fila, también en el celular */
+.fila-siempre {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+
 /* ===== DETALLE DE UN CURSO PÚBLICO ===== */
 
 /* Número adentro de un círculo */
@@ -844,8 +1179,103 @@ input[type="checkbox"] {
 	color: #44546a;
 }
 
+/* Arriba del detalle: Volver a la izquierda y el título en el medio (tres columnas) */
+.encabezado-detalle {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: center;
+	gap: 10px;
+}
+
+/* Lista con un círculo con tilde */
+.lista-check {
+	list-style-type: "☑  ";
+	padding-left: 24px;
+}
+
+.lista-check li {
+	margin-bottom: 6px;
+}
+
+/* Marco gris (como el del video en el Figma) con el temario adentro */
+.marco {
+	background-color: #9aa4b5;
+	border-radius: 12px;
+	padding: 6px;
+}
+
+.marco-adentro {
+	background-color: #0d1726;
+	color: #ffffff;
+	border-radius: 10px;
+	padding: 6px 18px 18px 18px;
+}
+
+.tarjeta .marco-adentro h3 {
+	color: #ffffff;
+}
+
+.marco-adentro .temario {
+	color: #c9d6e6;
+	margin-top: 6px;
+}
+
+.marco-pie {
+	text-align: center;
+	font-size: 12px;
+	color: #172333;
+	padding: 6px 0 2px 0;
+}
+
+/* Botón con las puntas bien redondas */
+.boton-redondo {
+	border-radius: 24px;
+	padding: 10px 24px;
+	font-size: 16px;
+}
+
 
 /* ===== ASISTENTE ===== */
+
+/* La tarjeta del asistente no tiene padding: cada lado pone el suyo */
+.asistente {
+	padding: 0;
+}
+
+.asistente-lista {
+	padding: 20px;
+}
+
+.asistente-chat {
+	padding: 20px;
+}
+
+/* Arriba del chat: "Fluenty.AI" con una línea abajo */
+.encabezado-chat {
+	border-bottom: 1px solid #dde3ea;
+	padding-bottom: 12px;
+}
+
+/* El botón gris de "Volver" */
+.boton-gris {
+	background-color: #d3d7de;
+	border-color: #9aa4b5;
+	color: #44546a;
+}
+
+/* Abajo: el + y la barra gris con el texto y Enviar */
+.barra-chat {
+	display: grid;
+	grid-template-columns: 40px 1fr auto;
+	gap: 10px;
+	align-items: center;
+}
+
+.boton-mas {
+	padding: 6px 0;
+	text-align: center;
+	font-size: 20px;
+}
 
 .item-chat {
 	display: block;
@@ -858,14 +1288,12 @@ input[type="checkbox"] {
 
 .item-chat:hover,
 .item-chat-activo {
-	background-color: #e8f1fc;
+	background-color: #eef0f3;
 }
 
 .mensajes {
 	padding: 14px 0;
 	margin: 14px 0;
-	border-top: 1px solid #e3e9f1;
-	border-bottom: 1px solid #e3e9f1;
 }
 
 /* Cada mensaje es una fila flex: los míos se van a la derecha */
@@ -881,7 +1309,7 @@ input[type="checkbox"] {
 }
 
 .burbuja {
-	background-color: #f1f5f9;
+	background-color: #d5d9e0;
 	border-radius: 4px 16px 16px 16px;
 	padding: 10px 14px;
 }
@@ -895,20 +1323,20 @@ input[type="checkbox"] {
 }
 
 .mensaje-mio .burbuja {
-	background-color: #0b1ca6;
-	color: #ffffff;
-	border-radius: 16px 4px 16px 16px;
+	border-radius: 14px;
 }
 
+/* El círculo con el logo de Fluenty al lado de cada respuesta de la IA */
 .avatar-ia {
-	width: 30px;
-	height: 30px;
+	width: 40px;
+	height: 40px;
 	border-radius: 50%;
-	background-color: #0b1ca6;
-	color: #ffffff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	border: 1px solid #9aa4b5;
+	background-color: #ffffff;
+	background-image: url("/Imagenes/LogoAffinity.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 75%;
 }
 
 
@@ -938,25 +1366,56 @@ input[type="checkbox"] {
 }
 
 /* Barra de arriba: X, progreso y números */
-.barra-leccion {
-	display: flex;
-	align-items: center;
-	gap: 12px;
+/* Arriba de la lección: el progreso y el título a la izquierda, los cuadraditos a la derecha */
+.cabecera-leccion {
+	display: grid;
+	gap: 18px;
 	color: #ffffff;
+	margin-bottom: 6px;
+}
+
+/* "Progreso de la lección" y "3 de 8" */
+.dato-leccion {
+	font-size: 12px;
 	font-weight: bold;
-	padding-bottom: 14px;
 }
 
-.barra-leccion .barra {
-	width: 100%;
-	height: 16px;
-	background-color: rgba(255, 255, 255, 0.15);
+/* La barra de progreso de la lección: verde sobre celeste */
+.barra-leccion {
+	background-color: #a9c4ef;
+	margin: 6px 0 14px 0;
 }
 
-.barra-leccion a {
-	color: #a9bad0;
-	font-size: 22px;
-	text-decoration: none;
+/* "UNIDAD 1 · LECCIÓN 1" chiquito en mayúscula */
+.unidad-leccion {
+	font-size: 12px;
+	font-weight: bold;
+	text-transform: uppercase;
+	color: #a9c4ef;
+	margin-bottom: 6px;
+}
+
+/* La barra de abajo: queda pegada al borde de abajo de la pantalla mientras bajás */
+.pie-leccion {
+	position: sticky;
+	bottom: 0;
+	z-index: 20;
+	display: grid;
+	grid-template-columns: 1fr 2fr 1fr;
+	align-items: center;
+	gap: 10px;
+	background-color: #1b2536;
+	color: #ffffff;
+	font-size: 13px;
+	padding: 14px 4%;
+	margin-top: 30px;
+}
+
+/* Botón blanco con letra azul (el "Atrás") */
+.boton-blanco {
+	background-color: #ffffff;
+	border-color: #ffffff;
+	color: #0b1ca6;
 }
 
 /* Una cita resaltada (comparación, pista, para qué sirve) */
@@ -1191,6 +1650,21 @@ input[type="checkbox"] {
 		width: 60%;
 	}
 
+	.barra-busqueda {
+		grid-template-columns: 4fr 1fr 1fr auto auto;
+		align-items: center;
+	}
+
+	.curso-asignado {
+		grid-template-columns: 3fr 1fr;
+		align-items: center;
+	}
+
+	.acceso {
+		grid-template-columns: 1fr 1fr;
+		padding: 10px;
+	}
+
 	.tarjeta {
 		padding: 22px 26px;
 	}
@@ -1261,12 +1735,30 @@ input[type="checkbox"] {
 		top: 20px;
 	}
 
+	/* La lección ocupa más ancho, como en el Figma */
+	.pagina-leccion {
+		width: 80%;
+	}
+
+	.cabecera-leccion {
+		grid-template-columns: 3fr 1fr;
+		align-items: center;
+	}
+
+	.pie-leccion {
+		padding: 14px 8%;
+	}
+
 	/* Lista de chats a la izquierda y el chat a la derecha */
 	.asistente {
 		display: grid;
 		grid-template-columns: 1fr 3fr;
-		gap: 18px;
-		align-items: start;
+		padding: 0;
+	}
+
+	/* La línea que separa el historial del chat */
+	.asistente-lista {
+		border-right: 1px solid #dde3ea;
 	}
 
 	.mensaje-mio {
@@ -1281,10 +1773,6 @@ input[type="checkbox"] {
 	.tabla .renglon {
 		display: grid;
 		grid-template-columns: 2fr 1fr 1fr 1fr 1fr 80px;
-	}
-
-	.pagina-leccion {
-		width: 720px;
 	}
 
 	.menu-landing {

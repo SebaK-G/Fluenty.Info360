@@ -35,16 +35,20 @@
 <main class="pagina">
 
     <section class="titulo-pagina">
-        <p class="subtitulo">📊 Calculadora de eficiencia</p>
-        <h1>¿Cuánto tiempo le ahorra la IA a tu equipo?</h1>
-        <p>Elegí una tarea, contanos cuánto tiempo le dedican y te mostramos las horas (y la plata) que se ahorran usándola bien.</p>
+        <h1>Calculadora de eficiencia</h1>
+        <p>Calculá la eficiencia de tus empleados completando este formulario. Averiguá lo mucho que puede mejorar tu equipo usando bien la IA.</p>
     </section>
 
-    <div class="grilla-2">
-
-        <!-- ===== Las 4 preguntas ===== -->
+        <!-- ===== Las 4 preguntas, en dos columnas ===== -->
         <form class="tarjeta" method="post" action='@Url.Action("Calcular", "Calculadora")' onsubmit="return validarCalculo()">
-            <h2>Tus datos</h2>
+            <div class="encabezado-paso">
+                <p class="numero-paso">1</p>
+                <div>
+                    <p class="paso-de">4 preguntas</p>
+                    <h2>Tus datos</h2>
+                </div>
+            </div>
+            <div class="grilla-2">
 
             <div class="campo">
                 <p class="pregunta">1. ¿Qué tarea querés calcular?</p>
@@ -82,15 +86,19 @@
                 <p class="ayuda">Lo que le cuesta a la empresa una hora de esa persona. Si lo dejás vacío, calculamos solo las horas.</p>
             </div>
 
+            </div>
+
             <!-- Los errores de la validación (los de calculadora.js y los que manda el servidor) -->
             <p class="error @(ViewBag.Error == "" ? "oculto" : "")" id="error-calculadora">@ViewBag.Error</p>
-            <input class="boton boton-grande separado" type="submit" value="Calcular ahorro" />
+            <div class="botones centrado separado">
+                <input class="boton boton-redondo" type="submit" value="Realizar cálculo" />
+            </div>
         </form>
 
         <!-- ===== El resultado ===== -->
         @if (ViewBag.Resultado != null)
         {
-            <section class="tarjeta tarjeta-azul fija">
+            <section class="tarjeta tarjeta-azul">
                 <p class="subtitulo">Resultado · @ViewBag.Resultado.NombreTarea</p>
                 <p class="numero-grande">@ViewBag.Resultado.HorasAhorradasMes.ToString("0.#")</p>
                 <p class="negrita">horas por mes</p>
@@ -116,14 +124,13 @@
         }
         else
         {
-            <section class="tarjeta tarjeta-azul fija">
+            <section class="tarjeta tarjeta-azul">
                 <p class="numero-grande">—</p>
                 <p class="negrita">horas por mes</p>
-                <p>Completá los datos y tocá Calcular ahorro. El resultado queda guardado abajo para comparar distintas tareas.</p>
+                <p>Completá los datos y tocá Realizar cálculo. El resultado queda guardado abajo para comparar distintas tareas.</p>
                 <p class="ayuda separado">Tu equipo: @ViewBag.Personas @(ViewBag.Personas == 1 ? "persona" : "personas"), @ViewBag.EnCurso con curso, @ViewBag.Avance% de avance promedio.</p>
             </section>
         }
-    </div>
 
     <!-- ===== Cálculos guardados ===== -->
     @if (ViewBag.Calculos.Count > 0)

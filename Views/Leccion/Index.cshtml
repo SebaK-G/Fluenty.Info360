@@ -1,8 +1,36 @@
 @using Fluenty.Info360.Models
 @{
     ViewData["Title"] = ViewBag.Leccion.Titulo;
-    // La lección ocupa toda la pantalla: sin el encabezado de la app
 }
+
+<!-- Encabezado: el mismo en todas las pantallas -->
+<header class="encabezado">
+    <a class="logo" href="/">
+        <img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" />
+        Fluenty
+    </a>
+    <nav class="menu">
+        <a href='@Url.Action("Index", "Home")'>Home</a>
+        @if (ViewBag.Menu.Gestiona)
+        {
+            <a href='@Url.Action("Index", "Curso")'>Cursos</a>
+            <a href='@Url.Action("Index", "Calculadora")'>Calculadora</a>
+            <a href='@Url.Action("Index", "Empleados")'>Empleados</a>
+        }
+        @if (ViewBag.Menu.CantidadCursos == 1)
+        {
+            <a href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Menu.IdCursoPropio })' class="activo">Mi curso</a>
+        }
+        else if (ViewBag.Menu.CantidadCursos > 1)
+        {
+            <a href='@Url.Action("Index", "Home")#mis-cursos' class="activo">Mis cursos</a>
+        }
+    </nav>
+    <div class="usuario">
+        <p>👤 @ViewBag.Menu.Nombre</p>
+        <a class="salir" href='@Url.Action("Salir", "Home")'>Salir</a>
+    </div>
+</header>
 
 <!-- Cartel de carga, arriba de todo para que quede pegado arriba de la pantalla (sticky). Mientras la IA responde -->
 <div id="carga" class="fondo-carga">
@@ -14,18 +42,24 @@
 
 <main class="pagina-leccion">
 
-    <!-- ===== Barra de arriba: salir, progreso, XP y pedidos a la IA que quedan hoy ===== -->
-    <header class="barra-leccion">
-        <a href='@Url.Action("Ver", "Curso", new { IdCurso = ViewBag.Leccion.IdCurso })' title="Salir de la lección">✕</a>
-        <div class="barra"><div id="relleno"></div></div>
-        <p>⚡&nbsp;@ViewBag.XP</p>
-        <p>🔥&nbsp;@ViewBag.Racha</p>
-        <p>🤖</p>
-        <p id="pedidos" title="Pedidos a la IA que te quedan hoy">@ViewBag.PedidosRestantes</p>
-    </header>
-
-    <p class="subtitulo">Unidad @ViewBag.Leccion.NumeroUnidad · @(ViewBag.EsExamen ? "Examen de la unidad" : "Lección " + ViewBag.Leccion.Numero)</p>
-    <h1>@ViewBag.Leccion.Titulo</h1>
+    <!-- ===== Arriba: el progreso y el título a la izquierda, y tres cuadraditos a la derecha ===== -->
+    <section class="cabecera-leccion">
+        <div>
+            <div class="fila-siempre">
+                <p class="dato-leccion">Progreso de la lección</p>
+                <p class="dato-leccion" id="numero-tarjeta"></p>
+            </div>
+            <div class="barra barra-leccion"><div id="relleno"></div></div>
+            <p class="unidad-leccion">Unidad @ViewBag.Leccion.NumeroUnidad · @(ViewBag.EsExamen ? "Examen de la unidad" : "Lección " + ViewBag.Leccion.Numero)</p>
+            <h1>@ViewBag.Leccion.Titulo</h1>
+            <p>@ViewBag.Leccion.TituloCurso</p>
+        </div>
+        <div class="datos-chicos">
+            <div class="dato"><h3>@ViewBag.XP</h3><p>XP</p></div>
+            <div class="dato"><h3>@ViewBag.Racha</h3><p>días de racha</p></div>
+            <div class="dato"><h3 id="pedidos">@ViewBag.PedidosRestantes</h3><p>pedidos a la IA</p></div>
+        </div>
+    </section>
 
     @if (ViewBag.EsExamen)
     {
@@ -170,14 +204,15 @@
         </section>
     }
 
-    <p class="titulo-pagina centrado separado" id="aviso-siguiente">Para seguir, primero resolvé esta tarjeta 🙂</p>
-
-    <!-- ===== Botones de abajo ===== -->
-    <div class="botones centrado">
-        <button type="button" id="atras" class="boton boton-borde" onclick="anterior()">Atrás</button>
-        <button type="button" id="siguiente" class="boton boton-verde" onclick="siguiente()">Continuar</button>
-    </div>
 </main>
+
+<!-- ===== Barra de abajo, pegada al borde de la pantalla (sticky): Atrás, el aviso y Continuar ===== -->
+<footer class="pie-leccion">
+    <div><button type="button" id="atras" class="boton boton-blanco" onclick="anterior()">Atrás</button></div>
+    <!-- El aviso va adentro de un div: así, aunque se esconda, la columna del medio sigue ocupando su lugar -->
+    <div class="centrado"><p id="aviso-siguiente">Para seguir, primero resolvé esta tarjeta 🙂</p></div>
+    <div class="paginador"><button type="button" id="siguiente" class="boton" onclick="siguiente()">Continuar</button></div>
+</footer>
 
 @section Scripts {
     <script src="~/js/leccion.js" asp-append-version="true"></script>

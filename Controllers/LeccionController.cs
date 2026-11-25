@@ -48,6 +48,7 @@ public class LeccionController : Controller
         ViewBag.XP = yo.XP;
         ViewBag.Racha = yo.Racha;
         ViewBag.PedidosRestantes = LogicaLeccion.TopePedidosDia() - bd.TraerPedidosIAHoy(idUsuario);
+        ViewBag.Menu = Menu.Armar(idUsuario, int.Parse(HttpContext.Session.GetString("IdRango")), HttpContext.Session.GetString("TipoUsuario") == "Empleador");
         ViewBag.Mensaje = "";
         if (Falta == 1)
         {
@@ -135,6 +136,7 @@ public class LeccionController : Controller
         ViewBag.Ofrecer = resultado.Ofrecer;
         ViewBag.XP = yo.XP;
         ViewBag.Racha = yo.Racha;
+        ViewBag.Menu = Menu.Armar(idUsuario, int.Parse(HttpContext.Session.GetString("IdRango")), HttpContext.Session.GetString("TipoUsuario") == "Empleador");
         return View("Completada");
     }
 

@@ -144,6 +144,8 @@ public class CursoController : Controller
             return RedirectToAction("Index", "Home");
         }
         ViewBag.Curso = camino.Curso;
+        // Cada objetivo viene en un renglón: se muestran uno abajo del otro
+        ViewBag.Objetivos = Funciones.Separar(camino.Curso.Objetivos, "\n");
         ViewBag.Asignacion = camino.Asignacion;
         ViewBag.ModoAlumno = camino.ModoAlumno;
         ViewBag.Subtitulo = camino.Subtitulo;

@@ -15,16 +15,8 @@
 <main class="pagina pagina-angosta">
 
     <section class="titulo-pagina">
-        <p class="subtitulo">Invitación de @ViewBag.Rango.NombreEmpresa</p>
-        <h1>Sumate como @ViewBag.Rango.Nombre</h1>
-        <p>No es un curso para volverte experto en IA: es para que tardes menos en lo que más te aburre de tu trabajo. Lecciones de 5 minutos, con ejemplos de lo que hacés vos.</p>
-
-        <!-- Los 3 pasos: cada uno lleva a su parte del formulario -->
-        <div class="separado">
-            <a class="boton-chico" href="#paso-1">1 · Tu cuenta</a>
-            <a class="boton-chico" href="#paso-2">2 · Tu trabajo</a>
-            <a class="boton-chico" href="#paso-3">3 · Vos y la IA</a>
-        </div>
+        <h1>Sumate al equipo como @ViewBag.Rango.Nombre</h1>
+        <p>No es un curso para volverte experto en IA: es para que tardes menos en lo que más te aburre de tu trabajo. Lecciones de 5 minutos, con ejemplos de lo que hacés vos. Te invita @ViewBag.Rango.NombreEmpresa.</p>
     </section>
 
     @if (ViewBag.Mensaje != "")
@@ -36,11 +28,11 @@
         <input type="hidden" name="Codigo" value="@ViewBag.Rango.Codigo" />
 
         <!-- ===================== PASO 1: TU CUENTA ===================== -->
-        <section class="tarjeta" id="paso-1">
+        <section class="tarjeta paso-formulario" id="paso-1">
             <div class="encabezado-paso">
                 <p class="numero-paso">1</p>
                 <div>
-                    <p class="ayuda">Paso 1 de 3</p>
+                    <p class="paso-de">Preguntas 1 de 3</p>
                     <h2>Tu cuenta</h2>
                 </div>
             </div>
@@ -71,14 +63,27 @@
                     <input type="password" id="Contrasena" name="Contrasena" maxlength="50" required placeholder="Creá una contraseña" />
                 </div>
             </div>
+
+            <!-- Abajo: el botón en el medio y los números de página a la derecha -->
+            <div class="pie-paso">
+                <div></div>
+                <div class="centrado"><button type="button" class="boton boton-redondo" onclick="irAPaso(2)">Siguiente</button></div>
+                <div class="paginador">
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(1)">‹</button>
+                    <button type="button" class="numero-pagina numero-pagina-activo" onclick="irAPaso(1)">1</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(2)">2</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(3)">3</button>
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(2)">›</button>
+                </div>
+            </div>
         </section>
 
         <!-- ===================== PASO 2: TU TRABAJO ===================== -->
-        <section class="tarjeta" id="paso-2">
+        <section class="tarjeta paso-formulario oculto" id="paso-2">
             <div class="encabezado-paso">
                 <p class="numero-paso">2</p>
                 <div>
-                    <p class="ayuda">Paso 2 de 3</p>
+                    <p class="paso-de">Preguntas 2 de 3</p>
                     <h2>Tu trabajo</h2>
                     <p class="ayuda">De acá salen los ejemplos de tu curso. Casi todo es tocar opciones.</p>
                 </div>
@@ -146,14 +151,27 @@
                     <div class="boton-chico eleccion"><input onchange="pintarElecciones()" type="radio" name="DatosClientes" value="No" /> No</div>
                 </div>
             </div>
+
+            <!-- Abajo: el botón en el medio y los números de página a la derecha -->
+            <div class="pie-paso">
+                <div></div>
+                <div class="centrado"><button type="button" class="boton boton-redondo" onclick="irAPaso(3)">Siguiente</button></div>
+                <div class="paginador">
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(1)">‹</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(1)">1</button>
+                    <button type="button" class="numero-pagina numero-pagina-activo" onclick="irAPaso(2)">2</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(3)">3</button>
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(3)">›</button>
+                </div>
+            </div>
         </section>
 
         <!-- ===================== PASO 3: VOS Y LA IA ===================== -->
-        <section class="tarjeta" id="paso-3">
+        <section class="tarjeta paso-formulario oculto" id="paso-3">
             <div class="encabezado-paso">
                 <p class="numero-paso">3</p>
                 <div>
-                    <p class="ayuda">Paso 3 de 3</p>
+                    <p class="paso-de">Preguntas 3 de 3</p>
                     <h2>Vos y la IA</h2>
                     <p class="ayuda">No hay respuestas malas: así sabemos desde dónde arrancar y cómo explicarte.</p>
                 </div>
@@ -213,13 +231,22 @@
                 <p class="ayuda">Lo usamos para explicarte con comparaciones que te resulten familiares.</p>
                 <input type="text" id="Hobbies" name="Hobbies" maxlength="200" placeholder="Ej.: cocinar, el fútbol, los videojuegos" />
             </div>
+
+            <!-- Abajo: el botón en el medio y los números de página a la derecha -->
+            <div class="pie-paso">
+                <div></div>
+                <div class="centrado"><input class="boton boton-redondo" type="submit" value="Enviar datos" onclick="revisarPasos()" /></div>
+                <div class="paginador">
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(2)">‹</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(1)">1</button>
+                    <button type="button" class="numero-pagina" onclick="irAPaso(2)">2</button>
+                    <button type="button" class="numero-pagina numero-pagina-activo" onclick="irAPaso(3)">3</button>
+                    <button type="button" class="flecha-pagina" onclick="irAPaso(3)">›</button>
+                </div>
+            </div>
         </section>
 
         <p class="aviso">🔒 Tus respuestas solo las usa la IA para armar tu curso. Tu jefe no las ve: solo ve si vas avanzando.</p>
 
-        <section class="titulo-pagina">
-            <input class="boton boton-grande" type="submit" value="Unirme al equipo" />
-            <p class="ayuda centrado">Al unirte, tu empresa va a poder armarte tu curso.</p>
-        </section>
     </form>
 </main>

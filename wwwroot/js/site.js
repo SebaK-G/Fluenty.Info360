@@ -42,3 +42,38 @@ function pintarElecciones() {
 function desactivarBoton(idBoton) {
     document.getElementById(idBoton).disabled = true;
 }
+
+// Formularios de 3 pasos: muestra solo el paso que se eligió y esconde los otros
+function irAPaso(numero) {
+    let pasos = document.getElementsByClassName("paso-formulario");
+    for (let i = 0; i < pasos.length; i++) {
+        pasos[i].className = "tarjeta paso-formulario oculto";
+    }
+    document.getElementById("paso-" + numero).className = "tarjeta paso-formulario";
+    window.scrollTo(0, 0);
+}
+
+// Al mandar: si falta algo, se muestran los 3 pasos para que el navegador marque qué falta
+function revisarPasos() {
+    let pasos = document.getElementsByClassName("paso-formulario");
+    let formulario = pasos[0].parentElement;
+    if (!formulario.checkValidity()) {
+        for (let i = 0; i < pasos.length; i++) {
+            pasos[i].className = "tarjeta paso-formulario";
+        }
+    }
+}
+
+// Empleados: muestra solo los renglones cuyo nombre tiene lo que se escribió en el buscador
+function buscarEmpleado() {
+    let texto = document.getElementById("buscar-empleado").value.toLowerCase();
+    let empleados = document.getElementsByClassName("empleado");
+    for (let i = 0; i < empleados.length; i++) {
+        let nombre = empleados[i].innerText.toLowerCase();
+        if (nombre.includes(texto)) {
+            empleados[i].style.display = "grid";
+        } else {
+            empleados[i].style.display = "none";
+        }
+    }
+}

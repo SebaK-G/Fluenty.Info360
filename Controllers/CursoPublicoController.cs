@@ -63,6 +63,8 @@ public class CursoPublicoController : Controller
         ViewBag.Unidades = LogicaCursoPublico.ArmarTemario(IdCurso);
         // Las herramientas se guardan juntas ("ChatGPT · Excel · Gmail"): se separan para mostrarlas como chips
         ViewBag.Herramientas = Funciones.Separar(curso.Herramientas, "·");
+        // Cada objetivo viene en un renglón: se muestran como lista
+        ViewBag.Objetivos = Funciones.Separar(curso.Objetivos, "\n");
         ViewBag.Inscriptos = bd.ContarInscriptos(IdCurso);
         ViewBag.YaInscripto = bd.EstaInscripto(IdCurso, idUsuario);
         // Para armar las lecciones a su medida, la IA necesita el formulario de la persona

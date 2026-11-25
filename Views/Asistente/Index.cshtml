@@ -34,17 +34,13 @@
 
 <main class="pagina">
 
-    <section class="titulo-pagina">
-        <p class="subtitulo">✦ Asistente de IA</p>
-        <h1>Preguntale a la IA</h1>
-        <p>Conoce tus tareas y tus cursos, así que te responde con ejemplos de tu trabajo.</p>
-    </section>
-
-    <div class="asistente">
+    <!-- Una sola tarjeta blanca: a la izquierda el historial y a la derecha el chat -->
+    <div class="tarjeta asistente">
 
         <!-- ===== Izquierda: los chats de la persona ===== -->
-        <section class="tarjeta">
-            <a class="boton boton-grande" href='@Url.Action("Index", "Asistente", new { IdChat = 0 })'>+ Nuevo chat</a>
+        <section class="asistente-lista">
+            <a class="boton boton-gris" href='@Url.Action("Index", "Home")'>← Volver</a>
+            <h2 class="separado">Historial de chats</h2>
             @if (ViewBag.Chats.Count == 0)
             {
                 <p class="ayuda separado" id="sin-chats">Tus conversaciones van a aparecer acá.</p>
@@ -62,9 +58,13 @@
         </section>
 
         <!-- ===== Derecha: el chat abierto ===== -->
-        <section class="tarjeta">
-            <div class="fila">
-                <h2 id="titulo-chat">@(ViewBag.Chat == null ? "Nuevo chat" : ViewBag.Chat.Titulo)</h2>
+        <section class="asistente-chat">
+            <div class="fila encabezado-chat">
+                <div>
+                    <h2>Fluenty.AI</h2>
+                    <p class="ayuda">Tu copiloto de Fluenty para tu aprendizaje</p>
+                    <p class="negrita" id="titulo-chat">@(ViewBag.Chat == null ? "Nuevo chat" : ViewBag.Chat.Titulo)</p>
+                </div>
                 <!-- En un chat nuevo no se ve: asistente.js lo muestra cuando se crea el chat -->
                 <form method="post" action='@Url.Action("Borrar", "Asistente")' id="form-borrar" class="@(ViewBag.IdChat == 0 ? "oculto" : "")" onsubmit="return confirmarBorrado()">
                     <input type="hidden" name="IdChat" id="IdChatBorrar" value="@ViewBag.IdChat" />
@@ -95,7 +95,7 @@
                         if (mensaje.Rol == "IA")
                         {
                             <div class="mensaje mensaje-ia">
-                                <div class="avatar-ia">✦</div>
+                                <div class="avatar-ia"></div>
                                 <div class="burbuja">
                                     <!-- Cada renglón del mensaje es un párrafo (así se respetan los saltos de línea) -->
                                     @foreach (string parrafo in mensaje.Parrafos)
@@ -124,7 +124,7 @@
                     <div class="burbuja"><p id="texto-mi-pregunta"></p></div>
                 </div>
                 <div class="mensaje mensaje-ia oculto" id="escribiendo">
-                    <div class="avatar-ia">✦</div>
+                    <div class="avatar-ia"></div>
                     <div class="burbuja"><div class="puntitos"><div></div><div class="puntito-2"></div><div class="puntito-3"></div></div></div>
                 </div>
             </div>
@@ -132,9 +132,11 @@
             <p class="error oculto" id="error-chat"></p>
 
             <!-- La pregunta se manda con fetch (asistente.js), sin recargar la página -->
-            <div class="input-boton">
+            <!-- El + abre un chat nuevo; la barra gris tiene el texto y el botón Enviar -->
+            <div class="barra-chat">
+                <a class="boton boton-mas" href='@Url.Action("Index", "Asistente", new { IdChat = 0 })' title="Nuevo chat">+</a>
                 <input type="hidden" id="IdChat" value="@ViewBag.IdChat" />
-                <input type="text" id="texto" aria-label="Tu pregunta" maxlength="2000" placeholder="Escribí tu pregunta..." onkeydown="teclaEnter(event)" />
+                <input type="text" id="texto" aria-label="Tu pregunta" maxlength="2000" placeholder="Escribí tus dudas sobre la IA y la plataforma..." onkeydown="teclaEnter(event)" />
                 <input class="boton" id="boton-enviar" type="button" value="Enviar" onclick="enviar()" />
             </div>
             <div class="en-linea ayuda separado">

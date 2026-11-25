@@ -11,34 +11,47 @@
 </header>
 
 <main class="pagina pagina-angosta">
-    <!-- Dos tarjetas: el formulario y el panel azul de bienvenida -->
-    <div class="grilla-2">
+    <!-- Una sola tarjeta blanca: a la izquierda el formulario y a la derecha el panel oscuro -->
+    <section class="tarjeta acceso">
 
-        <section class="tarjeta">
-            <h1>Iniciar sesión</h1>
-            <p class="ayuda">Entrá con el email y la contraseña de tu cuenta.</p>
-            <form class="separado" asp-action="Login" asp-controller="Home" method="post">
+        <div class="acceso-formulario">
+            <div class="centrado">
+                <p class="logo-grande"><img src="~/Imagenes/LogoAffinity.png" alt="Logo de Fluenty" /> Fluenty</p>
+                <h2 class="pestana">Iniciar sesión</h2>
+            </div>
+            <form asp-action="Login" asp-controller="Home" method="post">
                 <div class="campo">
-                    <p class="pregunta">Email</p>
-                    <input type="email" id="EmailLogin" name="Email" placeholder="Ingresá tu correo electrónico" required />
+                    <p class="pregunta">Usuario o correo electrónico</p>
+                    <input type="email" id="EmailLogin" name="Email" placeholder="✉ Ingresá tu correo electrónico" required />
                 </div>
                 <div class="campo">
                     <p class="pregunta">Contraseña</p>
                     <input type="password" id="ContrasenaLogin" name="Contrasena" placeholder="Ingresá la contraseña" required />
+                    <a class="olvide" href="mailto:contacto@fluenty.com">¿Olvidaste tu contraseña?</a>
                 </div>
                 <p class="error">@ViewBag.Mensaje</p>
-                <input class="boton boton-grande separado" type="submit" value="Acceder a Fluenty" />
+                <input class="boton boton-grande" type="submit" value="Acceder a Fluenty" />
             </form>
-        </section>
+        </div>
 
-        <section class="tarjeta tarjeta-azul">
-            <h2>Bienvenido a Fluenty</h2>
-            <p>Donde todos se pueden capacitar para usar la Inteligencia Artificial.</p>
-            <div class="columna separado">
-                <div class="dato"><h3>+200</h3><p>Cursos creados</p></div>
-                <div class="dato"><h3>+1.234.567</h3><p>Empleados capacitados</p></div>
-                <div class="dato"><h3>2.314 días</h3><p>de tiempo ahorrado para las empresas</p></div>
+        <div class="acceso-panel">
+            <p class="acceso-bienvenida">Bienvenido a Fluenty</p>
+            <h2>Donde todos se pueden capacitar para usar la Inteligencia Artificial.</h2>
+            <div class="columna">
+                <div class="estadistica">
+                    <p class="icono">☑</p>
+                    <div><h3>+200</h3><p>Cursos creados</p></div>
+                </div>
+                <div class="estadistica">
+                    <p class="icono">👤</p>
+                    <div><h3>+1.234.567</h3><p>Empleados capacitados</p></div>
+                </div>
+                <div class="estadistica">
+                    <p class="icono">📅</p>
+                    <div><h3>2.314 días</h3><p>de tiempo ahorrado para las empresas</p></div>
+                </div>
             </div>
-        </section>
-    </div>
+        </div>
+
+    </section>
 </main>

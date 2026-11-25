@@ -34,41 +34,51 @@
 
 <main class="pagina">
 
-    <section class="titulo-pagina">
-        <p class="subtitulo">Tu gente</p>
-        <h1>Empleados</h1>
-        <p>Cómo va cada persona de tus rangos con su curso.</p>
-    </section>
-
     <section class="tarjeta">
+        <h1 class="centrado">Empleados</h1>
+
         @if (ViewBag.Equipo.Count == 0)
         {
-            <p>Todavía no hay nadie en tus rangos. Compartí el link de cada rango desde Equipo.</p>
+            <p class="separado">Todavía no hay nadie en tus rangos. Compartí el link de cada rango desde Equipo.</p>
             <div class="botones">
                 <a class="boton" href='@Url.Action("Index", "Equipo")'>Ir a Equipo</a>
             </div>
         }
         else
         {
+            <!-- Buscador: site.js esconde los renglones que no coinciden con lo que se escribe -->
+            <div class="barra-gris separado">
+                <input type="search" id="buscar-empleado" placeholder="🔍 Buscar empleado" oninput="buscarEmpleado()" />
+                <button type="button" class="boton" onclick="buscarEmpleado()">Buscar</button>
+            </div>
+
+            <div class="renglon-empleado encabezado-lista">
+                <p>Empleados:</p>
+                <p>Estado:</p>
+                <p>Más info:</p>
+            </div>
+
             @foreach (EmpleadoCurso empleado in ViewBag.Equipo)
             {
-                <div class="renglon">
+                <div class="renglon-empleado empleado">
                     <div>
-                        <p class="negrita">@empleado.Nombre @empleado.Apellido</p>
+                        <p class="nombre-empleado">@empleado.Nombre @empleado.Apellido</p>
                         <p class="ayuda">@empleado.NombreRango · @empleado.Puesto</p>
                     </div>
                     @if (empleado.EstadoCurso == "Confirmado")
                     {
-                        <p class="etiqueta etiqueta-azul">@empleado.Progreso% · ⚡ @empleado.XP XP · 🔥 @empleado.Racha</p>
-                        <a class="boton" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso, IdUsuario = empleado.IdUsuario })'>Ver su camino</a>
+                        <p class="estado estado-azul">En capacitación · @empleado.Progreso%</p>
+                        <a class="boton boton-chiquito" href='@Url.Action("Ver", "Curso", new { IdCurso = empleado.IdCurso, IdUsuario = empleado.IdUsuario })'>Ver perfil</a>
                     }
                     else if (empleado.TieneFormulario)
                     {
-                        <p class="etiqueta etiqueta-naranja">Esperando su curso</p>
+                        <p class="estado estado-celeste">Esperando su curso</p>
+                        <p class="boton boton-chiquito boton-apagado">Ver perfil</p>
                     }
                     else
                     {
-                        <p class="etiqueta">Sin formulario</p>
+                        <p class="estado estado-rojo">Sin formulario</p>
+                        <p class="boton boton-chiquito boton-apagado">Ver perfil</p>
                     }
                 </div>
             }

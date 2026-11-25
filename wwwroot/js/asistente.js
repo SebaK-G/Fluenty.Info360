@@ -78,7 +78,7 @@ function mostrarRespuesta(data, texto) {
     }
 
     if (data.ok) {
-        let html = '<div class="mensaje mensaje-ia"><div class="avatar-ia">✦</div><div class="burbuja">';
+        let html = '<div class="mensaje mensaje-ia"><div class="avatar-ia"></div><div class="burbuja">';
         data.respuesta.forEach(parrafo => {
             html = html + "<p>" + parrafo + "</p>";
         });
