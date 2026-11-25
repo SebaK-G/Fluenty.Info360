@@ -61,7 +61,11 @@ Los cursos se hacen en **lecciones cortas estilo Duolingo**, con tarjetas, pregu
 4. La conexión está en `Models/BD.cs` y usa `Server=localhost` con autenticación de Windows. Si tu SQL Server tiene otro nombre, cambiá `localhost` por el tuyo.
 5. Cargar la clave de la IA (Groq) en User Secrets, desde la carpeta del proyecto:
    ```
-   dotnet user-secrets set "Groq:ApiKey" "TU_CLAVE_DE_GROQ"
+   dotnet user-secrets set "Groq:ApiKey" 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"
+dotnet user-secrets set "IA:Claves:0:ApiKey" "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"
+dotnet user-secrets set "IA:Claves:1:ApiKey" " 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"
+
+
    ```
    Sin la clave, la app funciona igual, pero no se pueden generar cursos ni lecciones nuevas.
 6. Ejecutar:
